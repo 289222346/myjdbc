@@ -68,6 +68,7 @@ public class DBUtil {
     @Value("${dbutil.mincount:10}")
     public void setMinCount(int mincount) {
         DBUtil.minCount = mincount;
+        initConnections();
     }
 
     @Value("${dbutil.closetime:10}")
