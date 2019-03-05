@@ -68,8 +68,6 @@ public class DBUtil {
     @Value("${dbutil.mincount:10}")
     public void setMinCount(int mincount) {
         DBUtil.minCount = mincount;
-        initConnections();
-
     }
 
     @Value("${dbutil.closetime:10}")
@@ -80,10 +78,15 @@ public class DBUtil {
     /**
      * 初始化数据库连接池（根据最小连接数新建连接）
      */
-    private static void initConnections() {
+    private void initConnections() {
         for (int i = 0; i < DBUtil.minCount; i++) {
-            PoolConnection poolConnection = new PoolConnection(newConn());
-            connections.add(poolConnection);
+            PoolConnection poolConnection = null;
+            try {
+                poolConnection = new PoolConnection(DriverManager.getConnection(url, username, password));
+                connections.add(poolConnection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
