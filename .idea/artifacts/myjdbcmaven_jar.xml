@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="myjdbcmaven:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/myjdbcmaven_jar</output-path>
-    <root id="archive" name="myjdbcmaven.jar">
-      <element id="module-output" name="myjdbcmaven" />
-    </root>
-  </artifact>
-</component>

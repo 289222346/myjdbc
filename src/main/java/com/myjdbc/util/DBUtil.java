@@ -36,6 +36,10 @@ public class DBUtil {
     /* 连接池 */
     private final static List<PoolConnection> connections = new ArrayList<>();
 
+    public static List<PoolConnection> getConnections() {
+        return connections;
+    }
+
     @Value("${spring.datasource.driver-class-name:com.mysql.jdbc.Driver}")
     public void setDriver(String driver) {
         this.driver = driver;
