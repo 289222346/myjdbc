@@ -6,6 +6,8 @@ import entity.po.PCode;
 
 public class PCodeDao extends BaseDaoMysql<PCode> {
 
+
+
     private PCodeDao() {
         super(PCode.class, "codeId");
     }
