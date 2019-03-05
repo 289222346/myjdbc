@@ -34,12 +34,7 @@ public class DBUtil {
     /* 关闭空闲连接扫描时间（分钟） */
     private static int closeTime = 5;
     /* 连接池 */
-    private static List<PoolConnection> connections = new ArrayList<>();
-
-
-    private DBUtil() {
-        System.out.println("size=" + connections.size());
-    }
+    private final static List<PoolConnection> connections = new ArrayList<>();
 
     @Value("${spring.datasource.driver-class-name:com.mysql.jdbc.Driver}")
     public void setDriver(String driver) {
@@ -69,6 +64,8 @@ public class DBUtil {
     @Value("${dbutil.mincount:10}")
     public void setMinCount(int mincount) {
         DBUtil.minCount = mincount;
+        initConnections();
+
     }
 
     @Value("${dbutil.closetime:10}")
@@ -76,20 +73,35 @@ public class DBUtil {
         DBUtil.closeTime = closetime;
     }
 
+    /**
+     * 初始化数据库连接池（根据最小连接数新建连接）
+     */
+    private static void initConnections() {
+        for (int i = 0; i < DBUtil.minCount; i++) {
+            PoolConnection poolConnection = new PoolConnection(newConn());
+            connections.add(poolConnection);
+        }
+    }
+
+    /**
+     * 新建数据库连接对象
+     *
+     * @return
+     */
     private static Connection newConn() {
         try {
             Connection conn = DriverManager.getConnection(url, username, password);
             return conn;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * 获取并更新连接池对象
+     * 从数据库连接池获取数据库连接,并更新该池
      * 遍历连接对象,如果连接池已到达最大值，则返回null
+     * 如果没有达到最大值，但当前可用已满，则新建临时连接
      *
      * @return
      */
@@ -104,10 +116,8 @@ public class DBUtil {
         }
         if (connections.size() < maxCount) {
             //如果在连接池中没有找到可用连接，且连接池没达到最大上线，则新建一个连接放入连接池
-            PoolConnection poolConnection = new PoolConnection(newConn());
+            PoolConnection poolConnection = new PoolConnection(newConn(), true);
             connections.add(poolConnection);
-            poolConnection.setFlag(true);
-            System.out.println("connections_size=" + connections.size());
             return poolConnection;
         }
         return null;
@@ -118,7 +128,6 @@ public class DBUtil {
      */
     @Scheduled(fixedRate = 1000 * 60)
     public static void closeConnection() {
-        System.out.println(maxCount);
         synchronized (connections) {
             for (int i = 0; i < connections.size() && connections.size() > minCount; i++) {
                 PoolConnection pconn = connections.get(i);
@@ -129,10 +138,8 @@ public class DBUtil {
                         try {
                             pconn.getConn().close();
                             connections.remove(i);
-                            System.out.println("connections_size=" + connections.size());
                         } catch (SQLException e) {
                             e.printStackTrace();
-                            System.out.println("关闭错误");
                         }
                     }
                 }

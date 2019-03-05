@@ -51,7 +51,6 @@ public class MainTest {
         long startTime = System.nanoTime();   //获取开始时间
         delete2(ids.toArray());
         long endTime = System.nanoTime(); //获取结束时间
-        System.out.println("程序运行时间： " + (endTime - startTime) / 1000 / 1000 + "ms");
     }
 
     public boolean delete2(Object[] ids) {

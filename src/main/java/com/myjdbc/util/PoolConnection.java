@@ -11,6 +11,11 @@ public class PoolConnection {
         this.conn = conn;
     }
 
+    public PoolConnection(Connection conn, boolean flag) {
+        this.conn = conn;
+        this.flag = flag;
+    }
+
     public Connection getConn() {
         return conn;
     }

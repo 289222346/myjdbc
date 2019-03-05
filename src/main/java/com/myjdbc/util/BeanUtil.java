@@ -50,19 +50,16 @@ public class BeanUtil {
                             setMethod = cls.getMethod(setField, cls.getDeclaredField(field.getName()).getType());
                             Method getMethod = ResultSet.class.getMethod(getRs, String.class);
                             value = getMethod.invoke(rs, getSqlFormatName(field.getName()).toString());
-                            //System.out.println(field.getName()+"="+value);
                         }
                         if (value != null)
                             setMethod.invoke(obj, value);
                     } catch (Exception e) {
                         //抛弃掉异常，异常直接跳过，不赋值
-                        System.out.println(field.getName() + "=获取异常");
                     }
                 }
                 list.add(obj);
             }
         } catch (Exception e) {
-            System.out.println("可能是操作太快引起的，但是暂不考虑限制用户的操作体验");
             e.printStackTrace();
         }
         return list;
