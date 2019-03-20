@@ -54,14 +54,4 @@ public interface Dao {
     List<Map<String, Object>> findMap(Connection con, String sql, Object... obj);//查询
 
 
-    /**
-     * 批量添加
-     *
-     * @param con  数据库连接对象
-     * @param sql  要执行的Sql语句
-     * @param list 要添加的数据集合
-     * @return
-     */
-    int[] savas(Connection con, String sql, List<Object[]> list) throws SQLException;
-
 }

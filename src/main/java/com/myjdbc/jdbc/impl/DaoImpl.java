@@ -22,6 +22,7 @@ import java.util.Map;
  * @version 1.1
  */
 public class DaoImpl implements Dao {
+
     //拼接Sql语句，以供JDBC调用
     private PreparedStatement getPS(Connection con, String sql, Object... obj) {
         PreparedStatement ps = null;
@@ -56,31 +57,6 @@ public class DaoImpl implements Dao {
         }
         return row;
     }
-
-    /**
-     * 2019.03.04 批量增加
-     */
-    public int[] savas(Connection con, String sql, List<Object[]> list) {
-        try {
-            con.setAutoCommit(false); //设置手动提交
-            //预编译sql对象,只编译一回
-            PreparedStatement ps = con.prepareStatement(sql);
-            for (int q = 0; q < list.size(); q++) {
-                Object[] obj = list.get(q);
-                for (int i = 0; i < obj.length; i++) {
-                    ps.setObject(i + 1, obj[i]);
-                }
-                ps.addBatch();//添加到批次
-            }
-            int[] rows = ps.executeBatch();//提交批处理
-            con.commit();//执行
-            return rows;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 
     /***
      * 2018.05.04 基础查询类（）

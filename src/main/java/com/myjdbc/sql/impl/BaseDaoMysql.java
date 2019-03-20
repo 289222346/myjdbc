@@ -239,4 +239,5 @@ public class BaseDaoMysql<T> extends DaoImpl implements BaseDao<T> {
         closeConn(connection);
         return flag;
     }
+
 }

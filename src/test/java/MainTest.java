@@ -1,5 +1,7 @@
 import dao.PCodeDao;
 import entity.po.PCode;
+import entity.po.WebViewShowBo;
+import entity.po.WebViewShowList;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -13,21 +15,29 @@ public class MainTest {
 
     @Test
     public void test1() {
-        for (int x = 0; x < 5; x++) {
-            PCode[] list = new PCode[20000];
-            for (int i = 0; i < 20000; i++) {
-                PCode pCode = new PCode();
-                pCode.setShortId(new BigInteger("25"));
-                pCode.setCodeType("9876543");
-                pCode.setValue(x + i + "");
-                pCode.setCodeNane("测试" + x + i);
-                list[i] = pCode;
-            }
-            long startTime = System.nanoTime();   //获取开始时间
-            save(list);
-            long endTime = System.nanoTime(); //获取结束时间
-            System.out.println("程序运行时间： " + (endTime - startTime) / 1000 / 1000 + "ms");
+
+        System.out.println("ss");
+        String url = "{\"webViewShowBo\":[{\"url\":\"https://www.baidu.com\",\"name\":\"百度B\",\"image\":\"baidu\"}," +
+                "{\"url\":\"https://www.baidu.com\",\"name\":\"百度B\",\"image\":\"baidu\"}]}";
+        WebViewShowList wShow = WebViewShowBo.inits(url);
+        for (WebViewShowBo wb : wShow.getWebViewShowBo()) {
+            System.out.println(wb);
         }
+//        for (int x = 0; x < 5; x++) {
+//            PCode[] list = new PCode[20000];
+//            for (int i = 0; i < 20000; i++) {
+//                PCode pCode = new PCode();
+//                pCode.setShortId(new BigInteger("25"));
+//                pCode.setCodeType("9876543");
+//                pCode.setValue(x + i + "");
+//                pCode.setCodeNane("测试" + x + i);
+//                list[i] = pCode;
+//            }
+//            long startTime = System.nanoTime();   //获取开始时间
+//            save(list);
+//            long endTime = System.nanoTime(); //获取结束时间
+//            System.out.println("程序运行时间： " + (endTime - startTime) / 1000 / 1000 + "ms");
+//        }
     }
 
     public boolean save2(PCode[] pCodes) {
