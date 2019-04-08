@@ -219,7 +219,7 @@ public class BeanUtil {
      */
     public static <T> Map<String, Object> poToParameter(T po, String key) {
         String fieles = "";//字段名
-        Object keyValue = "";//值
+        Object keyValue = null;//值
         List objs = new ArrayList();
         Class<?> cls = po.getClass();
         // 获取该类所有属性名
@@ -233,14 +233,16 @@ public class BeanUtil {
             try {
                 getMethod = cls.getMethod(getField);
                 Object value = getMethod.invoke(po);
-                if (value != null && !value.toString().equals("null")) {
-                    //排除主键
-                    if (field.getName().equals(key)) {
-                        keyValue = value;
-                    } else {
-                        fieles += "," + getSqlFormatName(field.getName()) + "=? ";
-                        objs.add(value);
+                //排除主键
+                if (field.getName().equals(key)) {
+                    if (value == null) {
+                        //主键为空，调用新增拼接参数方法
+                        return poToParameter(po);
                     }
+                    keyValue = value;
+                } else if (value != null && !value.toString().equals("null")) {
+                    fieles += "," + getSqlFormatName(field.getName()) + "=? ";
+                    objs.add(value);
                 }
             } catch (NoSuchMethodException e) {
                 //e.printStackTrace();
@@ -255,6 +257,7 @@ public class BeanUtil {
         Map<String, Object> map = new HashMap<>();
         map.put("fieles", fieles.substring(1));
         map.put("objs", objs.toArray());
+        map.put(key, keyValue);//主键
         return map;
     }
 

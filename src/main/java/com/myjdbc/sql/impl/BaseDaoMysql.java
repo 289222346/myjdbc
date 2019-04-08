@@ -176,9 +176,15 @@ public class BaseDaoMysql<T> extends DaoImpl implements BaseDao<T> {
     public boolean save(T po) {
         PoolConnection connection = getConn();
         Connection con = connection.getConn();
-        Map<String, Object> map = BeanUtil.poToParameter(po);
-        String sql = "insert into " + BeanUtil.getTableName(po.getClass()) + "(" + map.get("fieles") + ") values("
-                + map.get("values") + ")";
+        Map<String, Object> map = BeanUtil.poToParameter(po, mainKey);
+        String sql;
+        if (map.get(mainKey) != null) {
+            sql = "UPDATE " + BeanUtil.getTableName(po.getClass()) + " SET " + map.get("fieles") + " WHERE \n"
+                    + BeanUtil.getSqlFormatName(mainKey) + " =? ";
+        } else {
+            sql = "insert into " + BeanUtil.getTableName(po.getClass()) + "(" + map.get("fieles") + ") values("
+                    + map.get("values") + ")";
+        }
         boolean flag = update(con, sql, (Object[]) map.get("objs")) > 0 ? true : false;
         closeConn(connection);
         return flag;

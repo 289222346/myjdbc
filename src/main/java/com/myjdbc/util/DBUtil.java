@@ -1,6 +1,5 @@
 package com.myjdbc.util;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,20 +18,7 @@ import java.util.List;
 @Component
 public class DBUtil {
 
-    /* 驱动 */
-    private static String driver = "com.mysql.jdbc.Driver";
-    /* 数据库URL */
-    private static String url = "jdbc:mysql://127.0.0.1:3306/chinaone.xyz?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8";
-    /* 用户 */
-    private static String username = "root";
-    /* 密码 */
-    private static String password = "123456";
-    /* 最大连接数 */
-    private static int maxCount = 100;
-    /* 最小连接数 */
-    private static int minCount = 10;
-    /* 关闭空闲连接扫描时间（分钟） */
-    private static int closeTime = 5;
+    private final static DBconfig dbconfig = new DBconfig();
     /* 连接池 */
     private final static List<PoolConnection> connections = new ArrayList<>();
 
@@ -40,50 +26,14 @@ public class DBUtil {
         return connections;
     }
 
-    @Value("${spring.datasource.driver-class-name:com.mysql.jdbc.Driver}")
-    public void setDriver(String driver) {
-        this.driver = driver;
-    }
-
-    @Value("${spring.datasource.url:jdbc:mysql://127.0.0.1:3306?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8}")
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @Value("${spring.datasource.username:root}")
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Value("${spring.datasource.password:root}")
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Value("${dbutil.maxcount:100}")
-    public void setMaxCount(int maxcount) {
-        DBUtil.maxCount = maxcount;
-    }
-
-    @Value("${dbutil.mincount:10}")
-    public void setMinCount(int mincount) {
-        DBUtil.minCount = mincount;
-        initConnections();
-    }
-
-    @Value("${dbutil.closetime:10}")
-    public void setCloseTime(int closetime) {
-        DBUtil.closeTime = closetime;
-    }
-
     /**
      * 初始化数据库连接池（根据最小连接数新建连接）
      */
     private void initConnections() {
-        for (int i = 0; i < DBUtil.minCount; i++) {
+        for (int i = 0; i < dbconfig.minCount; i++) {
             PoolConnection poolConnection = null;
             try {
-                poolConnection = new PoolConnection(DriverManager.getConnection(url, username, password));
+                poolConnection = new PoolConnection(DriverManager.getConnection(dbconfig.url, dbconfig.username, dbconfig.password));
                 connections.add(poolConnection);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -98,7 +48,7 @@ public class DBUtil {
      */
     private static Connection newConn() {
         try {
-            Connection conn = DriverManager.getConnection(url, username, password);
+            Connection conn = DriverManager.getConnection(dbconfig.url, dbconfig.username, dbconfig.password);
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,7 +72,7 @@ public class DBUtil {
                 }
             }
         }
-        if (connections.size() < maxCount) {
+        if (connections.size() < dbconfig.maxCount) {
             //如果在连接池中没有找到可用连接，且连接池没达到最大上线，则新建一个连接放入连接池
             PoolConnection poolConnection = new PoolConnection(newConn(), true);
             connections.add(poolConnection);
@@ -137,11 +87,11 @@ public class DBUtil {
     @Scheduled(fixedRate = 1000 * 60)
     public static void closeConnection() {
         synchronized (connections) {
-            for (int i = 0; i < connections.size() && connections.size() > minCount; i++) {
+            for (int i = 0; i < connections.size() && connections.size() > dbconfig.minCount; i++) {
                 PoolConnection pconn = connections.get(i);
                 if (!pconn.getFlag()) {
                     pconn.addTimes();
-                    if (pconn.getTimes() >= closeTime) {
+                    if (pconn.getTimes() >= dbconfig.closeTime) {
                         //空闲超时则释放掉该连接
                         try {
                             pconn.getConn().close();
