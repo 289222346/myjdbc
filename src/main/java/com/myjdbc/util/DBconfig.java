@@ -8,6 +8,8 @@ import java.util.Properties;
 
 public class DBconfig {
 
+    /* 驱动 */
+    protected String driver;
     /* 数据库URL */
     protected String url = "jdbc:mysql://127.0.0.1:3306/chinaone.xyz?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8";
     /* 用户 */
@@ -20,6 +22,16 @@ public class DBconfig {
     protected int minCount = 1;
     /* 关闭空闲连接扫描时间（分钟） */
     protected int closeTime = 5;
+
+    public DBconfig(String driver, String url, String username, String password, int maxCount, int minCount, int closeTime) {
+        this.driver = driver;
+        this.url = url;
+        this.username = username;
+        this.password = password;
+        this.maxCount = maxCount;
+        this.minCount = minCount;
+        this.closeTime = closeTime;
+    }
 
     public DBconfig() {
         Properties prop = new Properties();

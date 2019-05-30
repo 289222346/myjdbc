@@ -71,6 +71,15 @@
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:1.13.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.43" level="project" />
+    <orderEntry type="module-library">
+      <library name="Maven: com.oracle:ojdbc14:10.2.0.5.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/src/main/webapp/WEB-INF/lib/ojdbc14-10.2.0.5.0-20170917.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:1.5.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:1.5.6.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:1.5.6.RELEASE" level="project" />

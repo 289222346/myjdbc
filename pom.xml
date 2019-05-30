@@ -22,6 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <ojdbc14.version>10.2.0.5.0</ojdbc14.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,14 @@
         </dependency>
 
         <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc14</artifactId>
+            <version>${ojdbc14.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ojdbc14-10.2.0.5.0-20170917.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -58,6 +67,11 @@
         </dependency>
 
 
+        <!--<dependency>-->
+            <!--<groupId>com.myjdbc</groupId>-->
+            <!--<artifactId>myjdbc</artifactId>-->
+            <!--<version>0.1.5</version>-->
+        <!--</dependency>-->
 
 
     </dependencies>

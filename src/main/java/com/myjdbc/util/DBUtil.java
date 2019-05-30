@@ -18,7 +18,17 @@ import java.util.List;
 @Component
 public class DBUtil {
 
-    private final static DBconfig dbconfig = new DBconfig();
+    /* 数据库配置 */
+    private static DBconfig dbconfig = new DBconfig();
+
+    public static DBconfig getDbconfig() {
+        return dbconfig;
+    }
+
+    public static void setDbconfig(DBconfig dbconfig) {
+        DBUtil.dbconfig = dbconfig;
+    }
+
     /* 连接池 */
     private final static List<PoolConnection> connections = new ArrayList<>();
 
@@ -48,6 +58,13 @@ public class DBUtil {
      */
     private static Connection newConn() {
         try {
+            try {
+                if (dbconfig.driver != null) {
+                    Class.forName(dbconfig.driver);
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             Connection conn = DriverManager.getConnection(dbconfig.url, dbconfig.username, dbconfig.password);
             return conn;
         } catch (SQLException e) {
