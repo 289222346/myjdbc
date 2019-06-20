@@ -30,6 +30,7 @@ public class DaoImpl implements Dao {
             ps = con.prepareStatement(sql);
             for (int i = 0; i < obj.length; i++) {
                 ps.setObject(i + 1, obj[i]);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

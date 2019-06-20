@@ -127,6 +127,11 @@ public class BaseDaoMysql<T> extends DaoImpl implements BaseDao<T> {
     }
 
     @Override
+    public List<T> findAll() {
+        return null;
+    }
+
+    @Override
     public List<T> findAll(T po) {
         PoolConnection poolConnection = getConn();
         Connection con = poolConnection.getConn();

@@ -1,6 +1,7 @@
 package com.myjdbc.sql;
 
 import com.myjdbc.jdbc.Dao;
+
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,14 @@ public interface BaseDao<T> extends Dao {
      * @return
      */
     T findById(Object value);
+
+
+    /**
+     * 返回列表中所有元素
+     *
+     * @return
+     */
+    List<T> findAll();
 
     /**
      * 返回对象数组(根据pojo类中的非null数据去完全匹配，找到全部数据)

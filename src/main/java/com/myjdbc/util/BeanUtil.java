@@ -117,7 +117,7 @@ public class BeanUtil {
     }
 
     /**
-     * 将对象转换成拼接参数
+     * 将对象转换成拼接参数(增加时)
      *
      * @param po
      * @param <T>
@@ -262,6 +262,47 @@ public class BeanUtil {
     }
 
     /**
+     * 将对象转换成拼接参数(修改时的拼接)
+     *
+     * @param po
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<String, Object> findParameter(T po) {
+        String fieles = "";//字段名
+        List objs = new ArrayList();
+        Class<?> cls = po.getClass();
+        // 获取该类所有属性名
+        Field[] fields = cls.getDeclaredFields();
+        // 声明Map对象，存储属性
+        for (Field field : fields) {
+            // 获取要设置的属性的set方法名称
+            String getField = "get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+            // 声明类函数方法，并获取和设置该方法型参类型
+            Method getMethod = null;
+            try {
+                getMethod = cls.getMethod(getField);
+                Object value = getMethod.invoke(po);
+                if (value != null && !value.toString().equals("null")) {
+                    fieles += "," + getSqlFormatName(field.getName()) + "=? ";
+                    objs.add(value);
+                }
+            } catch (NoSuchMethodException e) {
+                //e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                //e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                //e.printStackTrace();
+            }
+        }
+        //主键放在最后添加
+        Map<String, Object> map = new HashMap<>();
+        map.put("fieles", fieles.substring(1));
+        map.put("objs", objs.toArray());
+        return map;
+    }
+
+    /**
      * 2018.05.04 Object—>Map<String,Object>
      * <p>
      * 将对象属性反射成 Map(属性名,属性值)
@@ -284,7 +325,10 @@ public class BeanUtil {
                 // 声明类函数方法，并获取和设置该方法型参类型
                 Method getMethod = cls.getMethod(getField);
                 // 把获得的值设置给map对象
-                map.put(field.getName(), getMethod.invoke(obj));
+                Object value = getMethod.invoke(obj);
+                if (value != null) {
+                    map.put(field.getName(), value);
+                }
             } catch (NoSuchMethodException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

@@ -85,13 +85,31 @@ public class BaseDaoOracle<T> extends DaoImpl implements BaseDao<T> {
     }
 
     /**
+     * 最终SQL拼接器
+     *
+     * @param con        连接
+     * @param fieldNames 字段名
+     * @param values     值
+     * @return
+     */
+    private List<T> find(Connection con, String fieldNames, Object... values) {
+        String sql = "select " + sqlFields() + " from " + BeanUtil.getTableName(mainCls) + fieldNames;
+        return find(con, sql, mainCls, values);
+    }
+
+    /**
+     * 查询表中所有元素
+     */
+    private List<T> find(Connection con) {
+        return find(con, "");
+    }
+
+    /**
      * 重载父对象的方法，在这里处理po,将其拼接为标准Sql
      */
     private List<T> find(Connection con, T po) {
-        //拼接所有非null字段
-        Map<String, Object> map = BeanUtil.poToParameter(po);
-        String sql = "select " + sqlFields() + " from " + BeanUtil.getTableName(mainCls) + " where " + map.get("values");
-        return find(con, sql, mainCls, (Object[]) map.get("objs"));
+        Map<String, Object> map = BeanUtil.obj_Map(po);
+        return find(con, map);
     }
 
     /**
@@ -107,8 +125,8 @@ public class BaseDaoOracle<T> extends DaoImpl implements BaseDao<T> {
             values.add(value);
         }
         parameterName = parameterName.substring(4);
-        String sql = "select " + sqlFields() + " from " + BeanUtil.getTableName(mainCls) + " where " + parameterName;
-        return find(con, sql, mainCls, values.toArray());
+        String fieldNames = " where " + parameterName;
+        return find(con, fieldNames, values.toArray());
     }
 
     @Override
@@ -124,6 +142,15 @@ public class BaseDaoOracle<T> extends DaoImpl implements BaseDao<T> {
         }
         closeConn(poolConnection);
         return t;
+    }
+
+    @Override
+    public List<T> findAll() {
+        PoolConnection poolConnection = getConn();
+        Connection con = poolConnection.getConn();
+        List<T> list = find(con);
+        closeConn(poolConnection);
+        return list;
     }
 
     @Override

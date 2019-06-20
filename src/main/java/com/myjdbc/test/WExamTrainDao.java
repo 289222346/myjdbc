@@ -3,13 +3,13 @@ package com.myjdbc.test;
 import com.myjdbc.sql.impl.BaseDaoOracle;
 import com.myjdbc.util.PoolConnection;
 
-public class WExamTrainDao extends BaseDaoOracle<WExamTrain> {
+public class WExamTrainDao extends BaseDaoOracle<Test> {
 
-    protected WExamTrainDao(Class<WExamTrain> mainCls, String mainKey) {
-        super(mainCls, mainKey);
+    protected WExamTrainDao() {
+        super(Test.class, "id");
     }
 
-    protected WExamTrainDao(Class<WExamTrain> mainCls, String mainKey, PoolConnection conn) {
+    protected WExamTrainDao(Class<Test> mainCls, String mainKey, PoolConnection conn) {
         super(mainCls, mainKey, conn);
     }
 
