@@ -1,8 +1,12 @@
 package com.myjdbc.core.util;
 
 
-import com.alibaba.fastjson.JSONObject;
-
+/**
+ * @Author 陈文
+ * @Date 2019/12/25  9:53
+ * @Description 使用阿里的com.alibaba.fastjson.JSONObject，会产生错误（转换成JSONObject对象，而不是想要的实体）
+ * 所以使用PojoUtil类的JSON转换
+ */
 public class JsonUtil {
 
     /**
@@ -14,8 +18,8 @@ public class JsonUtil {
      * @return
      */
     public static <T> T jsonToBo(T bo, String json) {
-        bo = (T) JSONObject.parse(json);
-        return bo;
+//        bo = (T) JSONObject.parse(json);
+        return PojoUtil.jsonToBo(bo, json);
     }
 
     /**
@@ -26,7 +30,11 @@ public class JsonUtil {
      * @return
      */
     public static <T> String BoTojson(T bo) {
-        return JSONObject.toJSONString(bo);
+//        if (bo != null) {
+//            return JSONObject.toJSONString(bo);
+//        }
+//        return null;
+        return PojoUtil.boTojson(bo);
     }
 
 }
