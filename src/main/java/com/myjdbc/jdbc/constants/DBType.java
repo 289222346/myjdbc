@@ -2,20 +2,22 @@ package com.myjdbc.jdbc.constants;
 
 public enum DBType {
 
-    ORACLE(0, "oracle", "Oracle数据库"),
-    MYSQL(1, "mysql", "MySql数据库");
+    ORACLE("oracle", "Oracle数据库", "oracle.jdbc.driver.OracleDriver", "sqlGeneratorOracle"),
+    MYSQL("mysql", "MySql数据库", "com.mysql.jdbc.Driver", "sqlGeneratorMysql");
 
-    private int code;
+    private String code;
     private String remark;
-    private String value;
+    private String driver;
+    private String generator;
 
-    DBType(int code, String value, String remark) {
+    DBType(String code, String remark, String driver, String generator) {
         this.code = code;
         this.remark = remark;
-        this.value = value;
+        this.driver = driver;
+        this.generator = generator;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -23,7 +25,11 @@ public enum DBType {
         return remark;
     }
 
-    public String getValue() {
-        return value;
+    public String getDriver() {
+        return driver;
+    }
+
+    public String getGenerator() {
+        return generator;
     }
 }

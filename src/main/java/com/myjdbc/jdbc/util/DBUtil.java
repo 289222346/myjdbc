@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Connection连接池
+ * 数据库配置工具
  *
  * @author 笔落墨成
  * @version 1.0
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class DBUtil {
 
     /* 数据库配置 */
-    private static DBconfig dbconfig = new DBconfig();
+    public static DBconfig dbconfig = new DBconfig();
 
     public static DBconfig getDbconfig() {
         return dbconfig;
@@ -32,15 +32,15 @@ public class DBUtil {
      */
     public static Connection newConn() {
         try {
-            try {
-                if (dbconfig.driver != null) {
-                    Class.forName(dbconfig.driver);
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                if (dbconfig.driver != null) {
+//                    Class.forName(dbconfig.driver);
+//                }
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
             Connection conn = dbconfig.dataSource.getConnection();//从连接池取出连接对象
-                    //DriverManager.getConnection(dbconfig.url, dbconfig.username, dbconfig.password);
+            //DriverManager.getConnection(dbconfig.url, dbconfig.username, dbconfig.password);
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();
