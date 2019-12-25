@@ -13,11 +13,9 @@ import com.myjdbc.jdbc.core.service.CriteriaQuery;
 import com.myjdbc.jdbc.core.sqlgenerator.SqlGenerator;
 import com.myjdbc.jdbc.util.BeanUtil;
 import com.myjdbc.jdbc.util.DBUtil;
-import com.myjdbc.jdbc.util.DBconfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.JoinColumn;
@@ -33,11 +31,9 @@ import java.util.Map;
 
 @Service("baseService")
 public class BaseServiceImpl implements BaseService {
-
     private static final Logger logger = LoggerFactory.getLogger(BaseServiceImpl.class);
 
     @Autowired
-    @Qualifier(value = DBconfig.DB_TYPE)
     private SqlGenerator sqlGenerator;
 
     @Autowired
