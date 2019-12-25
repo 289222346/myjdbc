@@ -24,6 +24,7 @@
         <spring.version>4.0.9.RELEASE</spring.version>
         <!--JSON数据支持-->
         <fastjson-lib.version>1.2.6</fastjson-lib.version>
+        <jackson-databind.version>2.5.1</jackson-databind.version>
         <!-- 数据库连接池 -->
         <druid.version>1.1.9</druid.version>
 
@@ -115,6 +116,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson-lib.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
         </dependency>
 
         <!-- commons-lang -->

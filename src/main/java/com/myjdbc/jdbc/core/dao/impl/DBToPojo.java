@@ -3,7 +3,7 @@ package com.myjdbc.jdbc.core.dao.impl;
 import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.jdbc.util.BeanUtil;
-import com.myjdbc.redis.service.RedisService;
+import com.myjdbc.redis.service.MyRedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class DBToPojo {
     private static final Logger logger = LoggerFactory.getLogger(DBToPojo.class);
 
     @Autowired
-    private RedisService redisService;
+    private MyRedisService redisService;
 
     /**
      * @Author 陈文
@@ -95,8 +95,9 @@ public class DBToPojo {
             while (rs.next()) {
                 T obj = cls.newInstance();
                 for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-//                    String s = rs.getMetaData().getColumnName(i);
-                    Field field = fieldMap.get(rs.getMetaData().getColumnName(i));
+                    String rname = rs.getMetaData().getColumnName(i);
+                    //rname统一采用大写，用于抹平Mysql和Oracle的差异性
+                    Field field = fieldMap.get(rname.toUpperCase());
                     if (field == null) {
                         continue;
                     }
