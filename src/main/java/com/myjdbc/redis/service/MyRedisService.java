@@ -2,7 +2,7 @@ package com.myjdbc.redis.service;
 
 import java.util.Map;
 
-public interface RedisService extends RedisBaseService {
+public interface MyRedisService extends MyRedisBaseService {
 
     /**
      * 获取实体（先查找缓存、再查找数据库）

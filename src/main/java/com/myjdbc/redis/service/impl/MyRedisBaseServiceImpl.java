@@ -2,7 +2,7 @@ package com.myjdbc.redis.service.impl;
 
 
 import com.myjdbc.core.util.StringUtil;
-import com.myjdbc.redis.service.RedisBaseService;
+import com.myjdbc.redis.service.MyRedisBaseService;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
  * @Date 2019/12/10  16:16
  * @Description Redis缓存工具
  */
-@Service("redisService")
-public class RedisBaseServiceImpl implements RedisBaseService {
+@Service("myRedisBaseService")
+public class MyRedisBaseServiceImpl implements MyRedisBaseService {
 //    private static final Logger logger = LoggerFactory.getLogger(RedisBaseServiceImpl.class);
 
     @Resource

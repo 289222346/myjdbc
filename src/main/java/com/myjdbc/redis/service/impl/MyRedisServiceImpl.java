@@ -3,10 +3,11 @@ package com.myjdbc.redis.service.impl;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.jdbc.core.service.BaseService;
 import com.myjdbc.jdbc.util.BeanUtil;
-import com.myjdbc.redis.service.RedisService;
+import com.myjdbc.redis.service.MyRedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 
-public class RedisServiceImpl extends RedisBaseServiceImpl implements RedisService {
-    private static final Logger logger = LoggerFactory.getLogger(RedisServiceImpl.class);
+@Service("myRedisService")
+public class MyRedisServiceImpl extends MyRedisBaseServiceImpl implements MyRedisService {
+    private static final Logger logger = LoggerFactory.getLogger(MyRedisServiceImpl.class);
 
     @Autowired
     private BaseService baseService;
@@ -97,7 +99,7 @@ public class RedisServiceImpl extends RedisBaseServiceImpl implements RedisServi
     public <T> Object getDictionaryValue(Class<T> cls, String fieldName, String replaceName, String value) {
         List<T> list = null;
         try {
-            fieldName=BeanUtil.getPrimaryName(cls, fieldName);
+            fieldName = BeanUtil.getPrimaryName(cls, fieldName);
             list = baseService.criteriaEq(cls, fieldName, value);
         } catch (SQLException e) {
             e.printStackTrace();

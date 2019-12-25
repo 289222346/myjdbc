@@ -4,7 +4,7 @@ package com.myjdbc.redis.service;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public interface RedisBaseService {
+public interface MyRedisBaseService {
 
     /**
      * 默认存储时间（天）
