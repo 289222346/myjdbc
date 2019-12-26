@@ -1,4 +1,4 @@
-package com.myjdbc.redis.service;
+package com.myjdbc.redis;
 
 import java.util.Map;
 

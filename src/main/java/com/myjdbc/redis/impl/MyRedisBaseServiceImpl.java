@@ -1,8 +1,8 @@
-package com.myjdbc.redis.service.impl;
+package com.myjdbc.redis.impl;
 
 
 import com.myjdbc.core.util.StringUtil;
-import com.myjdbc.redis.service.MyRedisBaseService;
+import com.myjdbc.redis.MyRedisBaseService;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;

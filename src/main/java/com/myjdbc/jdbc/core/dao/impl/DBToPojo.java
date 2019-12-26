@@ -4,7 +4,7 @@ import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.jdbc.util.BeanUtil;
 import com.myjdbc.jdbc.annotation.Dictionary;
-import com.myjdbc.redis.service.MyRedisService;
+import com.myjdbc.redis.MyRedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

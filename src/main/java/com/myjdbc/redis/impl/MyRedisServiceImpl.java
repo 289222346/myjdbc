@@ -1,9 +1,9 @@
-package com.myjdbc.redis.service.impl;
+package com.myjdbc.redis.impl;
 
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.jdbc.core.service.BaseService;
 import com.myjdbc.jdbc.util.BeanUtil;
-import com.myjdbc.redis.service.MyRedisService;
+import com.myjdbc.redis.MyRedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
