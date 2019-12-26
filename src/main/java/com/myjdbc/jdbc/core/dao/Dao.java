@@ -19,7 +19,7 @@ public interface Dao {
      * @param seqName
      * @return
      */
-    public List<Integer> getSeq(Connection con, String seqName, int size);
+    public List<Integer> getSeq(Connection con, String seqName, int size) throws SQLException;
 
     /**
      * 数据的增加、修改、删除

@@ -6,7 +6,7 @@ import com.myjdbc.jdbc.util.TypeCconvert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.Map;
  * @author 陈文
  * @version 1.1
  */
-@Service("dao")
+@Repository("dao")
 public class DaoImpl implements Dao {
     private static final Logger logger = LoggerFactory.getLogger(DaoImpl.class);
 
@@ -33,27 +33,23 @@ public class DaoImpl implements Dao {
     private DBToPojo dtop;
 
     @Override
-    public List<Integer> getSeq(Connection con, String seqName, int size) {
+    public List<Integer> getSeq(Connection con, String seqName, int size) throws SQLException {
 
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT  ").append(seqName).append(".NEXTVAL FROM dual");
         PreparedStatement ps = null;
-        try {
-            List<Integer> list = new ArrayList<>();
-            ps = con.prepareStatement(sql.toString());
-            for (int i = 0; i < size; i++) {
-                ResultSet rs = ps.executeQuery();
-                rs.next();
-                Integer value = rs.getInt(1);
-                list.add(value);
-                rs.close();
-            }
-            ps.close();
-            return list;
-        } catch (SQLException e) {
-            logger.error("查询序列故障：" + e.getMessage());
+
+        List<Integer> list = new ArrayList<>();
+        ps = con.prepareStatement(sql.toString());
+        for (int i = 0; i < size; i++) {
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            Integer value = rs.getInt(1);
+            list.add(value);
+            rs.close();
         }
-        return null;
+        ps.close();
+        return list;
     }
 
     @Override

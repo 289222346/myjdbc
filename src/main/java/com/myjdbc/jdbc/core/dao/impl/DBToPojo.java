@@ -3,12 +3,12 @@ package com.myjdbc.jdbc.core.dao.impl;
 import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.jdbc.util.BeanUtil;
+import com.myjdbc.jdbc.annotation.Dictionary;
 import com.myjdbc.redis.service.MyRedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.myjdbc.jdbc.annotation.Dictionary;
+import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -23,7 +23,7 @@ import java.util.*;
  * @Date 2019/12/15  1:26
  * @Description DataBaseToPOJO
  */
-@Service
+@Repository
 public class DBToPojo {
     private static final Logger logger = LoggerFactory.getLogger(DBToPojo.class);
 
