@@ -10,19 +10,22 @@ import java.util.List;
 
 
 /**
- * MyJDBC 的SQL组装库
+ * SQL组装库
  * 本类不直接访问JDBC
- * 本类仅生成拼接后的SQL语句，即可用于
+ * 本类仅生成拼接后的SQL
+ * <p>
+ * 实体转换成SQL时，如果有JAP注解，有限遵循JAP
+ * 类、属性无注解时，默认属性名转换成大写后，作为字段名
+ * 如果没有@Id注解，则默认主键属性名为id,这时如果没有id属性和getId、setId方法，会产生错误
+ * <p>
  *
  * @author 陈文
  * @Description
  * @date 2019/7/15 8:52
- * @see com.myjdbc.jdbc.core.service.BaseService
- * 也可用于自定义Service
+ * @see com.myjdbc.jdbc.core.service.BaseService 由BaseService调用生成器
  */
 public interface SqlGenerator {
-
-
+    
     /**
      * @param cls        实体对象类
      * @param parentFlag 查询语句中包含父对象的属性时为true,否则为flase
@@ -36,7 +39,6 @@ public interface SqlGenerator {
     /**
      * 返回条件查询语句(条件查询)
      *
-     * @param cls           实体类
      * @param criteriaQuery 查询条件
      * @param parentFlag    查询语句中包含父对象的属性时为true,否则为flase
      * @return String 查询SQL
@@ -144,7 +146,7 @@ public interface SqlGenerator {
 
 
     /**
-     * 返回保存单个对象的查询语句(主键为null则新增，否则为根据主键Id去修改)
+     * 返回保存单个对象的语句(主键为null则新增，否则为根据主键Id去修改)
      *
      * @param po
      * @return void
@@ -154,6 +156,15 @@ public interface SqlGenerator {
      */
     public <T> SavaEntity save(T po);
 
+    /**
+     * 返回保存多个对象的语句（只能新增）
+     *
+     * @param po
+     * @return
+     * @Author 陈文
+     * @Date 2019/12/26  16:30
+     * @Description 不加注释，反正加了你们也看不懂
+     */
     public <T> SavaListEntity save(List<T> po);
 
 }

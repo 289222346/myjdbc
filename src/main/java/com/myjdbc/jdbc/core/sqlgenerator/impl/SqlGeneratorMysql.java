@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * @Author 陈文
  * @Date 2019/12/26  12:38
- * @Description Mysql数据库的SQL生成器2
+ * @Description Mysql数据库的SQL生成器
  */
 @Service("sqlGeneratorMysql")
 public class SqlGeneratorMysql implements SqlGenerator {
