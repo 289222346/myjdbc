@@ -30,14 +30,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 按照分层原则，每一张数据表都有一个Dao与之对应，为此设计此实现类
- * 具体的Dao类只要继承该类，即可拥有最基础的增删该查功能
- * 支持复杂Sql自定义，可选择List<T>、List<Object[]>、List<Map<String,Object>>三种返回形式。
- * 此实现类仅适用于Oracle
- * 以下请注意：*****************************************************
- * 使用本类应该严格按照MyJDBC命名规范
- * Po类名对应数据库表名，例如：LoginLog.java  对应  login_log表
- * Po类中的属性名应该严格对应数据库字段名，例如：userName  对应  user_name
+ * @Author 陈文
+ * @Date 2019/12/26  12:38
+ * @Description Oracle数据库的SQL生成器
  */
 @Service("sqlGeneratorOracle")
 public class SqlGeneratorOracle implements SqlGenerator {
