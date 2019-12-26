@@ -1,21 +1,18 @@
 package com.myjdbc.jdbc.core.sqlgenerator.impl;
 
 
-import com.myjdbc.core.constants.PropertiesJDBC;
-import com.myjdbc.jdbc.constants.DBType;
 import com.myjdbc.jdbc.core.bo.DeleteEntity;
 import com.myjdbc.jdbc.core.bo.SavaEntity;
 import com.myjdbc.jdbc.core.bo.SavaListEntity;
 import com.myjdbc.jdbc.core.service.CriteriaQuery;
 import com.myjdbc.jdbc.core.sqlgenerator.SqlGenerator;
+import com.myjdbc.jdbc.pool.DBconfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * 按照分层原则，每一张数据表都有一个Dao与之对应，为此设计此实现类
@@ -30,6 +27,7 @@ import java.util.Properties;
 @Service("sqlGenerator")
 public class SqlGeneratorFactory implements SqlGenerator {
 
+
     @Autowired
     private Map<String, SqlGenerator> map;
 
@@ -37,20 +35,7 @@ public class SqlGeneratorFactory implements SqlGenerator {
 
     private SqlGenerator creatSqlGenerator() throws IOException {
         //配置数据库类别和SQL生成器
-        DBType dbType = null;
-        //读取属性文件a.properties
-        Properties prop = new Properties();
-        InputStream in = this.getClass().getResourceAsStream("/dbconfig.properties");
-        prop.load(in);///加载属性列表
-        String value = prop.getProperty(PropertiesJDBC.DBTYPE.getCode());
-        if (DBType.MYSQL.getCode().equals(value)) {
-            dbType = DBType.MYSQL;
-        } else if (DBType.ORACLE.getCode().equals(value)) {
-            dbType = DBType.ORACLE;
-        } else {
-            return null;
-        }
-        return map.get(dbType.getGenerator());
+        return map.get(DBconfig.DBTYPE.getGenerator());
     }
 
     private SqlGenerator sql() {
