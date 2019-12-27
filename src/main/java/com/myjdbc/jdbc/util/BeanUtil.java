@@ -1,7 +1,7 @@
 package com.myjdbc.jdbc.util;
 
 import com.myjdbc.core.util.ClassUtil;
-import com.myjdbc.jdbc.annotation.Dictionary;
+import com.myjdbc.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,28 +31,73 @@ public class BeanUtil {
      * @Description 获取数据库查询值, 并进行处理
      */
     public static Object getValue(Field field, int i, ResultSet rs) throws SQLException {
-        Dictionary dictionary = BeanUtil.getDictionary(field);
-        Class type;
-        if (dictionary != null && dictionary.copyClass() != Class.class) {
-            type = dictionary.copyClass();
-        } else {
-            type = field.getType();
-        }
-        Object value = null;
-        if (type == String.class) {
-            return rs.getString(i);
-        } else if (type == Integer.class || type == Long.class || type == int.class || type == long.class) {
+//        Dictionary dictionary = BeanUtil.getDictionary(field);
+//        Class type;
+//        if (dictionary != null && dictionary.copyClass() != Class.class) {
+//            type = dictionary.copyClass();
+//        } else {
+//            type = field.getType();
+//        }
+        Class type = field.getType();
+        if (type == Short.class || type == short.class) {
+            return rs.getShort(i);
+        } else if (type == Integer.class || type == int.class) {
             return rs.getInt(i);
-        } else if (type == Double.class || type == double.class || type == Float.class || type == float.class) {
+        } else if (type == Long.class || type == long.class) {
+            return rs.getLong(i);
+        } else if (type == Double.class || type == double.class) {
             return rs.getDouble(i);
+        } else if (type == Float.class || type == float.class) {
+            return rs.getFloat(i);
         } else if (type == BigInteger.class) {
             return rs.getInt(i);
         } else if (type == BigDecimal.class) {
             return rs.getBigDecimal(i);
         } else if (type == Date.class) {
             return rs.getTimestamp(i);
+        } else {
+            return rs.getString(i);
         }
-        return value;
+    }
+
+    /**
+     * @return
+     * @Author 陈文
+     * @Date 2019/12/27  10:44
+     * @Description 将数据库查询值映射进实体
+     */
+    public static <T> T setValue(Class<T> cls, Field field, T obj, Object value) {
+        try {
+            ManyToOne manyToOne = getManyToOne(cls, field);
+            if (manyToOne != null) {
+                //多对一，要先New一个对应实体，然后把ID赋值给他
+                //把生成并赋值的实体赋值给value
+                Class fieldClass = field.getType();
+                String referencedColumnName = getReferencedColumnName(cls, field);
+                Object fieldValue = fieldClass.newInstance();
+                if (fieldValue != null) {
+                    Field fieldChild = ClassUtil.findField(fieldClass, referencedColumnName);
+                    fieldValue = setValue(fieldClass, fieldChild, fieldValue, value);
+
+                    String setField = setField(field.getName());
+                    Method setMethod = cls.getMethod(setField, field.getType());
+                    setMethod.invoke(obj, fieldValue);
+                }
+            } else {
+                String setField = setField(field.getName());
+                Method setMethod = cls.getMethod(setField, field.getType());
+                setMethod.invoke(obj, value);
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+        return obj;
     }
 
     /**
@@ -75,7 +120,7 @@ public class BeanUtil {
     }
 
     /**
-     * 给类名转换，加下划线
+     * 获取实体映射的数据库表名
      *
      * @param cls
      * @return
@@ -90,7 +135,7 @@ public class BeanUtil {
     }
 
     /**
-     * 获取主键字段名称
+     * 获取主键属性
      *
      * @param cls 实体类
      * @return java.lang.String
@@ -98,7 +143,7 @@ public class BeanUtil {
      * @date 2019/7/12 11:48
      */
     public static <T> String getPrimaryKey(Class<T> cls) {
-        Field[] fields = ClassUtil.getAllFields(cls);
+        Field[] fields = ClassUtil.getAllFields(cls, null);
         String pk = "";
         for (Field field : fields) {
             String getField = BeanUtil.getField(field.getName());
@@ -108,19 +153,33 @@ public class BeanUtil {
                 Id id = getMethod.getAnnotation(Id.class);
                 if (id != null) {
                     pk += field.getName();
-                    Column column = getMethod.getAnnotation(Column.class);
-                    if (column != null && column.name() != null) {
-                        pk += "," + column.name();
-                    } else {
-                        pk += "id";
-                    }
+//                    Column column = getMethod.getAnnotation(Column.class);
+//                    if (column != null && column.name() != null) {
+//                        pk += "," + column.name();
+//                    } else {
+//                        pk += "id";
+//                    }
                     return pk;
                 }
             } catch (NoSuchMethodException e) {
 //                e.printStackTrace();
             }
         }
-        return "id,id";
+        return "id";
+    }
+
+    /**
+     * 获取主键字段名
+     *
+     * @param cls 实体类
+     * @return java.lang.String
+     * @author ChenWen
+     * @date 2019/7/12 11:48
+     */
+    public static <T> String getPrimaryKeyFieldName(Class<T> cls) {
+        String id = getPrimaryKey(cls);
+        id = getSqlFormatName(cls, id);
+        return id;
     }
 
     /**
@@ -134,7 +193,8 @@ public class BeanUtil {
     public static String getId(Object t) {
         try {
             Class cls = t.getClass();
-            String getField = "getId";
+            String fieleName = getPrimaryKey(t.getClass());
+            String getField = getField(fieleName);//"getId";
             Method getMethod = cls.getMethod(getField);
             Object id = getMethod.invoke(t);
             if (id != null) {
@@ -159,7 +219,7 @@ public class BeanUtil {
     public static String getPrimaryName(Class cls, String fieldName) {
         //运行到此处，说明没有找到该方法，那么有可能fieldName传入的不是实体属性名，而是数据库表字段名
         //遍历所有字段，找到符合的属性，并获取对应值
-        for (Field field : ClassUtil.getAllFields(cls)) {
+        for (Field field : ClassUtil.getAllFields(cls, null)) {
             Column column = getColumn(cls, field);
             if (column != null && fieldName.equals(column.name())) {
                 return field.getName();
@@ -185,7 +245,7 @@ public class BeanUtil {
         }
         //运行到此处，说明没有找到该方法，那么有可能fieldName传入的不是实体属性名，而是数据库表字段名
         //遍历所有字段，找到符合的属性，并获取对应值
-        for (Field field : ClassUtil.getAllFields(cls)) {
+        for (Field field : ClassUtil.getAllFields(cls, null)) {
             Column column = getColumn(cls, field);
             if (column != null && fieldName.equals(column.name())) {
                 value = getPrimaryValue(cls, t, field.getName());
@@ -224,11 +284,18 @@ public class BeanUtil {
      * @date 2019/7/11 21:14
      */
     public static String getSqlFormatName(Class<?> cls, Field field) {
+        //优先以Column注解为准
         Column column = getColumn(cls, field);
         if (column != null) {
             return column.name().toUpperCase();
         } else {
-            return getUpperName(field.getName());
+            //JoinColumn注解为第二优先
+            JoinColumn joinColumn = getJoinColumn(cls, field);
+            if (joinColumn != null) {
+                return joinColumn.name().toUpperCase();
+            } else {
+                return getUpperName(field.getName());
+            }
         }
     }
 
@@ -739,11 +806,27 @@ public class BeanUtil {
      * @Date 2019/12/13  16:45
      * @Description 获取一对多注解
      */
+    public static ManyToOne getManyToOne(Class<? extends Object> cls, Field field) {
+        try {
+            Method getMethod = getGetMethod(cls, field);
+            ManyToOne annotation = getMethod.getAnnotation(ManyToOne.class);
+            return annotation;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @Author 陈文
+     * @Date 2019/12/13  16:45
+     * @Description 获取一对多注解
+     */
     public static OneToMany getOneToMany(Class<? extends Object> cls, Field field) {
         try {
             Method getMethod = getGetMethod(cls, field);
-            OneToMany oneToMany = getMethod.getAnnotation(OneToMany.class);
-            return oneToMany;
+            OneToMany annotation = getMethod.getAnnotation(OneToMany.class);
+            return annotation;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -758,8 +841,8 @@ public class BeanUtil {
     public static JoinColumn getJoinColumn(Class<? extends Object> cls, Field field) {
         try {
             Method getMethod = getGetMethod(cls, field);
-            JoinColumn oneToMany = getMethod.getAnnotation(JoinColumn.class);
-            return oneToMany;
+            JoinColumn annotation = getMethod.getAnnotation(JoinColumn.class);
+            return annotation;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -774,22 +857,36 @@ public class BeanUtil {
     public static Column getColumn(Class<? extends Object> cls, Field field) {
         try {
             Method getMethod = getGetMethod(cls, field);
-            Column column = getMethod.getAnnotation(Column.class);
-            return column;
+            Column annotation = getMethod.getAnnotation(Column.class);
+            return annotation;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * @Author 陈文
-     * @Date 2019/12/13  16:45
-     * @Description 获取字典注解
-     */
-    public static Dictionary getDictionary(Field field) {
-        Dictionary dictionary = field.getAnnotation(Dictionary.class);
-        return dictionary;
+    public static String getReferencedColumnName(Class cls, Field field) {
+        String referencedColumnName;
+        JoinColumn joinColumn = getJoinColumn(cls, field);
+        if (joinColumn != null) {
+            if (StringUtil.isNotEmpty(joinColumn.referencedColumnName())) {
+                referencedColumnName = joinColumn.referencedColumnName();
+            } else {
+                referencedColumnName = getPrimaryKey(field.getType());
+            }
+        } else {
+            //不存在joinColumn，则使用属性名
+            referencedColumnName = getUpperName(field.getName());
+        }
+        return referencedColumnName;
     }
 
+    public static String getPrimaryKeyJoinColumnName(Class cls) {
+        PrimaryKeyJoinColumn primaryKeyJoinColumn = (PrimaryKeyJoinColumn) cls.getAnnotation(PrimaryKeyJoinColumn.class);
+        if (primaryKeyJoinColumn != null && StringUtil.isNotEmpty(primaryKeyJoinColumn.name())) {
+            return primaryKeyJoinColumn.name();
+        } else {
+            return getPrimaryKeyFieldName(cls);
+        }
+    }
 }

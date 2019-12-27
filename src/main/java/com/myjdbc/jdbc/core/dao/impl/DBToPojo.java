@@ -1,22 +1,20 @@
 package com.myjdbc.jdbc.core.dao.impl;
 
 import com.myjdbc.core.util.ClassUtil;
-import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.jdbc.util.BeanUtil;
-import com.myjdbc.jdbc.annotation.Dictionary;
-import com.myjdbc.redis.MyRedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author 陈文
@@ -27,8 +25,8 @@ import java.util.*;
 public class DBToPojo {
     private static final Logger logger = LoggerFactory.getLogger(DBToPojo.class);
 
-    @Autowired
-    private MyRedisService redisService;
+//    @Autowired
+//    private MyRedisService redisService;
 
     /**
      * @Author 陈文
@@ -78,60 +76,38 @@ public class DBToPojo {
     public <T> List<T> populate(Class<T> cls, ResultSet rs) {
         List<T> list = new ArrayList<>();
         try {
-            Field[] fields = ClassUtil.getAllFields(cls);
+            Field[] fields = ClassUtil.getAllFields(cls, null);
             Map<String, Field> fieldMap = new HashMap<>();
-            Map<Field, Dictionary> dictionaryMap = new HashMap<>();
             for (Field field : fields) {
                 String key = BeanUtil.getSqlFormatName(cls, field);
                 if (key != null) {
                     fieldMap.put(key, field);
-                }
-                Dictionary dictionary = BeanUtil.getDictionary(field);
-                if (dictionary != null && StringUtil.isNotEmpty(dictionary.copyName())) {
-                    dictionaryMap.put(field, dictionary);
                 }
             }
 
             while (rs.next()) {
                 T obj = cls.newInstance();
                 for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                    String rname = rs.getMetaData().getColumnName(i);
+                    String rname = rs.getMetaData().getColumnName(i).toUpperCase();
                     //rname统一采用大写，用于抹平Mysql和Oracle的差异性
                     Field field = fieldMap.get(rname.toUpperCase());
                     if (field == null) {
                         continue;
                     }
                     // 获取要设置的属性的set方法名称
-                    String setField = BeanUtil.setField(field.getName());
                     String getRs = "get" + BeanUtil.assembleRs(field.getType().getSimpleName());
                     try {
                         Object value = null;
-                        Method setMethod = cls.getMethod(setField, field.getType());
+//
                         //获取值
                         value = BeanUtil.getValue(field, i, rs);
                         if (value != null) {
-                            //字典映射
-                            value = valueToDictionary(cls, field, value);
-                            setMethod.invoke(obj, value);
+                            //将值写入实体
+                            obj = BeanUtil.setValue(cls, field, obj, value);
                         }
                     } catch (Exception e) {
                         //抛弃掉异常，异常直接跳过，不赋值
-                        logger.error("发现异常：" + e.getMessage());
-                    }
-                }
-                for (Field field : dictionaryMap.keySet()) {
-                    Dictionary dictionary = dictionaryMap.get(field);
-                    String copyName = BeanUtil.getPrimaryName(dictionary.tableClass(), dictionary.copyName());
-                    String getField = BeanUtil.getField(copyName);
-                    Method getMethod = BeanUtil.getMethod(cls, getField);
-                    Object value = null;
-                    value = getMethod.invoke(obj);
-
-                    Method setMethod = BeanUtil.getSetMethod(cls, field, field.getType());
-                    if (value != null) {
-                        //字典映射
-                        value = valueToDictionary(cls, field, value);
-                        setMethod.invoke(obj, value);
+                        logger.error(field.getType().getName() + "->发现异常：" + e.getMessage());
                     }
                 }
                 list.add(obj);
@@ -141,26 +117,5 @@ public class DBToPojo {
         }
         return list;
     }
-
-
-    /**
-     * @Author 陈文
-     * @Date 2019/12/10  16:05
-     * @Description 字典映射
-     * 如果有字典注解，将值替换成字典映射值
-     */
-    private Object valueToDictionary(Class<? extends Object> cls, Field field, Object value) {
-        Dictionary dictionary = field.getAnnotation(Dictionary.class);
-        if (dictionary != null) {
-            //从缓存中获取
-            if (dictionary.fieldName().equals("")) {
-                value = redisService.getDictionaryValue(dictionary.tableClass(), dictionary.replaceName().toUpperCase(), value + "");
-            } else {
-                value = redisService.getDictionaryValue(dictionary.tableClass(), dictionary.fieldName(), dictionary.replaceName().toUpperCase(), value + "");
-            }
-        }
-        return value;
-    }
-
 
 }

@@ -34,7 +34,7 @@ public interface SqlGenerator {
      * @description
      * @date 2019/7/15 11:48
      */
-    public <T> String findById(Class<T> cls, boolean parentFlag);
+    public <T> String findById(Class<T> cls);
 
     /**
      * 返回条件查询语句(条件查询)
@@ -45,7 +45,7 @@ public interface SqlGenerator {
      * @author 陈文
      * @date 2019/7/15 9:28
      */
-    public <T> String findAll(CriteriaQuery criteriaQuery, boolean parentFlag);
+    public <T> String findAll(CriteriaQuery criteriaQuery);
 
 
     /**
@@ -56,12 +56,12 @@ public interface SqlGenerator {
     public String findAll(CriteriaQuery criteriaQuery, String sql);
 
 
-    /**
-     * @Author 陈文
-     * @Date 2019/12/12  14:53
-     * @Description 查全表SQL
-     */
-    public <T> String findAll(Class<T> cls, boolean parentFlag);
+//    /**
+//     * @Author 陈文
+//     * @Date 2019/12/12  14:53
+//     * @Description 查全表SQL
+//     */
+//    public <T> String findAll(Class<T> cls);
 
 //    /**
 //     * 返回列表中所有元素

@@ -126,10 +126,10 @@ public interface BaseService {
      * @author 陈文
      * @date 2019/7/15 9:28
      */
-    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, String filedValue) throws SQLException;
 
-    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, String filedValue, boolean parentFlag) throws SQLException;
+    <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue) throws SQLException;
 
+    <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue, boolean parentFlag) throws SQLException;
 
     /**
      * @param cls PO类
@@ -139,24 +139,13 @@ public interface BaseService {
      */
     public <T> List<T> findAll(Class<T> cls) throws SQLException;
 
-    /**
-     * 条件查询
-     *
-     * @param criteriaQuery 查询条件
-     * @return java.util.List<T> 实体集合或者Null
-     * @author 陈文
-     * @date 2019/7/15 10:54
-     */
-    public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery);
-
 
     /**
-     * @param parentFlag false时只查询类本身，True时视其继承的父类为其本身并共同查询，
      * @Author 陈文
      * @Date 2019/12/3  16:48
      * @Description 不加注释，反正加了你们也看不懂
      */
-    public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery, boolean parentFlag) throws SQLException;
+    public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery) throws SQLException;
 
     /**
      * 查询多条数据

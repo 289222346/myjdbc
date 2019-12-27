@@ -1,6 +1,5 @@
 package com.myjdbc.jdbc.core.service.impl;
 
-import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.jdbc.constants.OrderType;
 import com.myjdbc.jdbc.core.bo.Criteria;
 import com.myjdbc.jdbc.core.bo.Criterion;
@@ -10,6 +9,7 @@ import com.myjdbc.jdbc.core.service.CriteriaQuery;
 import com.myjdbc.jdbc.util.BeanUtil;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -46,25 +46,29 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
      */
     public CriteriaQueryBase(Class<T> cls, T t) {
         try {
-            Field[] fields = ClassUtil.getAllFields(cls);
-            for (Field field : fields) {
-                String getField = BeanUtil.getField(field.getName());
-                Method getMethod = cls.getMethod(getField);
-                Object value = getMethod.invoke(t);
-                if (value != null && !(value + "").equals("")) {
-                    if (field.getType().getSimpleName().equals("String")) {
-                        String v1 = value + "";
-                        int index1 = v1.indexOf("*");
-                        if (index1 == -1) {
-                            eq(field.getName(), value);
+            Class<?> currentClass = cls;
+            while (currentClass != null) {
+                Field[] fields = cls.getDeclaredFields();
+                for (Field field : fields) {
+                    String getField = BeanUtil.getField(field.getName());
+                    Method getMethod = cls.getMethod(getField);
+                    Object value = getMethod.invoke(t);
+                    if (value != null && !(value + "").equals("")) {
+                        if (field.getType().getSimpleName().equals("String")) {
+                            String v1 = value + "";
+                            int index1 = v1.indexOf("*");
+                            if (index1 == -1) {
+                                eq(field.getName(), value);
+                            } else {
+                                v1 = v1.replace('*', '%');
+                                like(field.getName(), v1);
+                            }
                         } else {
-                            v1 = v1.replace('*', '%');
-                            like(field.getName(), v1);
+                            eq(field.getName(), value);
                         }
-                    } else {
-                        eq(field.getName(), value);
                     }
                 }
+                currentClass = currentClass.getSuperclass();
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -207,7 +211,12 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
             if (getMethod != null) {
                 Column column = getMethod.getAnnotation(Column.class);
                 if (column != null) {
-                    return column.name();
+                    return BeanUtil.getTableName(cls) + "." + column.name();
+                } else {
+                    JoinColumn joinColumn = getMethod.getAnnotation(JoinColumn.class);
+                    if (joinColumn != null) {
+                        return BeanUtil.getTableName(cls) + "." + joinColumn.name();
+                    }
                 }
             }
         } catch (NoSuchMethodException e) {

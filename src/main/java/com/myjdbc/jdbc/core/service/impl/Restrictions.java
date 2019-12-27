@@ -40,7 +40,9 @@ public class Restrictions {
         for (int j = 0; j < i; j++) {
             succedaneum.append("?,");
         }
-        succedaneum.deleteCharAt(succedaneum.length() - 1);
+        if (succedaneum.length() > 0) {
+            succedaneum.deleteCharAt(succedaneum.length() - 1);
+        }
         return succedaneum.toString();
     }
 

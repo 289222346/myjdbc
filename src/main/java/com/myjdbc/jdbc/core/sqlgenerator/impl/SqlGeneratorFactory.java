@@ -45,13 +45,13 @@ public class SqlGeneratorFactory implements SqlGenerator {
     }
 
     @Override
-    public <T> String findById(Class<T> cls, boolean parentFlag) {
-        return sql().findById(cls, parentFlag);
+    public <T> String findById(Class<T> cls) {
+        return sql().findById(cls);
     }
 
     @Override
-    public <T> String findAll(CriteriaQuery criteriaQuery, boolean parentFlag) {
-        return sql().findAll(criteriaQuery, parentFlag);
+    public <T> String findAll(CriteriaQuery criteriaQuery) {
+        return sql().findAll(criteriaQuery);
     }
 
     @Override
@@ -59,10 +59,10 @@ public class SqlGeneratorFactory implements SqlGenerator {
         return sql().findAll(criteriaQuery, sql);
     }
 
-    @Override
-    public <T> String findAll(Class<T> cls, boolean parentFlag) {
-        return sql().findAll(cls, parentFlag);
-    }
+//    @Override
+//    public <T> String findAll(Class<T> cls) {
+//        return sql().findAll(cls);
+//    }
 
     @Override
     public <T> DeleteEntity delete(T t) {

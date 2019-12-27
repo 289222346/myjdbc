@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.lang.reflect.*;
@@ -169,10 +170,9 @@ public class BaseServiceImpl implements BaseService {
         return list;
     }
 
-
     @Override
     public Map<String, Object> findMapById(Class<? extends Object> cls, Serializable id) throws SQLException {
-        String sql = sqlGenerator.findById(cls, true);
+        String sql = sqlGenerator.findById(cls);
         Connection conn = getConn();
         List<Map<String, Object>> list = dao.findMap(conn, sql, id);
         closeConn(conn);
@@ -186,7 +186,7 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public <T> T findById(Class<T> cls, Serializable id) throws SQLException {
-        String sql = sqlGenerator.findById(cls, true);
+        String sql = sqlGenerator.findById(cls);
         Connection conn = getConn();
         List<T> list = dao.find(conn, sql, cls, id);
         closeConn(conn);
@@ -198,13 +198,13 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, String filedValue) throws SQLException {
+    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue) throws SQLException {
         return criteriaEq(cls, fieldName, filedValue, true);
     }
 
 
     @Override
-    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, String filedValue, boolean parentFlag) throws SQLException {
+    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue, boolean parentFlag) throws SQLException {
         CriteriaQuery criteriaQuery = new CriteriaQueryOracle(cls);
         criteriaQuery.eq(fieldName, filedValue);
         return findAll(criteriaQuery);
@@ -212,27 +212,19 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public <T> List<T> findAll(Class<T> cls) throws SQLException {
-        String sql = sqlGenerator.findAll(cls, true);
-        Connection conn = getConn();
-        List list = dao.find(conn, sql, cls);
-        closeConn(conn);
-        return list;
+        CriteriaQuery criteriaQuery = new CriteriaQueryOracle(cls);
+        return findAll(criteriaQuery);
     }
 
 
     @Override
     public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery) {
-        return findAll(criteriaQuery, true);
-    }
-
-    @Override
-    public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery, boolean parentFlag) {
-        return findAllDao(criteriaQuery, parentFlag, 0);
+        return findAllDao(criteriaQuery, 0);
     }
 
 
-    private <T> List<T> findAllDao(CriteriaQuery<T> criteriaQuery, boolean parentFlag, int findCount) {
-        String sql = sqlGenerator.findAll(criteriaQuery, parentFlag);
+    private <T> List<T> findAllDao(CriteriaQuery<T> criteriaQuery, int findCount) {
+        String sql = sqlGenerator.findAll(criteriaQuery);
         Connection conn = getConn();
         Object[] values = criteriaQuery.getValues();
         if (criteriaQuery.getPag() != null) {
@@ -247,16 +239,16 @@ public class BaseServiceImpl implements BaseService {
         closeConn(conn);
 
         //级联查询最多向下三层
-        if (findCount < 3) {
+        if (ListUtil.isNotEmpty(list) && findCount < 2) {
             //获取一对多属性值
-            //获取一对一属性值（未实现）
-            list = matchAnnotation(criteriaQuery.getCls(), list, findCount++);
+            //获取一对一属性值
+            list = matchAnnotation(criteriaQuery.getCls(), list, ++findCount);
         }
         return list;
     }
 
 
-    private List findAll(Connection conn, String sql, CriteriaQuery cq, Object[] values) {
+    private List findAll(Connection conn, String sql, CriteriaQuery cq, Object... values) {
         List list;
         if (cq.getCls() == Map.class) {
             list = dao.findMap(conn, sql, values);
@@ -428,26 +420,29 @@ public class BaseServiceImpl implements BaseService {
     /**
      * @param cls       处理的对象类型
      * @param list1     原始集合
-     * @param findCount 一对多查询深度
+     * @param findCount 级联查询深度
      * @return 处理后的集合
      * @Author 陈文
      * @Date 2019/12/13  17:49
      */
     private <T> List<?> matchAnnotation(Class<T> cls, List<T> list1, List<Map<String, Object>> list2, int findCount) {
-        Field[] fields = ClassUtil.getAllFields(cls);
+        Field[] fields = ClassUtil.getAllFields(cls, null);
         List list = null;
         if (list1 != null) {
             //实体形式
             list = list1;
         }
         if (list2 != null) {
-            //键值对形式
+            //Map键值对形式
             list = list2;
         }
+
+        //遍历所有属性
+        // 暂时不支持延时FetchType延时注解,后期修改为支持，应该修改这里
         for (Field field : fields) {
+            //一对多处理
             OneToMany oneToMany = BeanUtil.getOneToMany(cls, field);
             if (oneToMany != null) {
-//                logger.info("一对多：" + field.getName());
                 if (field.getType().equals(List.class)) {
                     // 当前集合的泛型类型
                     Type genericType = field.getGenericType();
@@ -472,12 +467,63 @@ public class BaseServiceImpl implements BaseService {
                         //子查询关联查找
                         if (list1 != null) {
                             //实体形式
-                            list = getChildrenA(list1, cls, field, clsA, pkName, fkName, findCount);
+                            list1 = getChildrenA(list1, cls, field, clsA, pkName, fkName, findCount);
+                            list = list1;
                         }
                         if (list2 != null) {
                             //键值对形式
-                            list = getChildreB(list2, cls, field, clsA, pkName, fkName, findCount);
+                            list2 = getChildreB(list2, cls, field, clsA, pkName, fkName, findCount);
+                            list = list2;
                         }
+                    }
+                }
+            } else {
+                ManyToOne manyToOne = BeanUtil.getManyToOne(cls, field);
+                if (manyToOne != null) {
+                    if (list1 != null) {
+                        //实体形式
+//                        list = getChildrenA(list1, cls, field, clsA, pkName, fkName, findCount);
+                        try {
+                            //获取属性值的方法
+                            Method getMethod1 = BeanUtil.getGetMethod(cls, field);
+
+                            //获取属性的子属性值的方法
+                            String referencedColumnName = BeanUtil.getReferencedColumnName(cls, field);
+                            Field field1 = ClassUtil.findField(field.getType(), referencedColumnName);
+                            Method getMethod2 = BeanUtil.getGetMethod(field.getType(), field1);
+                            for (T t : list1) {
+                                //多对一属性
+                                Object value = getMethod1.invoke(t);
+                                //多对一属性的外键
+                                if (value == null) {
+                                    continue;
+                                }
+                                Object valueId = getMethod2.invoke(value);
+                                //根据外键，查询数据
+                                CriteriaQuery criteriaQuery = new CriteriaQueryOracle(field.getType());
+                                criteriaQuery.eq(referencedColumnName, valueId);
+                                List<?> listA = findAllDao(criteriaQuery, findCount);
+
+                                //将数据重新set进对象
+                                if (ListUtil.isNotEmpty(listA)) {
+                                    value = listA.get(0);
+                                    String setField = BeanUtil.setField(field.getName());
+                                    Method setMethod = cls.getMethod(setField, field.getType());
+                                    setMethod.invoke(t, value);
+                                }
+                            }
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                        list = list1;
+                    }
+                    if (list2 != null) {
+                        //键值对形式
+//                        list = getChildreB(list2, cls, field, clsA, pkName, fkName, findCount);
                     }
                 }
             }
@@ -486,6 +532,12 @@ public class BaseServiceImpl implements BaseService {
     }
 
 
+    /**
+     * @return
+     * @Author 陈文
+     * @Date 2019/12/27  13:54
+     * @Description 一对多关联查询
+     */
     private <T> List<T> getChildrenA(List<T> list1, Class<T> cls, Field field, Class<?> clsA, String pkName, String fkName, int findCount) {
         for (T t : list1) {
             CriteriaQuery<?> criteriaQuery = new CriteriaQueryOracle(clsA);
@@ -497,15 +549,15 @@ public class BaseServiceImpl implements BaseService {
             criteriaQuery.eq(fkName, value);
             try {
                 //一对多关联查询
-                List<?> listA = findAllDao(criteriaQuery, true, findCount);
+                List<?> listA = findAllDao(criteriaQuery, findCount);
                 Method setMethod = BeanUtil.getSetMethod(cls, field, field.getType());
                 setMethod.invoke(t, listA);
             } catch (NoSuchMethodException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             } catch (IllegalAccessException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             } catch (InvocationTargetException e) {
-//                e.printStackTrace();
+                e.printStackTrace();
             }
         }
         return list1;
@@ -526,7 +578,7 @@ public class BaseServiceImpl implements BaseService {
 //            fkName = BeanUtil.getPrimaryName(cls, fkName);
             criteriaQuery.eq(fkName, value);
             //一对多关联查询
-            List<Map<String, Object>> listA = (List<Map<String, Object>>) findAllDao(criteriaQuery, true, findCount);
+            List<Map<String, Object>> listA = (List<Map<String, Object>>) findAllDao(criteriaQuery, findCount);
             map.put(field.getName(), listA);
         }
         return list2;
