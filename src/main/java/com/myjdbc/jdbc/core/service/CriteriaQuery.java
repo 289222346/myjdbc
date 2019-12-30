@@ -3,6 +3,13 @@ package com.myjdbc.jdbc.core.service;
 import com.myjdbc.jdbc.constants.OrderType;
 import com.myjdbc.jdbc.core.bo.Pag;
 
+
+/**
+ * @Author 陈文
+ * @Date 2019/12/27  22:49
+ * @return
+ * @Description 查询构造器
+ */
 public interface CriteriaQuery<T> {
 
     /**
@@ -22,14 +29,14 @@ public interface CriteriaQuery<T> {
     /**
      * @Author 陈文
      * @Date 2019/12/10  11:06
-     * @Description 字段内容模糊匹配某一些值
+     * @Description 字段内容模糊匹配某个值
      */
     public void like(String fieldName, Object value);
 
     /**
      * @Author 陈文
      * @Date 2019/12/8  16:25
-     * @Description 两个字段内容完全相等
+     * @Description 两个字段内容完全相等，例如SELECT * FROM TABLE WHERE TABLE.A=TABLE.B
      */
     public void eqProperty(String fieldName, String fieldName2);
 

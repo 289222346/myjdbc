@@ -81,22 +81,6 @@ public interface BaseService {
      */
     public void closeConnection();
 
-
-//    /**
-//     * 查询表中所有数据
-//     *
-//     * @param cls      数据库实体类
-//     * @param pageNo   当前页
-//     * @param pageSize 每页显示数
-//     * @return java.util.List<T>
-//     * @author ChenWen
-//     * @description 查询表中所有数据，不建议大数据时使用，所以强制分页，请合理分配页面大小。
-//     * @description 数据库查询十万条数据大概只要两百毫秒，但是封装成POJO对象会使用大量的反射等，需要50秒左右
-//     * @date 2019/7/10 20:14
-//     */
-//    <T> List<T> finAll(Class<T> cls, int pageNo, int pageSize);
-
-
     /**
      * 查询单个实体
      *
@@ -107,7 +91,6 @@ public interface BaseService {
      * @date 2019/7/15 8:57
      */
     public <T> T findById(Class<T> cls, Serializable id) throws SQLException;
-
 
     /**
      * @Author 陈文
