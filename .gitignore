@@ -1,5 +1,6 @@
 /target/
 /out/
+/myjdbc.git/
 
 ### IntelliJ IDEA ###
 .idea
