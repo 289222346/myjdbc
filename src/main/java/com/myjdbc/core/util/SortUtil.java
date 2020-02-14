@@ -35,7 +35,6 @@ public class SortUtil {
         return array;
     }
 
-
     /**
      * @Author 陈文
      * @Date 2019/12/12  19:19
@@ -72,7 +71,6 @@ public class SortUtil {
         return array;
     }
 
-
     /**
      * @Author 陈文
      * @Date 2019/12/12  19:24
@@ -107,5 +105,30 @@ public class SortUtil {
         return array;
     }
 
+    //降序
+    public static int[] selectionSort2(int[] array) {
+        if (array.length == 0)
+            return array;
+        for (int i = 0; i < array.length; i++) {
+            int maxIndex = i;
+            for (int j = i; j < array.length; j++) {
+                if (array[j] > array[maxIndex]) //找到最大的数
+                    maxIndex = j; //将最大数的索引保存
+            }
+            int temp = array[maxIndex];
+            array[maxIndex] = array[i];
+            array[i] = temp;
+        }
+        return array;
+    }
+
+    public static void main(String[] args) {
+        int array[] = new int[]{5, 8, 1};
+        array = selectionSort2(array);
+
+        for (int i : array) {
+            System.out.print(i + "-");
+        }
+    }
 
 }
