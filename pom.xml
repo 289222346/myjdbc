@@ -24,7 +24,7 @@
         <spring.version>4.0.9.RELEASE</spring.version>
         <!--JSON数据支持-->
         <!--<fastjson-lib.version>1.2.6</fastjson-lib.version>-->
-        <jackson-databind.version>2.9.10.1</jackson-databind.version>
+        <jackson-databind.version>2.9.10.3</jackson-databind.version>
         <!-- 数据库连接池 -->
         <druid.version>1.1.9</druid.version>
 
