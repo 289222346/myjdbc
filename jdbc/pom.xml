@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.myjdbc</groupId>
+    <artifactId>jdbc</artifactId>
+    <version>1.0</version>
+
+    <packaging>pom</packaging>
+    <name>jdbc</name>
+    <description>jdbc</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <!--版本控制Start-->
+
+        <!--myjdbc公共版本依赖Start-->
+        <!-- log4j12 -->
+        <slf4j.version>1.6.1</slf4j.version>
+        <!--JPA-->
+        <jpa.version>1.0</jpa.version>
+        <!--myjdbc公共版本依赖End-->
+
+        <!-- 数据库连接池 -->
+        <druid.version>1.1.9</druid.version>
+        <!--版本控制End-->
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.myjdbc</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!--myjdbc公共依赖Start-->
+        <!-- log4j12 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!--JPA-->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>${jpa.version}</version>
+        </dependency>
+        <!--myjdbc公共依赖End-->
+
+
+        <!--JDBC独有依赖Start-->
+        <!-- druid连接池  -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+
+        <!--JDBC独有依赖End-->
+
+    </dependencies>
+
+
+</project>

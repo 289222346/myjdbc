@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/myjdbcmaven.iml" filepath="$PROJECT_DIR$/myjdbcmaven.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jdbc/jdbc.iml" filepath="$PROJECT_DIR$/jdbc/jdbc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/myjdbc.iml" filepath="$PROJECT_DIR$/.idea/myjdbc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/myjeecg/myjeecg.iml" filepath="$PROJECT_DIR$/myjeecg/myjeecg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mymongodb/mymongodb.iml" filepath="$PROJECT_DIR$/mymongodb/mymongodb.iml" />
     </modules>
   </component>
 </project>
