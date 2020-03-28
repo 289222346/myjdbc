@@ -3,6 +3,8 @@ package com.myjdbc.mymongodb.util;
 import com.myjdbc.core.util.ClassUtil;
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
+import org.springframework.data.annotation.Id;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,11 +32,6 @@ public class MongoDBUtil {
         Document document = new Document();
         Map<String, Object> map = MongoDBUtil.mongoDBPOToMap(t);
         document.putAll(map);
-//        for (Map.Entry<String, Object> stringObjectEntry : map.entrySet()) {
-//            String key = stringObjectEntry.getKey();
-//            Object value = stringObjectEntry.getValue();
-//            document.put(key, value);
-//        }
         return document;
     }
 
@@ -70,7 +67,8 @@ public class MongoDBUtil {
                 // 声明类函数方法，并获取和设置该方法型参类型
                 Method getMethod = cls.getMethod(getField);
                 //属性名
-                String fieldName = field.getName();
+                Id id = field.getAnnotation(Id.class);//存在Id注解，则为主键，MongoDB中默认主键为_id（带索引）
+                String fieldName = id == null ? field.getName() : "_id";
                 // 把获得的值设置给map对象
                 Object value = getMethod.invoke(obj);
                 if (value != null) {
