@@ -4,6 +4,7 @@ import com.myjdbc.core.util.ClassUtil;
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -35,14 +36,11 @@ public class MongoDBUtil {
         return document;
     }
 
-
     /**
-     * 2018.05.04 Object—>Map<String,Object>
-     * <p>
-     * 将对象属性反射成 Map(属性名,属性值)
-     *
-     * @param obj
      * @return
+     * @Author 陈文
+     * @Date 2020/3/29  20:09
+     * @Description 将对象属性反射成Map(Document)
      */
     public static <T> Map<String, Object> mongoDBPOToMap(T obj) {
         Class<?> cls = obj.getClass();
@@ -66,13 +64,20 @@ public class MongoDBUtil {
             try {
                 // 声明类函数方法，并获取和设置该方法型参类型
                 Method getMethod = cls.getMethod(getField);
+
                 //属性名
-                Id id = field.getAnnotation(Id.class);//存在Id注解，则为主键，MongoDB中默认主键为_id（带索引）
-                String fieldName = id == null ? field.getName() : "_id";
+                String fieldName = field.getName();
                 // 把获得的值设置给map对象
+
                 Object value = getMethod.invoke(obj);
-                if (value != null) {
-                    map.put(fieldName, value);
+                if (!ObjectUtils.isEmpty(value)) {
+                    //若ID属性不为_id，则添加默认ID属性
+                    Id id = field.getAnnotation(Id.class);//存在Id注解，则为主键，MongoDB中默认主键为_id（带索引）
+                    if (id != null && !"_id".equals(fieldName)) {
+                        map.put("_id", value);
+                    } else {
+                        map.put(fieldName, value);
+                    }
                 }
             } catch (NoSuchMethodException e) {
                 // TODO Auto-generated catch block
