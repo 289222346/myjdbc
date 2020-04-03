@@ -29,7 +29,7 @@ public class MongoDBUtil {
      * @Date 2020/3/26  14:26
      * @Description 获取MongoDB的Document文档
      */
-    public static <T> Document getDocument(T t) {
+    public static <T> Document poToDocument(T t) {
         Document document = new Document();
         Map<String, Object> map = MongoDBUtil.mongoDBPOToMap(t);
         document.putAll(map);
