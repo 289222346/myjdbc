@@ -52,8 +52,12 @@ public class PropertiesUtil {
         Properties prop = new Properties();
         InputStream in = PropertiesUtil.class.getClassLoader().getResourceAsStream(fileName);
         try {
-            prop.load(in);///加载属性列表
-            in.close();
+            //文件不存在，认为所有属性为空
+            if (in != null) {
+                //加载属性列表
+                prop.load(in);
+                in.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

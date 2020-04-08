@@ -114,6 +114,7 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
         add(Restrictions.eqProperty(fieldName, fieldName2));
     }
 
+    @Override
     public Class getCls() {
         return cls;
     }
@@ -133,6 +134,11 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
         return sqlBuff.toString();
     }
 
+    @Override
+    public List<Criteria> getCriteriaList() {
+        return criteriaList;
+    }
+
     /**
      * @Author 陈文
      * @Date 2019/12/3  0:12
@@ -150,18 +156,21 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
     }
 
     @Override
-    public int getTotal() {
+    public long getTotal() {
         return pag.getTotal();
     }
 
-    public void setTotal(int total) {
+    @Override
+    public void setTotal(long total) {
         pag.setTotal(total);
     }
 
+    @Override
     public Pag getPag() {
         return pag;
     }
 
+    @Override
     public void setPag(int page, int rows) {
         pag = new Pag(page, rows);
     }
@@ -197,7 +206,6 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
         String fieldName = getColumnName(criterion.getFieldName());
         //运算符
         String remark = criterion.getOp().getValue();
-
         //被匹配字段名或值
         String succedaneum = Criteria.getFieldValue() != null ? criterion.getSuccedaneum() : getColumnName(criterion.getSuccedaneum());
         return " " + fieldName + remark + succedaneum + " ";

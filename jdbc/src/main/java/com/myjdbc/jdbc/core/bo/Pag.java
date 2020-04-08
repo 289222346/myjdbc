@@ -1,7 +1,7 @@
 package com.myjdbc.jdbc.core.bo;
 
 public class Pag {
-    private int total = 0;//总记录数
+    private long total = 0;//总记录数
     private int page = 1;// 当前页
     private int rows = 10;// 每页显示记录数
     private String sql;//用于保存查询总记录数的SQL
@@ -19,11 +19,11 @@ public class Pag {
         return rows;
     }
 
-    public int getTotal() {
+    public long getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(long total) {
         this.total = total;
     }
 

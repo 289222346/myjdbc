@@ -13,7 +13,6 @@ import com.myjdbc.jdbc.constants.PropertiesJDBC;
  */
 public class DBconfig {
 
-
     /* 数据库类型 */
     public static final DBType DBTYPE;
     /* 驱动 */

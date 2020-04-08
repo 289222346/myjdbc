@@ -10,10 +10,6 @@ import java.util.Arrays;
 public class Restrictions {
 
     public static Criteria eq(String fieldName, Object value) {
-//        Criterion criterion = new Criterion(fieldName, "?", OpType.EQ);
-//        List<Object> list = new ArrayList<>();
-//        list.add(value);
-//        Criteria criteria = new Criteria(criterion, list);
         return getCriteria(fieldName, OpType.EQ, value);
     }
 
@@ -24,14 +20,10 @@ public class Restrictions {
     }
 
     public static Criteria in(String fieldName, Object... values) {
-//        Criterion criterion = new Criterion(fieldName, "(" + getSuccedaneum(values.length) + ")", OpType.IN);
-//        Criteria criteria = new Criteria(criterion, Arrays.asList(values));
         return getCriteria(fieldName, OpType.IN, values);
     }
 
     public static Criteria like(String fieldName, Object... values) {
-//        Criterion criterion = new Criterion(fieldName, "(" + getSuccedaneum(values.length) + ")", OpType.LIKE);
-//        Criteria criteria = new Criteria(criterion, Arrays.asList(values));
         return getCriteria(fieldName, OpType.LIKE, values);
     }
 

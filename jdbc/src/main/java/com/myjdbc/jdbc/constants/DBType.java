@@ -7,7 +7,8 @@ import com.myjdbc.jdbc.core.sqlgenerator.impl.SqlGeneratorOracle;
 public enum DBType {
 
     ORACLE("oracle", "Oracle数据库", "oracle.jdbc.OracleDriver", SqlGeneratorOracle.class),
-    MYSQL("mysql", "MySql数据库", "com.mysql.jdbc.Driver", SqlGeneratorMysql.class);
+    MYSQL("mysql", "MySql数据库", "com.mysql.jdbc.Driver", SqlGeneratorMysql.class),
+    MONGODB("mongodb", "MongoDB数据库", "mongodb", SqlGeneratorMysql.class);
 
     private String code;
     private String remark;
@@ -33,7 +34,7 @@ public enum DBType {
         return driver;
     }
 
-    public SqlGenerator getSqlGenerator()  {
+    public SqlGenerator getSqlGenerator() {
         SqlGenerator sqlGenerator = null;
         try {
             sqlGenerator = sqlGeneratorClass.newInstance();
