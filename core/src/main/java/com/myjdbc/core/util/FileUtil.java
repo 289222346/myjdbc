@@ -51,13 +51,12 @@ public class FileUtil {
         return fileName;
     }
 
-
     /**
      * @Author 陈文
      * @Date 2019/12/6  15:41
      * @Description 将文件流转换成字符串
      */
-    private static StringBuffer readFileContent(File file) {
+    public static StringBuffer readFileContent(File file) {
 
         BufferedReader reader = null;
         StringBuffer sbf = new StringBuffer();
