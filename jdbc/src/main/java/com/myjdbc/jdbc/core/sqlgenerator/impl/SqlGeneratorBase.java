@@ -4,10 +4,10 @@ import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.jdbc.constants.MyCascade;
-import com.myjdbc.jdbc.core.bo.DeleteEntity;
-import com.myjdbc.jdbc.core.bo.SavaEntity;
-import com.myjdbc.jdbc.core.bo.SavaListEntity;
-import com.myjdbc.jdbc.core.sqlcriteria.CriteriaQuery;
+import com.myjdbc.core.entity.DeleteEntity;
+import com.myjdbc.core.entity.SaveEntity;
+import com.myjdbc.core.entity.SavaListEntity;
+import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.jdbc.core.sqlgenerator.SqlGenerator;
 import com.myjdbc.jdbc.util.BeanUtil;
 import com.myjdbc.jdbc.util.BeanUtilOracle;
@@ -120,14 +120,14 @@ public abstract class SqlGeneratorBase implements SqlGenerator {
     }
 
     @Override
-    public <T> SavaEntity save(T po) {
+    public <T> SaveEntity save(T po) {
         String fieldName = BeanUtil.getPrimaryKey(po.getClass());
         String primaryKey = BeanUtil.getSqlFormatName(po.getClass(), fieldName);
 
         Object pkValue = BeanUtil.reflexField(po, fieldName);
         String tableName = BeanUtil.getTableName(po.getClass());
 
-        SavaEntity savaEntity = poToParameter(po, primaryKey, pkValue != null && !"".equals(pkValue) ? false : true);
+        SaveEntity savaEntity = poToParameter(po, primaryKey, pkValue != null && !"".equals(pkValue) ? false : true);
         String sql;
         if (pkValue != null && !"".equals(pkValue)) {
             sql = "UPDATE " + tableName + " SET " + savaEntity.getFieles() + " WHERE "
@@ -384,7 +384,7 @@ public abstract class SqlGeneratorBase implements SqlGenerator {
      * @param <T>
      * @return
      */
-    protected <T> SavaEntity poToParameter(T po, String pkName, boolean flag) {
+    protected <T> SaveEntity poToParameter(T po, String pkName, boolean flag) {
         String fieles = "";//字段名
         String values = "";//值位置替代符
         Object pkValue = "";
@@ -451,7 +451,7 @@ public abstract class SqlGeneratorBase implements SqlGenerator {
                 e.printStackTrace();
             }
         }
-        SavaEntity savaEntity = new SavaEntity();
+        SaveEntity savaEntity = new SaveEntity();
         savaEntity.setFieles(fieles.substring(1));
         if (flag) {
             savaEntity.setValues(values.substring(1));

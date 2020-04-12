@@ -1,10 +1,11 @@
 package com.myjdbc.jdbc.core.sqlgenerator;
 
 
-import com.myjdbc.jdbc.core.bo.DeleteEntity;
-import com.myjdbc.jdbc.core.bo.SavaEntity;
-import com.myjdbc.jdbc.core.bo.SavaListEntity;
-import com.myjdbc.jdbc.core.sqlcriteria.CriteriaQuery;
+import com.myjdbc.core.service.BaseService;
+import com.myjdbc.core.entity.DeleteEntity;
+import com.myjdbc.core.entity.SaveEntity;
+import com.myjdbc.core.entity.SavaListEntity;
+import com.myjdbc.core.criteria.CriteriaQuery;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import java.util.List;
  * @author 陈文
  * @Description
  * @date 2019/7/15 8:52
- * @see com.myjdbc.jdbc.core.service.BaseService 由BaseService调用生成器
+ * @see BaseService 由BaseService调用生成器
  */
 public interface SqlGenerator {
 
@@ -81,7 +82,7 @@ public interface SqlGenerator {
      * @description
      * @date 2019/7/12 12:04
      */
-    public <T> SavaEntity save(T po);
+    public <T> SaveEntity save(T po);
 
     /**
      * 返回保存多个对象的语句（只能新增）

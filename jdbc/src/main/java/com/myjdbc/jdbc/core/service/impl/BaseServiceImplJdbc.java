@@ -3,20 +3,23 @@ package com.myjdbc.jdbc.core.service.impl;
 
 import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
-import com.myjdbc.jdbc.core.bo.DeleteEntity;
-import com.myjdbc.jdbc.core.bo.SavaEntity;
-import com.myjdbc.jdbc.core.bo.SavaListEntity;
+import com.myjdbc.core.entity.DeleteEntity;
+import com.myjdbc.core.entity.SaveEntity;
+import com.myjdbc.core.entity.SavaListEntity;
 import com.myjdbc.jdbc.core.dao.Dao;
 import com.myjdbc.jdbc.core.dao.impl.DaoImpl;
-import com.myjdbc.jdbc.core.service.BaseService;
-import com.myjdbc.jdbc.core.sqlcriteria.CriteriaQuery;
-import com.myjdbc.jdbc.core.sqlcriteria.impl.CriteriaQueryOracle;
+import com.myjdbc.core.service.ActionSaveAndUpdate;
+import com.myjdbc.core.service.ActionTransaction;
+import com.myjdbc.core.service.BaseServiceType;
+import com.myjdbc.core.criteria.CriteriaQuery;
+import com.myjdbc.core.criteria.impl.CriteriaQueryOracle;
 import com.myjdbc.jdbc.core.sqlgenerator.SqlGenerator;
 import com.myjdbc.jdbc.core.sqlgenerator.impl.SqlGeneratorFactory;
-import com.myjdbc.jdbc.pool.DBUtil;
+import com.myjdbc.core.pool.DBUtil;
 import com.myjdbc.jdbc.util.BeanUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -29,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 
-public class BaseServiceImplJdbc implements BaseService {
+public class BaseServiceImplJdbc implements ActionSaveAndUpdate, ActionTransaction, BaseServiceType {
     private static final Logger logger = LoggerFactory.getLogger(BaseServiceImplJdbc.class);
 
-    //    @Autowired
+
     private SqlGenerator sqlGenerator = new SqlGeneratorFactory();
 
     private Dao dao = new DaoImpl();
@@ -47,6 +50,7 @@ public class BaseServiceImplJdbc implements BaseService {
      * 注意：开启事务，一定要记得提交或者回滚
      * 默认执行半自动事务处理
      */
+    @Override
     public void transactionStatus() throws SQLException {
         transactionStatus(true);
     }
@@ -60,6 +64,7 @@ public class BaseServiceImplJdbc implements BaseService {
      * 全手动事务处理：需要手动结束事务
      * 但即使是半自动方式，没有执行提交或者回滚操作，仍然需要手动关闭事务
      */
+    @Override
     public void transactionStatus(boolean connectionFlag) throws SQLException {
         connection = DBUtil.newConn();
         connection.setAutoCommit(false);
@@ -72,6 +77,7 @@ public class BaseServiceImplJdbc implements BaseService {
      * @Date 2019/12/7  11:27
      * @Description 回滚事务
      */
+    @Override
     public void transactionRollback() throws SQLException {
         if (connection != null) {
             connection.rollback();
@@ -87,6 +93,7 @@ public class BaseServiceImplJdbc implements BaseService {
      * @Date 2019/12/7  11:34
      * @Description 提交事务
      */
+    @Override
     public void transactionCommit() throws SQLException {
         if (connection != null && !connection.getAutoCommit()) {
             connection.commit();
@@ -113,73 +120,88 @@ public class BaseServiceImplJdbc implements BaseService {
         }
     }
 
-
     @Override
-    public <T> void delete(T t) throws Exception {
+    public <T> int delete(T t) {
         List<T> list = new ArrayList<>();
         list.add(t);
-        delete(list);
+        return batchDelete(list);
     }
-
 
     @Override
-    public <T> void delete(List<T> list) throws Exception {
+    public <T> int batchDelete(List<T> list) {
         Connection conn = getConn();
-        for (T t : list) {
-            delete(conn, t);
+        for (int i = 0; i < list.size(); i++) {
+            try {
+                delete(conn, list.get(i));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return SAVE_NO_INSIDE_ERROR;
+            }
         }
         closeConn(conn);
+        return SAVE_OK;
     }
 
-    private <T> void delete(Connection conn, T t) throws Exception {
+    private <T> int delete(Connection conn, T t) throws SQLException {
         DeleteEntity deleteEntity = sqlGenerator.delete(t);
         for (String sql : deleteEntity.getSqlList()) {
             dao.update(conn, sql, new Object[]{deleteEntity.getPkValue()});
         }
+        return SAVE_OK;
     }
 
     @Override
-    public <T> void save(T t) throws Exception {
-        SavaEntity savaEntity = sqlGenerator.save(t);
-        String sql = savaEntity.getSql();
+    public <T> int save(T t) {
+        SaveEntity saveEntity = sqlGenerator.save(t);
+        String sql = saveEntity.getSql();
         Connection conn = getConn();
-        dao.update(conn, sql, savaEntity.getObjs().toArray());
+        int i = SAVE_OK;
+        try {
+            dao.update(conn, sql, saveEntity.getObjs().toArray());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            i = SAVE_NO_INSIDE_ERROR;
+        }
         closeConn(conn);
+        return i;
     }
-
 
     //批量保存待优化
     @Override
-    public <T> void save(List<T> t) throws Exception {
+    public <T> int batchSave(List<T> t) {
         if (ListUtil.isNotEmpty(t)) {
             SavaListEntity savaListEntity = sqlGenerator.save(t);
             String sql = savaListEntity.getSql();
             Connection conn = getConn();
-            dao.batchAdd(conn, sql, savaListEntity.getObjs());
+            int i = SAVE_OK;
+            try {
+                dao.batchAdd(conn, sql, savaListEntity.getObjs());
+            } catch (SQLException e) {
+                e.printStackTrace();
+                i = SAVE_NO_INSIDE_ERROR;
+            }
             closeConn(conn);
+            return i;
         }
+        return SAVE_NO_ALL_NULL;
     }
 
     @Override
-    public List<Integer> getSeq(String seqName, int size) throws SQLException {
-        Connection conn = getConn();
-        List<Integer> list = dao.getSeq(conn, seqName, size);
-        closeConn(conn);
-        return list;
+    public <T> int update(T t) {
+        return 0;
+    }
+
+    @Override
+    public <T> int replace(T t) {
+        return 0;
     }
 
 //    @Override
-//    public Map<String, Object> findMapById(Class<? extends Object> cls, Serializable id) {
-//        String sql = sqlGenerator.findById(cls);
+//    public List<Long> getSeq(String seqName) {
 //        Connection conn = getConn();
-//        List<Map<String, Object>> list = dao.findMap(conn, sql, id);
+////        List<Long> list = dao.getSeq(conn, seqName, size);
 //        closeConn(conn);
-//        if (ListUtil.isNotEmpty(list)) {
-//            Map<String, Object> map = list.get(0);
-//            map = matchMapAnnotation(cls, map, 0);
-//            return map;
-//        }
-//        return null;l
+//        return list;
 //    }
 
     @Override
@@ -197,12 +219,6 @@ public class BaseServiceImplJdbc implements BaseService {
 
     @Override
     public <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue) {
-        return criteriaEq(cls, fieldName, filedValue, true);
-    }
-
-
-    @Override
-    public <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue, boolean parentFlag) {
         CriteriaQuery criteriaQuery = new CriteriaQueryOracle(cls);
         criteriaQuery.eq(fieldName, filedValue);
         return findAll(criteriaQuery);
@@ -223,37 +239,15 @@ public class BaseServiceImplJdbc implements BaseService {
         return findAll(criteriaQuery);
     }
 
+    @Override
+    public <T> List<T> findAll(Class<T> cls, Map<String, Object> query) {
+        return null;
+    }
 
     @Override
     public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery) {
         return findAllDao(criteriaQuery, 0);
     }
-
-
-    protected <T> List<T> findAllDao(CriteriaQuery<T> criteriaQuery, int findCount) {
-        String sql = sqlGenerator.findAll(criteriaQuery);
-        Connection conn = getConn();
-        Object[] values = criteriaQuery.getValues();
-        if (criteriaQuery.getPag() != null) {
-            //查询分页总数
-            int total = dao.findCount(conn, criteriaQuery.getSql(), values);
-            criteriaQuery.setTotal(total);
-        }
-        //查询数据
-//        List<T> list = dao.find(conn, sql, criteriaQuery.getCls(), values);
-        //查询数据
-        List<T> list = findAll(conn, sql, criteriaQuery, values);
-        closeConn(conn);
-
-        //级联查询最多向下三层
-        if (ListUtil.isNotEmpty(list) && findCount < 2) {
-            //获取一对多属性值
-            //获取一对一属性值
-            list = matchAnnotation(criteriaQuery.getCls(), list, ++findCount);
-        }
-        return list;
-    }
-
 
     protected List findAll(Connection conn, String sql, CriteriaQuery cq, Object... values) {
         List list;
@@ -266,108 +260,11 @@ public class BaseServiceImplJdbc implements BaseService {
     }
 
     @Override
-    public List findAll(CriteriaQuery criteriaQuery, String sql, Object... values) {
-        sql = sqlGenerator.findAll(criteriaQuery, sql);
-        Connection conn = getConn();
-        if (criteriaQuery.getPag() != null) {
-            //查询分页总数
-            int total = dao.findCount(conn, criteriaQuery.getSql(), values);
-            criteriaQuery.setTotal(total);
-        }
-
-        //查询数据
-        List list = findAll(conn, sql, criteriaQuery, values);
-
-        closeConn(conn);
-        return list;
-    }
-
-    @Override
-    public List<Object[]> findAll(String sql, Object... values) {
-        //查询数据
-        Connection conn = getConn();
-        List<Object[]> list = dao.findObjects(conn, sql, values);
-        closeConn(conn);
-        return list;
-    }
-
-    @Override
-    public <T> List<T> findAll(Class<T> cls, String sql, Object... values) {
-        Connection conn = getConn();
-        List<T> list = dao.find(conn, sql, cls, values);
-        closeConn(conn);
-        return list;
-    }
-
-
-    @Override
     public <T> List<T> criteriaIn(Class<T> cls, String fieldName, Object[] values) {
         CriteriaQuery criteriaQuery = new CriteriaQueryOracle(cls);
         criteriaQuery.in(fieldName, values);
         return findAll(criteriaQuery);
     }
-
-
-//    @Override
-//    public <T> BaseDao<T> getDao(Class<T> cls) {
-//        BaseDao<T> dao;
-//        if (DBType.ORACLE.getValue().equals(DB_TYPE)) {
-//            new BaseDaoOracle(cls);
-//        }
-//        return null;
-//    }
-
-//    @Override
-//    public <T> BaseDao<T> getDao(Class<T> cls, PoolConnection pconn) {
-//        BaseDao<T> dao;
-//        if (DBType.ORACLE.getValue().equals(DB_TYPE)) {
-//            return new BaseDaoOracle(cls, pconn);
-//        }
-//        return null;
-//    }
-
-//    @Override
-//    public <T> List<T> finAll(Class<T> cls, int pageNo, int pageSize) {
-//        BaseDao dao = getDao(cls);
-//        return dao.findAll(pageNo, pageSize);
-//    }
-
-
-//
-//    @Override
-//    public <T> void delete(List<T> ts) {
-//        if (ListUtil.isNotEmpty(ts)) {
-//            List<Object[]> values = new ArrayList<>();
-//            BaseDao dao = null;
-//            for (T t : ts) {
-//                if (dao == null) {
-//                    dao = new BaseDaoOracle(t.getClass());
-//                }
-//                Object value = BeanUtil.reflexField(t, "id");
-//                if (value != null) {
-//                    values.add(new Object[]{value});
-//                }
-//            }
-//            dao.delete(values);
-//        }
-//    }
-
-//    @Override
-//    public <T> Serializable save(T entity) {
-//        BaseDao dao = getDao(entity.getClass());
-//        dao.save(entity);
-//        return null;
-//    }
-//
-//    @Override
-//    public <T> Serializable save(List<T> list) {
-//        if (ListUtil.isNotEmpty(list)) {
-//            BaseDao dao = getDao(list.get(0).getClass());
-//            dao.save(list);
-//        }
-//        return null;
-//    }
-
 
     private Connection getConn() {
         return connection != null ? connection : DBUtil.newConn();
@@ -402,13 +299,70 @@ public class BaseServiceImplJdbc implements BaseService {
         }
     }
 
+    //    @Override
+    public List findAll(CriteriaQuery criteriaQuery, String sql, Object... values) {
+        sql = sqlGenerator.findAll(criteriaQuery, sql);
+        Connection conn = getConn();
+        if (criteriaQuery.getPag() != null) {
+            //查询分页总数
+            int total = dao.findCount(conn, criteriaQuery.getSql(), values);
+            criteriaQuery.setTotal(total);
+        }
+
+        //查询数据
+        List list = findAll(conn, sql, criteriaQuery, values);
+
+        closeConn(conn);
+        return list;
+    }
+
+    //    @Override
+    public List<Object[]> findAll(String sql, Object... values) {
+        //查询数据
+        Connection conn = getConn();
+        List<Object[]> list = dao.findObjects(conn, sql, values);
+        closeConn(conn);
+        return list;
+    }
+
+    //    @Override
+    public <T> List<T> findAll(Class<T> cls, String sql, Object... values) {
+        Connection conn = getConn();
+        List<T> list = dao.find(conn, sql, cls, values);
+        closeConn(conn);
+        return list;
+    }
+
+
+    protected <T> List<T> findAllDao(CriteriaQuery<T> criteriaQuery, int findCount) {
+        String sql = sqlGenerator.findAll(criteriaQuery);
+        Connection conn = getConn();
+        Object[] values = criteriaQuery.getValues();
+        if (criteriaQuery.getPag() != null) {
+            //查询分页总数
+            int total = dao.findCount(conn, criteriaQuery.getSql(), values);
+            criteriaQuery.setTotal(total);
+        }
+        //查询数据
+//        List<T> list = dao.find(conn, sql, criteriaQuery.getCls(), values);
+        //查询数据
+        List<T> list = findAll(conn, sql, criteriaQuery, values);
+        closeConn(conn);
+
+        //级联查询最多向下三层
+        if (ListUtil.isNotEmpty(list) && findCount < 2) {
+            //获取一对多属性值
+            //获取一对一属性值
+            list = matchAnnotation(criteriaQuery.getCls(), list, ++findCount);
+        }
+        return list;
+    }
 
     private <T> T matchAnnotation(Class<T> cls, T t, int findCount) {
         List<T> list = new ArrayList<>();
         list.add(t);
         return matchAnnotation(cls, list, findCount).get(0);
     }
-
 
     private Map<String, Object> matchMapAnnotation(Class<? extends Object> cls, Map<String, Object> map, int findCount) {
         List<Map<String, Object>> list = new ArrayList<>();
@@ -590,4 +544,6 @@ public class BaseServiceImplJdbc implements BaseService {
         }
         return list2;
     }
+
+
 }

@@ -1,46 +1,45 @@
 package com.myjdbc.jdbc.core.sqlgenerator.impl;
 
 
-import com.myjdbc.jdbc.constants.DBType;
-import com.myjdbc.jdbc.core.bo.DeleteEntity;
-import com.myjdbc.jdbc.core.bo.SavaEntity;
-import com.myjdbc.jdbc.core.bo.SavaListEntity;
-import com.myjdbc.jdbc.core.sqlcriteria.CriteriaQuery;
+import com.myjdbc.core.constants.DBType;
+import com.myjdbc.core.entity.DeleteEntity;
+import com.myjdbc.core.entity.SaveEntity;
+import com.myjdbc.core.entity.SavaListEntity;
+import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.jdbc.core.sqlgenerator.SqlGenerator;
-import com.myjdbc.jdbc.pool.DBconfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.myjdbc.core.pool.DBconfig;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
+ * @Author 陈文
+ * @Date 2019/08/12  23:53
  * SQL生成器工厂
  * 使用SQL生成器，只要自动装配时指定sqlGenerator（本类）实现
  * 不用关心到底有多少种生成器，也不用关心到底是使用哪一种生成器
  */
-public class SqlGeneratorFactory implements SqlGenerator {
 
-//    @Autowired
-//    private Map<String, SqlGenerator> map;
+public class SqlGeneratorFactory implements SqlGenerator {
 
     private SqlGenerator sqlGenerator;
 
-    private SqlGenerator creatSqlGenerator() throws IOException {
+    private SqlGenerator creatSqlGenerator() {
         //配置数据库类别和SQL生成器
-        return DBconfig.DBTYPE.getSqlGenerator();
+        if (DBconfig.DBTYPE == DBType.ORACLE) {
+            return new SqlGeneratorOracle();
+        }
+        if (DBconfig.DBTYPE == DBType.MYSQL) {
+            return new SqlGeneratorMysql();
+        }
+        return new SqlGeneratorMysql();
     }
 
     private SqlGenerator sql() {
         if (sqlGenerator != null) {
             return sqlGenerator;
         }
-        try {
-            sqlGenerator = creatSqlGenerator();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sqlGenerator = creatSqlGenerator();
         return sqlGenerator;
     }
 
@@ -64,18 +63,13 @@ public class SqlGeneratorFactory implements SqlGenerator {
         return sql().findAll(criteriaQuery, sql);
     }
 
-//    @Override
-//    public <T> String findAll(Class<T> cls) {
-//        return sql().findAll(cls);
-//    }
-
     @Override
     public <T> DeleteEntity delete(T t) {
         return sql().delete(t);
     }
 
     @Override
-    public <T> SavaEntity save(T po) {
+    public <T> SaveEntity save(T po) {
         return sql().save(po);
     }
 
