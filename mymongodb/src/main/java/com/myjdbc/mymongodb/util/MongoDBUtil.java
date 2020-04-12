@@ -30,9 +30,7 @@ public class MongoDBUtil {
      * @Description 获取MongoDB的Document文档
      */
     public static <T> Document poToDocument(T t) {
-        Document document = new Document();
-        Map<String, Object> map = MongoDBUtil.mongoDBPOToMap(t);
-        document.putAll(map);
+        Document document = new Document(MongoDBUtil.mongoDBPOToMap(t));
         return document;
     }
 
@@ -72,7 +70,8 @@ public class MongoDBUtil {
                 Object value = getMethod.invoke(obj);
                 if (!ObjectUtils.isEmpty(value)) {
                     //若ID属性不为_id，则添加默认ID属性
-                    Id id = field.getAnnotation(Id.class);//存在Id注解，则为主键，MongoDB中默认主键为_id（带索引）
+                    Id id = field.getAnnotation(Id.class);
+                    //存在Id注解，则为主键，MongoDB中默认主键为_id（带索引）
                     if (id != null && !"_id".equals(fieldName)) {
                         map.put("_id", value);
                     } else {
@@ -80,19 +79,14 @@ public class MongoDBUtil {
                     }
                 }
             } catch (NoSuchMethodException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (SecurityException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
