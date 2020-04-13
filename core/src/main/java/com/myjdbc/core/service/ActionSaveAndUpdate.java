@@ -1,5 +1,6 @@
 package com.myjdbc.core.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -86,6 +87,17 @@ public interface ActionSaveAndUpdate extends BaseServiceRetrieve {
     <T> int delete(T t);
 
     /**
+     * 删除实体
+     *
+     * @param id  唯一ID
+     * @param cls 实体类型
+     * @return
+     * @Author 陈文
+     * @Date 2020/4/13  21:52
+     */
+    int delete(Serializable id, Class<?> cls);
+
+    /**
      * 批量删除实体
      *
      * @param list
@@ -95,7 +107,6 @@ public interface ActionSaveAndUpdate extends BaseServiceRetrieve {
      * @description 依据主键来删除
      */
     <T> int batchDelete(List<T> list);
-
 
 }
 

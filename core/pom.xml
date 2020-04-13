@@ -25,7 +25,7 @@
 
 
         <!-- springmvc -->
-        <spring.version>4.0.9.RELEASE</spring.version>
+        <spring.version>5.1.8.RELEASE</spring.version>
         <!--JSON数据支持-->
         <!--<fastjson-lib.version>1.2.6</fastjson-lib.version>-->
         <jackson-databind.version>2.9.10.1</jackson-databind.version>

@@ -11,48 +11,58 @@ public interface BaseServiceType {
     /**
      * 操作结果：保存成功
      */
-    int SAVE_OK = 0;
+    int SUCCESS = 0;
     /**
      * 操作结果：保存失败，没有ApiModel注解
      */
-    int SAVE_NO_LACK_MODEL = 1;
+    int FAILURE_LACK_MODEL = 1;
     /**
      * 操作结果：保存失败，ID冲突
      */
-    int SAVE_NO_ID_CLASH = 2;
+    int FAILURE_ID_CLASH = 2;
     /**
      * 操作结果：保存失败，对象所有属性为空
      */
-    int SAVE_NO_ALL_NULL = 3;
+    int FAILURE_ALL_NULL = 3;
     /**
      * 操作结果：保存失败，IP属性为空
      */
-    int SAVE_NO_IP_NULL = 4;
+    int FAILURE_IP_NULL = 4;
     /**
      * 操作结果：保存失败，内部错误
      */
-    int SAVE_NO_INSIDE_ERROR = 5;
+    int FAILURE_INSIDE_ERROR = 5;
+    /**
+     * 操作结果：保存失败，不允许传入集合
+     */
+    int FAILURE_NO_LIST = 6;
     /**
      * 操作结果：保存失败，非法操作
      */
-    int SAVE_TYPE_NULL = 99;
+    int FAILURE_TYPE_NULL = 99;
 
     String[] DESCS = new String[]{
-            "保存成功",
-            "保存失败,实体（对象）没有ApiModel注解",
-            "保存失败，ID冲突",
-            "保存失败，对象所有属性为空",
-            "保存失败，IP属性为空",
-            "保存失败，非法操作"
+            "操作成功",
+            "操作失败,实体（对象）没有ApiModel注解",
+            "操作失败，ID冲突",
+            "操作失败，对象所有属性为空",
+            "操作失败，IP属性为空",
+            "操作失败，内部错误",
+            "操作失败，不允许传入集合",
+            "操作失败，非法操作"
     };
 
     /**
      * 获取操作结果的说明
      *
      * @param type 操作结果码
-     * @return
+     * @return 操作结果说明
+     * @Author 陈文
+     * @Date 2020/4/13  20:42
+     * @Description 可以通过重写该方法，来自定义返回值
      */
-    static String getDesc(int type) {
+
+    default String getDesc(int type) {
         if (type >= DESCS.length) {
             return DESCS[DESCS.length - 1];
         }
@@ -60,7 +70,10 @@ public interface BaseServiceType {
     }
 
     static void main(String[] args) {
-        String desc = getDesc(SAVE_TYPE_NULL);
+        BaseServiceType ss = new BaseServiceType() {
+
+        };
+        String desc = ss.getDesc(FAILURE_NO_LIST);
         System.out.println(desc);
     }
 

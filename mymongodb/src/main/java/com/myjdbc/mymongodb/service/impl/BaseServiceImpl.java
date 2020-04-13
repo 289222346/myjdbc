@@ -6,7 +6,6 @@ import com.myjdbc.core.criteria.impl.CriteriaQueryFactory;
 import com.myjdbc.core.entity.Criterion;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.service.BaseService;
-import com.myjdbc.core.service.BaseServiceType;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.mymongodb.util.MongoDBUtil;
@@ -20,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,10 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-
 @Service("baseService")
 public class BaseServiceImpl implements BaseService {
-
 
     @Autowired
     protected MongoTemplate mongoTemplate;
@@ -87,19 +85,34 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public <T> int delete(T t) {
+        if (ListUtil.isList(t)) {
+            return FAILURE_NO_LIST;
+        }
         try {
             mongoTemplate.remove(t, getModelName(t.getClass()));
         } catch (Exception e) {
             e.printStackTrace();
-            return BaseServiceType.SAVE_NO_INSIDE_ERROR;
+            return FAILURE_INSIDE_ERROR;
         }
-        return BaseServiceType.SAVE_OK;
+        return SUCCESS;
+    }
+
+    @Override
+    public int delete(Serializable id, Class<?> cls) {
+        try {
+            Query query = Query.query(Criteria.where("_id").is(id));
+            mongoTemplate.remove(query, getModelName(cls));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FAILURE_INSIDE_ERROR;
+        }
+        return SUCCESS;
     }
 
     @Override
     public <T> int batchDelete(List<T> list) {
         if (ListUtil.isEmpty(list)) {
-            return BaseServiceType.SAVE_NO_ALL_NULL;
+            return FAILURE_ALL_NULL;
         }
         try {
             Query query = new Query();
@@ -111,9 +124,9 @@ public class BaseServiceImpl implements BaseService {
             mongoTemplate.remove(query, getModelName(list.get(0).getClass()));
         } catch (Exception e) {
             e.printStackTrace();
-            return BaseServiceType.SAVE_NO_INSIDE_ERROR;
+            return FAILURE_INSIDE_ERROR;
         }
-        return BaseServiceType.SAVE_OK;
+        return SUCCESS;
     }
 
     @Override
@@ -124,12 +137,12 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public <T> int batchSave(List<T> list) {
         if (ListUtil.isEmpty(list)) {
-            return BaseServiceType.SAVE_NO_ALL_NULL;
+            return FAILURE_ALL_NULL;
         }
         for (T t : list) {
             save(t);
         }
-        return BaseServiceType.SAVE_OK;
+        return SUCCESS;
     }
 
     @Override
@@ -150,9 +163,12 @@ public class BaseServiceImpl implements BaseService {
      */
     private <T> int saveAndUpdate(T t, int actionType) {
         try {
+            if (ListUtil.isList(t)) {
+                return FAILURE_NO_LIST;
+            }
             ApiModel apiModel = t.getClass().getAnnotation(ApiModel.class);
             if (apiModel == null) {
-                return BaseServiceType.SAVE_NO_LACK_MODEL;
+                return FAILURE_LACK_MODEL;
             }
             /***
              * 前置条件判断
@@ -163,13 +179,13 @@ public class BaseServiceImpl implements BaseService {
             Document document = MongoDBUtil.poToDocument(t);
             if (document == null || document.size() == 0) {
                 //保存失败，对象所有属性为空
-                return BaseServiceType.SAVE_NO_ALL_NULL;
+                return FAILURE_ALL_NULL;
             }
             //序列化ID
             Serializable id = (Serializable) document.get("_id");
             if (ObjectUtils.isEmpty(id)) {
                 //保存失败，IP属性为空
-                return BaseServiceType.SAVE_NO_IP_NULL;
+                return FAILURE_IP_NULL;
             }
             /**
              * 进入对应操作
@@ -187,9 +203,9 @@ public class BaseServiceImpl implements BaseService {
                 return replaceAction(id, document, collectionName);
             }
             //找不到操作响应
-            return BaseServiceType.SAVE_TYPE_NULL;
+            return FAILURE_TYPE_NULL;
         } catch (Exception e) {
-            return BaseServiceType.SAVE_NO_INSIDE_ERROR;
+            return FAILURE_INSIDE_ERROR;
         }
     }
 
@@ -203,11 +219,30 @@ public class BaseServiceImpl implements BaseService {
         T tempT = this.findById(cls, id);
         if (tempT != null) {
             //保存失败，ID冲突
-            return BaseServiceType.SAVE_NO_ID_CLASH;
+            return FAILURE_ID_CLASH;
         }
         mongoTemplate.getCollection(collectionName).insertOne(document);
         //保存成功
-        return BaseServiceType.SAVE_OK;
+        return SUCCESS;
+    }
+
+    /**
+     * @return
+     * @Date 2020/4/13  21:10
+     * @Author 陈文
+     * @Description 批量保存操作
+     */
+    private <T> int batchSaveAction(List<Serializable> ids, List<Document> documents, String collectionName, Class<T> cls) {
+        //如果要保存的数据，有一部分已经存在于数据库中，则整体不再保存
+        CriteriaQuery criteriaQuery = CriteriaQueryFactory.creatCriteriaQuery(cls);
+        criteriaQuery.in("_id", ids.toArray());
+        List<T> list = findAll(criteriaQuery);
+        if (ListUtil.isNotEmpty(list)) {
+            return FAILURE_ID_CLASH;
+        }
+        mongoTemplate.getCollection(collectionName).insertMany(documents);
+        //保存成功
+        return SUCCESS;
     }
 
     /**
@@ -222,14 +257,14 @@ public class BaseServiceImpl implements BaseService {
         //存储对象
         Bson update = new Document("$set", document);
         mongoTemplate.getCollection(collectionName).updateOne(filter, update);
-        return BaseServiceType.SAVE_OK;
+        return SUCCESS;
     }
 
     private int replaceAction(Serializable id, Document document, String collectionName) {
         //查询条件
         Bson filter = new Document("_id", id);
         mongoTemplate.getCollection(collectionName).replaceOne(filter, document);
-        return BaseServiceType.SAVE_OK;
+        return SUCCESS;
     }
 
 
@@ -269,20 +304,8 @@ public class BaseServiceImpl implements BaseService {
             String filedName = criterion.getFieldName();
             //限定值
             List<Object> values = criteria.getFieldValue();
-            //判断匹配方式
-            if (criterion.getOp() == OpType.EQ) {
-                //完全相等
-                values.forEach(value -> {
-                    query.addCriteria(Criteria.where(filedName).is(value));
-                });
-            } else if (criterion.getOp() == OpType.LIKE) {
-                //模糊查询
-                values.forEach(value -> {
-                    //正则表达式
-                    Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
-                    query.addCriteria(Criteria.where(filedName).regex(pattern));
-                });
-            }
+            //获取匹配方式
+            getCriteria(query, values, filedName, criterion.getOp());
         });
         //集合名称（可以认为是MongoDB中的数据库表名称）
         String collectionName = getModelName(criteriaQuery.getCls());
@@ -300,6 +323,43 @@ public class BaseServiceImpl implements BaseService {
         }
         List<T> list = mongoTemplate.find(query, criteriaQuery.getCls(), collectionName);
         return list;
+    }
+
+    /**
+     * @param query     mongoDB查询器
+     * @param values    限定值
+     * @param filedName 限定字段名
+     * @param op        限定条件
+     * @return
+     * @Author 陈文
+     * @Date 2020/4/13  21:19
+     * @Description 不加注释，反正加了你们也看不懂
+     */
+    private void getCriteria(Query query, List<Object> values, String filedName, OpType op) {
+
+        //完全相等
+        if (op == OpType.EQ) {
+            values.forEach(value -> {
+                query.addCriteria(Criteria.where(filedName).is(value));
+            });
+            return;
+        }
+
+        //模糊查询
+        if (op == OpType.LIKE) {
+            values.forEach(value -> {
+                //正则表达式
+                Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
+                query.addCriteria(Criteria.where(filedName).regex(pattern));
+            });
+            return;
+        }
+
+        //包含相等
+        if (op == OpType.IN) {
+            query.addCriteria(Criteria.where(filedName).in(values));
+            return;
+        }
     }
 
     @Override
