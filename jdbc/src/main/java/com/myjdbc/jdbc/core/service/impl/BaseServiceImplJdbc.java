@@ -135,11 +135,11 @@ public class BaseServiceImplJdbc implements ActionSaveAndUpdate, ActionTransacti
                 delete(conn, list.get(i));
             } catch (SQLException e) {
                 e.printStackTrace();
-                return SAVE_NO_INSIDE_ERROR;
+                return FAILURE_INSIDE_ERROR;
             }
         }
         closeConn(conn);
-        return SAVE_OK;
+        return SUCCESS;
     }
 
     private <T> int delete(Connection conn, T t) throws SQLException {
@@ -147,7 +147,7 @@ public class BaseServiceImplJdbc implements ActionSaveAndUpdate, ActionTransacti
         for (String sql : deleteEntity.getSqlList()) {
             dao.update(conn, sql, new Object[]{deleteEntity.getPkValue()});
         }
-        return SAVE_OK;
+        return SUCCESS;
     }
 
     @Override
@@ -155,12 +155,12 @@ public class BaseServiceImplJdbc implements ActionSaveAndUpdate, ActionTransacti
         SaveEntity saveEntity = sqlGenerator.save(t);
         String sql = saveEntity.getSql();
         Connection conn = getConn();
-        int i = SAVE_OK;
+        int i = SUCCESS;
         try {
             dao.update(conn, sql, saveEntity.getObjs().toArray());
         } catch (SQLException e) {
             e.printStackTrace();
-            i = SAVE_NO_INSIDE_ERROR;
+            i = FAILURE_INSIDE_ERROR;
         }
         closeConn(conn);
         return i;
@@ -173,17 +173,17 @@ public class BaseServiceImplJdbc implements ActionSaveAndUpdate, ActionTransacti
             SavaListEntity savaListEntity = sqlGenerator.save(t);
             String sql = savaListEntity.getSql();
             Connection conn = getConn();
-            int i = SAVE_OK;
+            int i = SUCCESS;
             try {
                 dao.batchAdd(conn, sql, savaListEntity.getObjs());
             } catch (SQLException e) {
                 e.printStackTrace();
-                i = SAVE_NO_INSIDE_ERROR;
+                i = FAILURE_INSIDE_ERROR;
             }
             closeConn(conn);
             return i;
         }
-        return SAVE_NO_ALL_NULL;
+        return FAILURE_ALL_NULL;
     }
 
     @Override
