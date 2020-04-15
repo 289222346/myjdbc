@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import javax.tools.Diagnostic;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@Service("baseService")
-public class BaseServiceImpl implements BaseService {
+@Service("mongodbService")
+public class MongodbServiceImpl implements BaseService {
 
     @Autowired
     protected MongoTemplate mongoTemplate;
@@ -63,25 +64,6 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public void closeConnection() {
 
-    }
-
-    @Override
-    public <T> T findById(Class<T> cls, Serializable id) {
-        return mongoTemplate.findById(id, cls, getModelName(cls));
-    }
-
-    @Override
-    public <T> List<T> findAll(Class<T> cls) {
-        return mongoTemplate.findAll(cls, getModelName(cls));
-    }
-
-    @Override
-    public <T> List<T> findAll(Class<T> cls, Map<String, Object> query) {
-        Query query1 = new Query();
-        query.forEach((key, value) -> {
-            query1.addCriteria(Criteria.where(key).is(value));
-        });
-        return mongoTemplate.find(query1, cls, getModelName(cls));
     }
 
     @Override
@@ -295,6 +277,26 @@ public class BaseServiceImpl implements BaseService {
         return null;
     }
 
+
+    @Override
+    public <T> T findById(Class<T> cls, Serializable id) {
+        return mongoTemplate.findById(id, cls, getModelName(cls));
+    }
+
+    @Override
+    public <T> List<T> findAll(Class<T> cls) {
+        return mongoTemplate.findAll(cls, getModelName(cls));
+    }
+
+    @Override
+    public <T> List<T> findAll(Class<T> cls, Map<String, Object> query) {
+        Query query1 = new Query();
+        query.forEach((key, value) -> {
+            query1.addCriteria(Criteria.where(key).is(value));
+        });
+        return mongoTemplate.find(query1, cls, getModelName(cls));
+    }
+
     @Override
     public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery) {
         //MongoDB的Query查询构造器
@@ -329,6 +331,8 @@ public class BaseServiceImpl implements BaseService {
     }
 
     /**
+     * 匹配成mongoDB查询器
+     *
      * @param query     mongoDB查询器
      * @param values    限定值
      * @param filedName 限定字段名
@@ -336,15 +340,50 @@ public class BaseServiceImpl implements BaseService {
      * @return
      * @Author 陈文
      * @Date 2020/4/13  21:19
-     * @Description 不加注释，反正加了你们也看不懂
      */
     private void getCriteria(Query query, List<Object> values, String filedName, OpType op) {
+        if (ListUtil.isEmpty(values)) {
+            throw new NullPointerException("限定值不能为空！");
+        }
 
         //完全相等
         if (op == OpType.EQ) {
-            values.forEach(value -> {
-                query.addCriteria(Criteria.where(filedName).is(value));
-            });
+            if (values.size() > 1) {
+                throw new NullPointerException("同一个限定字段，EQ限定条件只允许有一个!");
+            }
+            query.addCriteria(Criteria.where(filedName).is(values.get(0)));
+            return;
+        }
+
+        if (op == OpType.GT) {
+            if (values.size() > 1) {
+                throw new NullPointerException("同一个限定字段，GT限定条件只允许有一个!");
+            }
+            query.addCriteria(Criteria.where(filedName).gt(values.get(0)));
+            return;
+        }
+
+        if (op == OpType.LT) {
+            if (values.size() > 1) {
+                throw new NullPointerException("同一个限定字段，LT限定条件只允许有一个!");
+            }
+            query.addCriteria(Criteria.where(filedName).lt(values.get(0)));
+            return;
+        }
+
+        if (op == OpType.GE) {
+            if (values.size() > 1) {
+                throw new NullPointerException("同一个限定字段，GE限定条件只允许有一个!");
+            }
+            query.addCriteria(Criteria.where(filedName).gte(values.get(0)));
+            return;
+        }
+
+        if (op == OpType.LE) {
+            if (values.size() > 1) {
+                throw new NullPointerException("同一个限定字段，LE限定条件只允许有一个!");
+            }
+            query.addCriteria(Criteria.where(filedName).lte(values.get(0)));
             return;
         }
 

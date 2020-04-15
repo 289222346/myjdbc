@@ -39,8 +39,8 @@ public interface CriteriaQuery<T> {
     /**
      * 执行 {@literal $lt} 小于运算
      *
-     * @param fieldName
-     * @param value
+     * @param fieldName 限定字段
+     * @param value     限定值
      * @Author 陈文
      * @Date 2020/4/15  10:55
      */
@@ -49,9 +49,8 @@ public interface CriteriaQuery<T> {
     /**
      * 执行 {@literal $ge} 大于等于运算
      *
-     * @param fieldName
-     * @param value
-     * @return
+     * @param fieldName 限定字段
+     * @param value     限定值
      * @Author 陈文
      * @Date 2020/4/15  11:05
      */
@@ -60,9 +59,8 @@ public interface CriteriaQuery<T> {
     /**
      * 执行 {@literal $le} 小于等于运算
      *
-     * @param fieldName
-     * @param value
-     * @return
+     * @param fieldName 限定字段
+     * @param value     限定值
      * @Author 陈文
      * @Date 2020/4/15  11:05
      */
