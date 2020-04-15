@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="myjdbc-core-1.0">
-    <output-path>$PROJECT_DIR$/out/artifacts/myjdbc_core_1_0</output-path>
-    <root id="archive" name="myjdbc-core-1.0.war" />
-  </artifact>
-</component>

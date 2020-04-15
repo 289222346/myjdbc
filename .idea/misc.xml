@@ -5,7 +5,6 @@
       <list>
         <option value="$PROJECT_DIR$/myjdbc/pom.xml" />
         <option value="$PROJECT_DIR$/core/pom.xml" />
-        <option value="$PROJECT_DIR$/jdbc/pom.xml" />
         <option value="$PROJECT_DIR$/mymongodb/pom.xml" />
       </list>
     </option>
