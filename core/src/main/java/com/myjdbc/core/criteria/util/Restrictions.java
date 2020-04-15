@@ -7,10 +7,33 @@ import com.myjdbc.core.entity.Criterion;
 
 import java.util.Arrays;
 
+/**
+ * 限制条件标准生成器
+ *
+ * @Author 陈文
+ * @Date 2020/4/15  11:31
+ * @return
+ */
 public class Restrictions {
 
     public static Criteria eq(String fieldName, Object value) {
         return getCriteria(fieldName, OpType.EQ, value);
+    }
+
+    public static Criteria gt(String fieldName, Object value) {
+        return getCriteria(fieldName, OpType.GT, value);
+    }
+
+    public static Criteria lt(String fieldName, Object value) {
+        return getCriteria(fieldName, OpType.LT, value);
+    }
+
+    public static Criteria ge(String fieldName, Object value) {
+        return getCriteria(fieldName, OpType.GE, value);
+    }
+
+    public static Criteria le(String fieldName, Object value) {
+        return getCriteria(fieldName, OpType.LE, value);
     }
 
     public static Criteria eqProperty(String fieldName, String fieldName2) {

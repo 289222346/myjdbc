@@ -1,6 +1,5 @@
 package com.myjdbc.core.criteria.impl;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.myjdbc.core.criteria.util.Restrictions;
 import com.myjdbc.core.entity.Pag;
 import com.myjdbc.core.util.ClassUtil;
@@ -28,7 +27,7 @@ import java.util.List;
  * @Description
  * @date 2019/7/15 9:47
  */
-public abstract class CriteriaQueryBase<T> implements CriteriaQuery {
+public class CriteriaQueryBase<T> implements CriteriaQuery {
     private static final Logger logger = LoggerFactory.getLogger(CriteriaQueryBase.class);
 
     //分页
@@ -92,6 +91,26 @@ public abstract class CriteriaQueryBase<T> implements CriteriaQuery {
     @Override
     public void eq(String fieldName, Object value) {
         add(Restrictions.eq(fieldName, value));
+    }
+
+    @Override
+    public void gt(String fieldName, Object value) {
+        add(Restrictions.gt(fieldName, value));
+    }
+
+    @Override
+    public void lt(String fieldName, Object value) {
+        add(Restrictions.lt(fieldName, value));
+    }
+
+    @Override
+    public void ge(String fieldName, Object value) {
+        add(Restrictions.ge(fieldName, value));
+    }
+
+    @Override
+    public void le(String fieldName, Object value) {
+        add(Restrictions.le(fieldName, value));
     }
 
     @Override

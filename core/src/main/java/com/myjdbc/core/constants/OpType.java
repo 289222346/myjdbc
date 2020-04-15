@@ -10,7 +10,10 @@ public enum OpType {
     EQ(0, " = ", "完全相等"),
     IN(1, " IN ", "包含"),
     LIKE(2, " LIKE ", "模糊匹配"),
-    ORDER_ASC(3, " ASC ", "正序排序");
+    GT(3, " LIKE ", "模糊匹配"),
+    LT(4, " LIKE ", "模糊匹配"),
+    GE(5, " LIKE ", "模糊匹配"),
+    LE(6, " LIKE ", "模糊匹配");
 
     private int code;
     private String value;
