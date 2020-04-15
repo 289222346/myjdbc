@@ -23,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -116,11 +117,13 @@ public class BaseServiceImpl implements BaseService {
         }
         try {
             Query query = new Query();
+            List<Serializable> ids = new ArrayList<>();
             for (T t : list) {
                 Document document = MongoDBUtil.poToDocument(t);
                 Serializable id = (Serializable) document.get("_id");
-                query.addCriteria(Criteria.where("_id").is(id));
+                ids.add(id);
             }
+            query.addCriteria(Criteria.where("_id").in(ids.toArray()));
             mongoTemplate.remove(query, getModelName(list.get(0).getClass()));
         } catch (Exception e) {
             e.printStackTrace();
