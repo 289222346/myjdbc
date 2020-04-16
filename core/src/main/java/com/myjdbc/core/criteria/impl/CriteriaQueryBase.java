@@ -31,13 +31,13 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
     private static final Logger logger = LoggerFactory.getLogger(CriteriaQueryBase.class);
 
     //分页
-    private Pag pag;
+    protected Pag pag;
     //查询实体
-    private final Class<T> cls;
+    protected final Class<T> cls;
     //查询条件
-    private final List<Criteria> criteriaList = new ArrayList<>();
+    protected final List<Criteria> criteriaList = new ArrayList<>();
     //排序条件
-    private OrderBo orderBo;
+    protected OrderBo orderBo;
 
     public CriteriaQueryBase(Class<T> cls) {
         this.cls = cls;
@@ -49,39 +49,7 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
      * @Description 实体中的参数转换成eq参数
      */
     public CriteriaQueryBase(Class<T> cls, T t) {
-        try {
-            Class<?> currentClass = cls;
-            while (currentClass != null) {
-                Field[] fields = cls.getDeclaredFields();
-                for (Field field : fields) {
-                    String getField = ClassUtil.getField(field.getName());
-                    Method getMethod = cls.getMethod(getField);
-                    Object value = getMethod.invoke(t);
-                    if (value != null && !(value + "").equals("")) {
-                        if (field.getType().getSimpleName().equals("String")) {
-                            String v1 = value + "";
-                            int index1 = v1.indexOf("*");
-                            if (index1 == -1) {
-                                eq(field.getName(), value);
-                            } else {
-                                v1 = v1.replace('*', '%');
-                                like(field.getName(), v1);
-                            }
-                        } else {
-                            eq(field.getName(), value);
-                        }
-                    }
-                }
-                currentClass = currentClass.getSuperclass();
-            }
-        } catch (NoSuchMethodException e) {
-            logger.error(e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.error(e.getMessage());
-        } catch (InvocationTargetException e) {
-            logger.error(e.getMessage());
-        }
-        this.cls = cls;
+        this(cls);
     }
 
     private void add(Criteria criteria) {
@@ -121,6 +89,11 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
     @Override
     public void in(String fieldName, Object... value) {
         add(Restrictions.in(fieldName, value));
+    }
+
+    @Override
+    public OrderBo getOrder() {
+        return orderBo;
     }
 
     @Override
@@ -262,19 +235,19 @@ public class CriteriaQueryBase<T> implements CriteriaQuery {
      * @Date 2019/12/8  16:53
      * @Description 拼接排序SQL
      */
-    private String getOrder() {
-        String str = "";
-        if (orderBo != null) {
-            for (String fieldName : orderBo.getFieldNames()) {
-                str += "," + getColumnName(fieldName);
-            }
-        }
-        if (!str.equals("")) {
-            str = str.substring(1);
-            str = " Order By " + str + orderBo.getOrderType().getValue();
-        }
-        return str;
-    }
+//    private String getOrder() {
+//        String str = "";
+//        if (orderBo != null) {
+//            for (String fieldName : orderBo.getFieldNames()) {
+//                str += "," + getColumnName(fieldName);
+//            }
+//        }
+//        if (!str.equals("")) {
+//            str = str.substring(1);
+//            str = " Order By " + str + orderBo.getOrderType().getValue();
+//        }
+//        return str;
+//    }
 
 //    /**
 //     * @Author 陈文

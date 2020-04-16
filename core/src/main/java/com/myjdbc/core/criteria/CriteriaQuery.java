@@ -2,6 +2,7 @@ package com.myjdbc.core.criteria;
 
 import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.entity.Criteria;
+import com.myjdbc.core.entity.OrderBo;
 import com.myjdbc.core.entity.Pag;
 
 import java.util.List;
@@ -99,6 +100,16 @@ public interface CriteriaQuery<T> {
      * @Description 两个字段内容完全相等，例如SELECT * FROM TABLE WHERE TABLE.A=TABLE.B
      */
     void eqProperty(String fieldName, String fieldName2);
+
+    /**
+     * 获取排序规则
+     *
+     * @return
+     * @Author 陈文
+     * @Date 2020/4/16  18:41
+     * @Description
+     */
+    OrderBo getOrder();
 
     /**
      * 根据某个字段排序

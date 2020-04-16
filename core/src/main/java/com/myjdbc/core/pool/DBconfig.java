@@ -36,13 +36,9 @@ public class DBconfig {
 
         //获取数据库类型和驱动
         String dbtypeValue = util.readProperty(PropertiesJDBC.DBTYPE.getCode());
-        if (DBType.MYSQL.getCode().equals(dbtypeValue)) {
-            DBTYPE = DBType.MYSQL;
-        } else if (DBType.ORACLE.getCode().equals(dbtypeValue)) {
-            DBTYPE = DBType.ORACLE;
-        } else {
-            DBTYPE = (DBType) PropertiesJDBC.DBTYPE.getDefaultValue();
-        }
+        //获取数据库类型
+        DBTYPE = DBType.getDBType(dbtypeValue);
+        //获取驱动
         DRIVER = DBTYPE.getDriver();
 
         //获取数据库连接地址

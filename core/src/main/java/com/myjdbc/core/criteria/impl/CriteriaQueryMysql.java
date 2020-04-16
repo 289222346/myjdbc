@@ -10,14 +10,14 @@ import com.myjdbc.core.criteria.CriteriaQuery;
  * @Description
  * @date 2019/7/15 9:47
  */
-public class CriteriaQueryMysql extends CriteriaQueryBase implements CriteriaQuery {
+public class CriteriaQueryMysql<T> extends CriteriaQueryJdbc<T> implements CriteriaQuery {
 
 
-    public CriteriaQueryMysql(Class cls) {
+    public CriteriaQueryMysql(Class<T> cls) {
         super(cls);
     }
 
-    public <T> CriteriaQueryMysql(Class<T> cls, T t) {
+    public CriteriaQueryMysql(Class<T> cls, T t) {
         super(cls, t);
     }
 

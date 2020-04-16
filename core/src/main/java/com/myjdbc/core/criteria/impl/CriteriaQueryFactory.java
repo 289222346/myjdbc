@@ -23,6 +23,9 @@ public class CriteriaQueryFactory<T> {
         if (DBconfig.DBTYPE == DBType.MYSQL) {
             return new CriteriaQueryMysql(cls);
         }
+        if (DBconfig.DBTYPE == DBType.MONGODB) {
+            return new CriteriaQueryMongodb(cls);
+        }
         return null;
     }
 
@@ -32,6 +35,9 @@ public class CriteriaQueryFactory<T> {
         }
         if (DBconfig.DBTYPE == DBType.MYSQL) {
             return new CriteriaQueryMysql(cls, t);
+        }
+        if (DBconfig.DBTYPE == DBType.MONGODB) {
+            return new CriteriaQueryMongodb(cls, t);
         }
         return null;
     }

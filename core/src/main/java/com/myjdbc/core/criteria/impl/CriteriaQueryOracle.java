@@ -10,14 +10,14 @@ import com.myjdbc.core.criteria.CriteriaQuery;
  * @Description
  * @date 2019/7/15 9:47
  */
-public class CriteriaQueryOracle extends CriteriaQueryBase implements CriteriaQuery {
+public class CriteriaQueryOracle<T> extends CriteriaQueryJdbc<T> implements CriteriaQuery {
 
 
-    public CriteriaQueryOracle(Class cls) {
+    public CriteriaQueryOracle(Class<T> cls) {
         super(cls);
     }
 
-    public <T> CriteriaQueryOracle(Class<T> cls, T t) {
+    public CriteriaQueryOracle(Class<T> cls, T t) {
         super(cls, t);
     }
 

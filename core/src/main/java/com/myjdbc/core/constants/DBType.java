@@ -29,6 +29,15 @@ public enum DBType {
         return driver;
     }
 
+    public static DBType getDBType(String code) {
+        for (DBType dbType : DBType.values()) {
+            if (dbType.getCode().equals(code)) {
+                return dbType;
+            }
+        }
+        return (DBType) PropertiesJDBC.DBTYPE.getDefaultValue();
+    }
+
 //    public SqlGenerator getSqlGenerator() {
 //        SqlGenerator sqlGenerator = null;
 //        try {
