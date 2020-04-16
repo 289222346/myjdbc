@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Class-Path: spring-expression-5.1.8.RELEASE.jar spring-data-redis-1.6.
+ 2.RELEASE.jar spring-core-5.1.8.RELEASE.jar aspectjweaver-1.9.3.jar j
+ edis-2.9.0.jar spring-aspects-5.1.8.RELEASE.jar spring-jcl-5.1.8.RELE
+ ASE.jar spring-jdbc-5.1.8.RELEASE.jar commons-pool2-2.4.2.jar commons
+ -lang-2.6.jar spring-tx-5.1.8.RELEASE.jar spring-test-5.1.8.RELEASE.j
+ ar spring-beans-5.1.8.RELEASE.jar jackson-core-2.9.10.jar jstl-1.2.ja
+ r spring-context-5.1.8.RELEASE.jar slf4j-api-1.7.12.jar jackson-annot
+ ations-2.9.10.jar mysql-connector-java-5.1.46.jar spring-webmvc-5.1.8
+ .RELEASE.jar spring-orm-5.1.8.RELEASE.jar spring-context-support-5.1.
+ 8.RELEASE.jar druid-1.1.10.jar jackson-databind-2.9.10.1.jar spring-a
+ op-5.1.8.RELEASE.jar spring-web-5.1.8.RELEASE.jar persistence-api-1.0
+ .jar
+

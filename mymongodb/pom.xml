@@ -6,9 +6,9 @@
 
     <groupId>com.myjdbc</groupId>
     <artifactId>mymongodb</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>mymongodb</name>
     <description>mymongodb</description>
 
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.myjdbc</groupId>
             <artifactId>core</artifactId>
-            <version>1.0</version>
+            <version>1.0.1</version>
         </dependency>
 
         <!--mongoDB独有依赖Start-->
@@ -65,5 +65,34 @@
         <!--</dependency>-->
         <!--临时引用start-->
     </dependencies>
+
+    <!--阿里私有云Maven仓库-->
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://repo.rdc.aliyun.com/repository/49922-release-Ezq88P/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://repo.rdc.aliyun.com/repository/49922-snapshot-RvgibH/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <!--上传source.jar 非必须 -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

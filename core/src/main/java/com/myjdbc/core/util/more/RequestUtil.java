@@ -1,4 +1,4 @@
-package com.myjdbc.core.util;
+package com.myjdbc.core.util.more;
 
 import javax.servlet.http.HttpServletRequest;
 

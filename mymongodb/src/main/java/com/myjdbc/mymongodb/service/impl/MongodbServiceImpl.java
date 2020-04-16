@@ -269,12 +269,15 @@ public class MongodbServiceImpl implements BaseService {
     @Override
     public <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue) {
         CriteriaQuery<T> criteriaQuery = CriteriaQueryFactory.creatCriteriaQuery(cls);
+        criteriaQuery.eq(fieldName, filedValue);
         return findAll(criteriaQuery);
     }
 
     @Override
     public <T> List<T> criteriaIn(Class<T> cls, String fieldName, Object[] values) {
-        return null;
+        CriteriaQuery<T> criteriaQuery = CriteriaQueryFactory.creatCriteriaQuery(cls);
+        criteriaQuery.in(fieldName, values);
+        return findAll(criteriaQuery);
     }
 
 
