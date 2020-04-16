@@ -1,9 +1,11 @@
 package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.constants.OpType;
+import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.criteria.impl.CriteriaQueryFactory;
 import com.myjdbc.core.entity.Criterion;
+import com.myjdbc.core.entity.OrderBo;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.service.BaseService;
 import com.myjdbc.core.util.ListUtil;
@@ -14,6 +16,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -328,6 +331,19 @@ public class MongodbServiceImpl implements BaseService {
             int rows = criteriaQuery.getRows();
             //分页查询条件
             query.with(PageRequest.of(page, rows));
+        }
+        //判断是否需要排序
+        if (criteriaQuery.getOrder() != null) {
+            OrderBo order = criteriaQuery.getOrder();
+            if (order.getOrderType().equals(OrderType.ASC)) {
+                for (String string : order.getFieldNames()) {
+                    query.with(Sort.by(Sort.Order.asc(string)));
+                }
+            } else {
+                for (String string : order.getFieldNames()) {
+                    query.with(Sort.by(Sort.Order.desc(string)));
+                }
+            }
         }
         List<T> list = mongoTemplate.find(query, criteriaQuery.getCls(), collectionName);
         return list;
