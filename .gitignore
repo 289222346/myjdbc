@@ -1,0 +1,26 @@
+target/
+out/
+logs/
+.idea/
+
+### target ###
+
+
+### IntelliJ IDEA ###
+*.iws
+*.ipr
+*.iml
+.mvn
+mvnw
+mvnw.cmd
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### resource  ###
+*.properties
