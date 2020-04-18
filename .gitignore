@@ -1,12 +1,15 @@
-/target/
-/out/
-/myjdbc.git/
+target/
+out/
+logs/
+.idea/
+
+### target ###
+
 
 ### IntelliJ IDEA ###
-.idea
 *.iws
-*.iml
 *.ipr
+*.iml
 .mvn
 mvnw
 mvnw.cmd
@@ -20,4 +23,4 @@ mvnw.cmd
 /.nb-gradle/
 
 ### resource  ###
-dbconfig.properties
+*.properties
