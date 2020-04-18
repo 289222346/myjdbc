@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * @version 1.0
  */
 @Service
-public class DBUtil {
+public class DbUtil {
 
     /**
      * @Author 陈文
@@ -25,11 +25,12 @@ public class DBUtil {
     /**
      * 新建数据库连接对象
      *
-     * @return
+     * @return 数据库连接对象
      */
     public static Connection newConn() {
         try {
-            Connection conn = dataSource.getConnection();//从连接池取出连接对象
+            //从连接池取出连接对象
+            Connection conn = dataSource.getConnection();
             return conn;
         } catch (SQLException e) {
             e.printStackTrace();

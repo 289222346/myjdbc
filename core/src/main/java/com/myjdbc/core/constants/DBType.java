@@ -35,7 +35,7 @@ public enum DBType {
                 return dbType;
             }
         }
-        return (DBType) PropertiesJDBC.DBTYPE.getDefaultValue();
+        return (DBType) PropertiesJDBC.DB_TYPE.getDefaultValue();
     }
 
 //    public SqlGenerator getSqlGenerator() {

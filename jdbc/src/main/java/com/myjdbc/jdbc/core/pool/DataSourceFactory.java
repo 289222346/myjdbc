@@ -4,6 +4,10 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 import javax.sql.DataSource;
 
+/**
+ * @Author: 陈文
+ * @Date: 2020/4/18 11:48
+ */
 public class DataSourceFactory {
 
     /**
@@ -15,21 +19,22 @@ public class DataSourceFactory {
         return creatDruidDataSource();
     }
 
+    
     public static DataSource creatDruidDataSource() {
         //配置数据库连接池
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDriverClassName(DBconfig.DRIVER);
-        dataSource.setUrl(DBconfig.URL);
-        dataSource.setUsername(DBconfig.USERNAME);
-        dataSource.setPassword(DBconfig.PASSWORD);
-        if (DBconfig.MAX_ACTIVE != null) {
-            dataSource.setMaxActive(DBconfig.MAX_ACTIVE);
+        dataSource.setDriverClassName(DbConfig.DRIVER);
+        dataSource.setUrl(DbConfig.URL);
+        dataSource.setUsername(DbConfig.USERNAME);
+        dataSource.setPassword(DbConfig.PASSWORD);
+        if (DbConfig.MAX_ACTIVE != null) {
+            dataSource.setMaxActive(DbConfig.MAX_ACTIVE);
         }
-        if (DBconfig.INITIAL_SIZE != null) {
-            dataSource.setInitialSize(DBconfig.INITIAL_SIZE);
+        if (DbConfig.INITIAL_SIZE != null) {
+            dataSource.setInitialSize(DbConfig.INITIAL_SIZE);
         }
-        if (DBconfig.MAX_WAIT != null) {
-            dataSource.setMinIdle(DBconfig.MAX_WAIT);
+        if (DbConfig.MAX_WAIT != null) {
+            dataSource.setMinIdle(DbConfig.MAX_WAIT);
         }
         return dataSource;
     }
