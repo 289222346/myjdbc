@@ -4,9 +4,6 @@ package com.myjdbc.core.criteria.util;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.entity.Criteria;
 import com.myjdbc.core.entity.Criterion;
-
-import java.util.Arrays;
-
 /**
  * 限制条件标准生成器
  *
@@ -16,71 +13,120 @@ import java.util.Arrays;
  */
 public class Restrictions {
 
+    /**
+     * 完全相等
+     *
+     * @param fieldName 限定字段名
+     * @param value     限定值
+     * @return 字段查询条件
+     */
     public static Criteria eq(String fieldName, Object value) {
         return getCriteria(fieldName, OpType.EQ, value);
     }
 
+    /**
+     * 大于
+     *
+     * @param fieldName 限定字段名
+     * @param value     限定值
+     * @return 字段查询条件
+     */
     public static Criteria gt(String fieldName, Object value) {
         return getCriteria(fieldName, OpType.GT, value);
     }
 
+    /**
+     * 小于
+     *
+     * @param fieldName 限定字段名
+     * @param value     限定值
+     * @return 字段查询条件
+     */
     public static Criteria lt(String fieldName, Object value) {
         return getCriteria(fieldName, OpType.LT, value);
     }
 
+    /**
+     * 大于等于
+     *
+     * @param fieldName 限定字段名
+     * @param value     限定值
+     * @return 字段查询条件
+     */
     public static Criteria ge(String fieldName, Object value) {
         return getCriteria(fieldName, OpType.GE, value);
     }
 
+    /**
+     * 小于等于
+     *
+     * @param fieldName 限定字段名
+     * @param value     限定值
+     * @return 字段查询条件
+     */
     public static Criteria le(String fieldName, Object value) {
         return getCriteria(fieldName, OpType.LE, value);
     }
 
-    public static Criteria eqProperty(String fieldName, String fieldName2) {
-        Criterion criterion = new Criterion(fieldName, fieldName2 + "", OpType.EQ);
-        Criteria criteria = new Criteria(criterion, null);
-        return criteria;
+    /**
+     * 属性相等
+     *
+     * @param fieldName   限定字段名
+     * @param succedaneum 替代(相等)字段名
+     * @return 字段查询条件
+     */
+    public static Criteria eqProperty(String fieldName, String succedaneum) {
+        return getCriteria(fieldName, OpType.EQ_PROPERTY, succedaneum);
     }
 
+    /**
+     * 包含
+     *
+     * @param fieldName 限定字段名
+     * @param values    限定值
+     * @return 字段查询条件
+     */
     public static Criteria in(String fieldName, Object... values) {
         return getCriteria(fieldName, OpType.IN, values);
     }
 
+    /**
+     * 模糊匹配
+     *
+     * @param fieldName 限定字段名
+     * @param values    限定值
+     * @return 字段查询条件
+     */
     public static Criteria like(String fieldName, Object... values) {
         return getCriteria(fieldName, OpType.LIKE, values);
     }
 
-    public static String getSuccedaneum(int i) {
-        StringBuffer succedaneum = new StringBuffer();
-        for (int j = 0; j < i; j++) {
-            succedaneum.append("?,");
-        }
-        if (succedaneum.length() > 0) {
-            succedaneum.deleteCharAt(succedaneum.length() - 1);
-        }
-        return succedaneum.toString();
-    }
-
-    private static Criteria getCriteria(String fieldName, OpType opType, Object... values) {
-        int length = getLength(values, 0);
-        Criterion criterion = new Criterion(fieldName, "(" + getSuccedaneum(length) + ")", opType);
-        Criteria criteria = new Criteria(criterion, Arrays.asList(values));
+    /**
+     * 获取字段查询条件
+     *
+     * @param fieldName 限定字段名
+     * @param opType    限定条件
+     * @param value     限定值
+     * @return 字段查询条件
+     */
+    private static Criteria getCriteria(String fieldName, OpType opType, Object value) {
+        Criterion criterion = new Criterion(opType, value);
+        Criteria criteria = new Criteria(fieldName, criterion);
         return criteria;
     }
 
-    private static int getLength(Object[] values, int i) {
-        for (Object value : values) {
-            if (value != null) {
-                if (value.getClass().isArray()) {
-                    //如果是数组类型，则继续解析他
-                    i += getLength((Object[]) value, i);
-                } else {
-                    i++;
-                }
-            }
-        }
-        return i;
+    /**
+     * 获取字段查询条件
+     *
+     * @param fieldName 限定字段名
+     * @param opType    限定条件
+     * @param values    限定值
+     * @return 字段查询条件
+     */
+    private static Criteria getCriteria(String fieldName, OpType opType, Object... values) {
+        Criterion criterion = new Criterion(opType, values);
+        Criteria criteria = new Criteria(fieldName, criterion);
+        return criteria;
     }
-
 
 }

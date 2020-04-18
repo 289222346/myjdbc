@@ -6,22 +6,52 @@ package com.myjdbc.core.constants;
  * @author 陈文
  * @date 2019/7/15 11:00
  */
+@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum OpType {
-    EQ(0, " = ", "完全相等"),
-    IN(1, " IN ", "包含"),
-    LIKE(2, " LIKE ", "模糊匹配"),
-    GT(3, " LIKE ", "模糊匹配"),
-    LT(4, " LIKE ", "模糊匹配"),
-    GE(5, " LIKE ", "模糊匹配"),
-    LE(6, " LIKE ", "模糊匹配");
+    /**
+     * 完全相等
+     */
+    EQ(0, "完全相等"),
+    /**
+     * 包含
+     */
+    IN(1, "包含"),
+    /**
+     * 模糊匹配
+     */
+    LIKE(2, "模糊匹配"),
+    /**
+     * 大于"
+     */
+    GT(3, "大于"),
+    /**
+     * 小于
+     */
+    LT(4, "小于"),
+    /**
+     * 大于等于
+     */
+    GE(5, "大于等于"),
+    /**
+     * 小于等于
+     */
+    LE(6, "小于等于"),
+    /**
+     * 属性匹配
+     */
+    EQ_PROPERTY(7, "属性匹配");
 
+    /**
+     * 运算符编码
+     */
     private int code;
-    private String value;
+    /**
+     * 运算符备注
+     */
     private String remark;
 
-    OpType(int code, String value, String remark) {
+    OpType(int code, String remark) {
         this.code = code;
-        this.value = value;
         this.remark = remark;
     }
 
@@ -31,14 +61,6 @@ public enum OpType {
 
     public void setCode(int code) {
         this.code = code;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public String getRemark() {

@@ -3,36 +3,50 @@ package com.myjdbc.core.entity;
 
 import com.myjdbc.core.constants.OpType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * 查询条件SQL
- * （参数用?号替代，需要配合Criteria使用）
+ * 限定条件
  *
  * @author 陈文
- * @Description
- * @date 2019/7/15 9:48
- * @see Criteria 查询时实际使用Criteria类，本类用于生成SQL,值保存在Criteria
+ * @Date: 2020/4/18 12:28
+ * @see Criteria 本类依赖于Criteria
  */
 public class Criterion {
 
-    private final String fieldName;
-    private final String succedaneum;
+    /**
+     * 限定条件
+     */
     private final OpType op;
+    /**
+     * 限定值
+     */
+    private final List<Object> fieldValue = new ArrayList<>();
 
-    public Criterion(String fieldName, String succedaneum, OpType op) {
-        this.fieldName = fieldName;
-        this.succedaneum = succedaneum;
+    /**
+     * @param op         限定条件
+     * @param fieldValue 限定值
+     */
+    public Criterion(OpType op, Object fieldValue) {
         this.op = op;
+        this.fieldValue.add(fieldValue);
     }
 
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public String getSuccedaneum() {
-        return succedaneum;
+    /**
+     * @param op          限定条件
+     * @param fieldValues 限定数组
+     */
+    public Criterion(OpType op, Object[] fieldValues) {
+        this.op = op;
+        this.fieldValue.addAll(fieldValue);
     }
 
     public OpType getOp() {
         return op;
+    }
+
+    public List<Object> getFieldValue() {
+        return fieldValue;
     }
 }

@@ -3,13 +3,14 @@ package com.myjdbc.mymongodb.service.impl;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.criteria.CriteriaQuery;
-import com.myjdbc.core.criteria.impl.CriteriaQueryFactory;
+import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
 import com.myjdbc.core.entity.Criterion;
 import com.myjdbc.core.entity.OrderBo;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.service.BaseService;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.StringUtil;
+import com.myjdbc.mymongodb.util.MongodbQueryUtil;
 import com.myjdbc.mymongodb.util.MongoDBUtil;
 import io.swagger.annotations.ApiModel;
 import org.bson.Document;
@@ -23,7 +24,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import javax.tools.Diagnostic;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -222,7 +222,7 @@ public class MongodbServiceImpl implements BaseService {
      */
     private <T> int batchSaveAction(List<Serializable> ids, List<Document> documents, String collectionName, Class<T> cls) {
         //如果要保存的数据，有一部分已经存在于数据库中，则整体不再保存
-        CriteriaQuery criteriaQuery = CriteriaQueryFactory.creatCriteriaQuery(cls);
+        CriteriaQuery criteriaQuery = new CriteriaQueryImpl(cls);
         criteriaQuery.in("_id", ids.toArray());
         List<T> list = findAll(criteriaQuery);
         if (ListUtil.isNotEmpty(list)) {
@@ -271,14 +271,14 @@ public class MongodbServiceImpl implements BaseService {
 
     @Override
     public <T> List<T> criteriaEq(Class<T> cls, String fieldName, Object filedValue) {
-        CriteriaQuery<T> criteriaQuery = CriteriaQueryFactory.creatCriteriaQuery(cls);
+        CriteriaQuery<T> criteriaQuery = new CriteriaQueryImpl<>(cls);
         criteriaQuery.eq(fieldName, filedValue);
         return findAll(criteriaQuery);
     }
 
     @Override
     public <T> List<T> criteriaIn(Class<T> cls, String fieldName, Object[] values) {
-        CriteriaQuery<T> criteriaQuery = CriteriaQueryFactory.creatCriteriaQuery(cls);
+        CriteriaQuery<T> criteriaQuery = new CriteriaQueryImpl<>(cls);
         criteriaQuery.in(fieldName, values);
         return findAll(criteriaQuery);
     }
@@ -308,15 +308,13 @@ public class MongodbServiceImpl implements BaseService {
         //MongoDB的Query查询构造器
         Query query = new Query();
         //遍历Myjdbc查询构造器，并适配成MongoDB的Query查询构造器
-        criteriaQuery.getCriteriaList().forEach(criteria -> {
+        criteriaQuery.getCriteriaMap().values().forEach(criteria -> {
             //查询条件
-            Criterion criterion = criteria.getCriterion();
+            List<Criterion> criterions = criteria.getCriterions();
             //限定字段名
-            String filedName = criterion.getFieldName();
-            //限定值
-            List<Object> values = criteria.getFieldValue();
+            String filedName = criteria.getFieldName();
             //获取匹配方式
-            getCriteria(query, values, filedName, criterion.getOp());
+            getCriteria(query, filedName, criterions);
         });
         //集合名称（可以认为是MongoDB中的数据库表名称）
         String collectionName = getModelName(criteriaQuery.getCls());
@@ -352,75 +350,83 @@ public class MongodbServiceImpl implements BaseService {
     /**
      * 匹配成mongoDB查询器
      *
-     * @param query     mongoDB查询器
-     * @param values    限定值
-     * @param filedName 限定字段名
-     * @param op        限定条件
+     * @param query         mongoDB查询器
+     * @param filedName     限定字段名
+     * @param criterionList 限定条件集
      * @return
      * @Author 陈文
      * @Date 2020/4/13  21:19
      */
-    private void getCriteria(Query query, List<Object> values, String filedName, OpType op) {
-        if (ListUtil.isEmpty(values)) {
-            throw new NullPointerException("限定值不能为空！");
+    private void getCriteria(Query query, String filedName, List<Criterion> criterionList) {
+        if (query == null) {
+            throw new NullPointerException("query-查询器不能为空！");
         }
 
-        //完全相等
-        if (op == OpType.EQ) {
-            if (values.size() > 1) {
-                throw new NullPointerException("同一个限定字段，EQ限定条件只允许有一个!");
+        if (StringUtil.isEmpty(filedName)) {
+            throw new NullPointerException("filedName-限定字段名不能为空！");
+        }
+
+        if (ListUtil.isEmpty(criterionList)) {
+            throw new NullPointerException("criterionList-限定条件不能为空！");
+        }
+        Criteria criteria = Criteria.where(filedName);
+
+        criterionList.forEach(criterion -> {
+            //限定条件
+            OpType op = criterion.getOp();
+            //限定值
+            List<Object> values = criterion.getFieldValue();
+            if (ListUtil.isEmpty(values)) {
+                throw new NullPointerException("限定值不能为空！");
             }
-            query.addCriteria(Criteria.where(filedName).is(values.get(0)));
-            return;
-        }
 
-        if (op == OpType.GT) {
-            if (values.size() > 1) {
-                throw new NullPointerException("同一个限定字段，GT限定条件只允许有一个!");
+            //完全相等
+            if (op == OpType.EQ) {
+                criteria.is(values.get(0));
+                return;
             }
-            query.addCriteria(Criteria.where(filedName).gt(values.get(0)));
-            return;
-        }
 
-        if (op == OpType.LT) {
-            if (values.size() > 1) {
-                throw new NullPointerException("同一个限定字段，LT限定条件只允许有一个!");
+            //模糊查询
+            if (op == OpType.LIKE) {
+                values.forEach(value -> {
+                    //正则表达式
+                    Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
+                    criteria.regex(pattern);
+                });
+                return;
             }
-            query.addCriteria(Criteria.where(filedName).lt(values.get(0)));
-            return;
-        }
 
-        if (op == OpType.GE) {
-            if (values.size() > 1) {
-                throw new NullPointerException("同一个限定字段，GE限定条件只允许有一个!");
+            //包含相等
+            if (op == OpType.IN) {
+                query.addCriteria(Criteria.where(filedName).in(values));
+                return;
             }
-            query.addCriteria(Criteria.where(filedName).gte(values.get(0)));
-            return;
-        }
 
-        if (op == OpType.LE) {
-            if (values.size() > 1) {
-                throw new NullPointerException("同一个限定字段，LE限定条件只允许有一个!");
+            //大于
+            if (op == OpType.GT) {
+                criteria.gt(values.get(0));
+                return;
             }
-            query.addCriteria(Criteria.where(filedName).lte(values.get(0)));
-            return;
-        }
 
-        //模糊查询
-        if (op == OpType.LIKE) {
-            values.forEach(value -> {
-                //正则表达式
-                Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
-                query.addCriteria(Criteria.where(filedName).regex(pattern));
-            });
-            return;
-        }
+            //小于
+            if (op == OpType.LT) {
+                criteria.lt(values.get(0));
+                return;
+            }
 
-        //包含相等
-        if (op == OpType.IN) {
-            query.addCriteria(Criteria.where(filedName).in(values));
-            return;
-        }
+            //大于等于
+            if (op == OpType.GE) {
+                criteria.gte(values.get(0));
+                return;
+            }
+
+            //小于等于
+            if (op == OpType.LE) {
+                criteria.lte(values.get(0));
+                return;
+            }
+        });
+        query.addCriteria(criteria);
     }
 
     @Override
