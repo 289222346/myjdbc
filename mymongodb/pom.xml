@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.myjdbc</groupId>
             <artifactId>core</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
 
         <!--mongoDB独有依赖Start-->
