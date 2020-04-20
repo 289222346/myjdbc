@@ -1,9 +1,13 @@
 package com.myjdbc.mymongodb.util;
 
 import com.myjdbc.core.util.ClassUtil;
+import com.myjdbc.core.util.StringUtil;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
@@ -13,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MongoDBUtil {
+public class MongoUtil {
 
     public static void main(String[] args) {
 //        UserExample userExample = new UserExample();
@@ -27,10 +31,10 @@ public class MongoDBUtil {
      * @return
      * @Author 陈文
      * @Date 2020/3/26  14:26
-     * @Description 获取MongoDB的Document文档
+     * @Description 获取Mongo的Document文档
      */
     public static <T> Document poToDocument(T t) {
-        Document document = new Document(MongoDBUtil.mongoDBPOToMap(t));
+        Document document = new Document(MongoUtil.mongoPOToMap(t));
         return document;
     }
 
@@ -40,7 +44,7 @@ public class MongoDBUtil {
      * @Date 2020/3/29  20:09
      * @Description 将对象属性反射成Map(Document)
      */
-    public static <T> Map<String, Object> mongoDBPOToMap(T obj) {
+    public static <T> Map<String, Object> mongoPOToMap(T obj) {
         Class<?> cls = obj.getClass();
         // 获取该类所有属性名
         List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
@@ -71,7 +75,7 @@ public class MongoDBUtil {
                 if (!ObjectUtils.isEmpty(value)) {
                     //若ID属性不为_id，则添加默认ID属性
                     Id id = field.getAnnotation(Id.class);
-                    //存在Id注解，则为主键，MongoDB中默认主键为_id（带索引）
+                    //存在Id注解，则为主键，Mongo中默认主键为_id（带索引）
                     if (id != null && !"_id".equals(fieldName)) {
                         map.put("_id", value);
                     } else {
@@ -91,6 +95,40 @@ public class MongoDBUtil {
             }
         }
         return map;
+    }
+
+    /**
+     * 获取模型名称(数据库表名)
+     *
+     * @Author: 陈文
+     * @Date: 2020/4/20 11:26
+     */
+    public static String getModelName(Class cls) {
+        ApiModel apiModel = (ApiModel) cls.getAnnotation(ApiModel.class);
+        String modelName = null;
+        if (apiModel != null) {
+            //collectionName
+            modelName = apiModel.value();
+        }
+        if (StringUtil.isEmpty(modelName)) {
+            modelName = cls.getSimpleName();
+        }
+        return modelName;
+    }
+
+    /**
+     * 将{@link Map}转换成 {@link Query}。
+     * 内容示意：Map{key,value} 其中{@see key} 是字段名，{@see value} 是限定值。限定条件全部为EQ(完全相等)
+     *
+     * @Author: 陈文
+     * @Date: 2020/4/20 12:40
+     */
+    public static Query mapToQuery(Map<String, Object> map) {
+        Query query = new Query();
+        map.forEach((key, value) -> {
+            query.addCriteria(Criteria.where(key).is(value));
+        });
+        return query;
     }
 
 }
