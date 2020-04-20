@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * 基础数据服务层的Mongodb实现
  * {@code actionRetrieve} 是查询操作
- * {@code actionSaveAndUpdate} 是增删改操作
+ * {@code actionSaveAndUpdate} 是增删操作
  * <p>
  * {@link MongoTemplate} 本实现，完全依赖于spring框架下的mongo模板，底层完全使用该模板。
  * 本实现的作用是使myjdbc用户保持一致的操作习惯，而不用关系mongo底层原理(包括mongodb模板).

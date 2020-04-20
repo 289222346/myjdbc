@@ -1,14 +1,28 @@
 package com.myjdbc.core.constants;
 
-
+/**
+ * 数据库类型
+ *
+ * @Author: 陈文
+ * @Date: 2020/4/20 12:24
+ */
 public enum DBType {
 
     ORACLE("oracle", "Oracle数据库", "oracle.jdbc.OracleDriver"),
     MYSQL("mysql", "MySql数据库", "com.mysql.jdbc.Driver"),
-    MONGODB("mongodb", "MongoDB数据库", "mongodb");
+    MONGO("mongodb", "MongoDB数据库", null);
 
+    /**
+     * 配置文件中应该填写得类型名
+     */
     private String code;
+    /**
+     * 备注
+     */
     private String remark;
+    /**
+     * 驱动
+     */
     private String driver;
 
     DBType(String code, String remark, String driver) {
@@ -37,17 +51,4 @@ public enum DBType {
         }
         return (DBType) PropertiesJDBC.DB_TYPE.getDefaultValue();
     }
-
-//    public SqlGenerator getSqlGenerator() {
-//        SqlGenerator sqlGenerator = null;
-//        try {
-//            sqlGenerator = sqlGeneratorClass.newInstance();
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//        return sqlGenerator;
-//    }
-
 }

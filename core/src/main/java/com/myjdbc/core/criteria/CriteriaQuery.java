@@ -5,7 +5,6 @@ import com.myjdbc.core.entity.Criteria;
 import com.myjdbc.core.entity.OrderBo;
 import com.myjdbc.core.entity.Pag;
 
-import java.util.List;
 import java.util.Map;
 
 /**

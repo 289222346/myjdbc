@@ -9,35 +9,39 @@ package com.myjdbc.core.service;
 public interface BaseServiceType {
 
     /**
-     * 操作结果：保存成功
+     * 操作结果：操作成功
      */
     int SUCCESS = 0;
     /**
-     * 操作结果：保存失败，没有ApiModel注解
+     * 操作结果：操作失败，没有ApiModel注解
      */
     int FAILURE_LACK_MODEL = 1;
     /**
-     * 操作结果：保存失败，ID冲突
+     * 操作结果：操作失败，ID冲突
      */
     int FAILURE_ID_CLASH = 2;
     /**
-     * 操作结果：保存失败，对象所有属性为空
+     * 操作结果：操作失败，对象所有属性为空
      */
     int FAILURE_ALL_NULL = 3;
     /**
-     * 操作结果：保存失败，IP属性为空
+     * 操作结果：操作失败，IP属性为空
      */
     int FAILURE_IP_NULL = 4;
     /**
-     * 操作结果：保存失败，内部错误
+     * 操作结果：操作失败，内部错误
      */
     int FAILURE_INSIDE_ERROR = 5;
     /**
-     * 操作结果：保存失败，不允许传入集合
+     * 操作结果：操作失败，不允许传入集合
      */
     int FAILURE_NO_LIST = 6;
     /**
-     * 操作结果：保存失败，非法操作
+     * 操作结果：操作失败，找不到没有数据
+     */
+    int FAILURE_NO_DATA = 7;
+    /**
+     * 操作结果：操作失败，非法操作
      */
     int FAILURE_TYPE_NULL = 99;
 
@@ -49,6 +53,7 @@ public interface BaseServiceType {
             "操作失败，IP属性为空",
             "操作失败，内部错误",
             "操作失败，不允许传入集合",
+            "操作失败，找不到没有数据",
             "操作失败，非法操作"
     };
 

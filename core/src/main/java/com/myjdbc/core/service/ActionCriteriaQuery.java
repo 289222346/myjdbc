@@ -5,16 +5,15 @@ import com.myjdbc.core.criteria.CriteriaQuery;
 import java.util.List;
 
 /**
- * 公共数据库服务层
+ * 查询构造器操作
+ * <p>
+ * 本接口提供查询构造器的操作，依赖于{@link CriteriaQuery}查询构造器接口
  *
  * @author 陈文
- * @Description 查询构造器使用接口，该接口的实现类都应该使用查询构造器
- * 现支持数据库：
- * 1.Oracle
- * 2.Mysql
- * 3.MongoDB
+ * @version 1.0.4
+ * @Date: 2020/4/20 8:45
  */
-public interface BaseServiceCriteriaQuery {
+public interface ActionCriteriaQuery {
 
     /**
      * 返回条件查询语句(单字段查询)
@@ -42,6 +41,7 @@ public interface BaseServiceCriteriaQuery {
     <T> List<T> criteriaIn(Class<T> cls, String fieldName, Object[] values);
 
     /**
+     * @param criteriaQuery 查询构造器
      * @Author 陈文
      * @Date 2019/12/3  16:48
      * @Description 查询表中符合要求的数据

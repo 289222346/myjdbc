@@ -1,20 +1,24 @@
 package com.myjdbc.core.service;
 
+import com.myjdbc.core.criteria.CriteriaQuery;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 保存或者更新操作
- * * 现支持数据库：
- * 1.Oracle
- * 2.Mysql
- * 3.MongoDB
+ * <p>
+ * 本接口提供数据存储、修改、删除的操作
+ * <p>
+ * 两个方法会与其他接口存在耦合：
+ * {@link #findAllAndDelete(Class, Map)}和{@link #findAllAndDelete(CriteriaQuery)}
  *
  * @author 陈文
- * @Date 2020/4/11  17:21
+ * @version 1.0.4
+ * @Date: 2020/4/20 8:45
  */
-
-public interface ActionSaveAndUpdate extends BaseServiceRetrieve {
+public interface ActionSaveAndUpdate extends BaseServiceType {
 
     /**
      * 动作状态：保存
@@ -47,12 +51,12 @@ public interface ActionSaveAndUpdate extends BaseServiceRetrieve {
     /**
      * 批量保存实体
      *
-     * @param t 需要更新的实体
+     * @param list 需要更新的实体集合
      * @return 操作结果状态码
      * @author ChenWen
      * @date 2019/7/12 16:21
      */
-    <T> int batchSave(List<T> t);
+    <T> int batchSave(List<T> list);
 
     /**
      * 更新实体（只替换非空字段）
@@ -107,6 +111,32 @@ public interface ActionSaveAndUpdate extends BaseServiceRetrieve {
      * @description 依据主键来删除
      */
     <T> int batchDelete(List<T> list);
+
+    /**
+     * 删除实体
+     * 该方法是带有查询限制条件的删除方法
+     *
+     * @param cls   实体类
+     * @param query 查询条件,Map<key,value>{@see key} 字段名，{@see value} 限定值。限定条件全部为EQ(完全相等)
+     * @return 查询到的结果集（已经删除）
+     * @Author 陈文
+     * @Date: 2020/4/20 8:29
+     * @description 本方法查询条件应该始终和 {@link ActionRetrieve#findAll(Class, Map)} 保持一致
+     */
+    <T> List<T> findAndDelete(Class<T> cls, Map<String, Object> query);
+
+    /**
+     * 删除实体
+     * 该方法是带有查询限制条件的删除方法
+     *
+     * @param criteriaQuery 查询构造器
+     * @return 查询到的结果集（已经删除）
+     * @Author 陈文
+     * @Date: 2020/4/20 8:29
+     * @description 本方法查询条件应该始终和 {@link ActionCriteriaQuery#findAll(CriteriaQuery)} 保持一致
+     */
+    <T> List<T> findAndDelete(CriteriaQuery<T> criteriaQuery);
+
 
 }
 

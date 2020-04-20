@@ -18,10 +18,6 @@ import java.sql.SQLException;
  * @Date 2020/4/8  10:28
  * @return
  * @Description 事务管理接口
- * 现支持数据库：
- * 1.Oracle
- * 2.Mysql
- * 3.MongoDB
  */
 public interface ActionTransaction {
 
