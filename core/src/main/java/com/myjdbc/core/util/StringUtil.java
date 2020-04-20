@@ -11,7 +11,7 @@ public class StringUtil {
      * @author Robin Chang
      */
     public static boolean isEmpty(String s) {
-        if (s != null && !s.equals("")) {
+        if (null != s && !"".equals(s)) {
             return false;
         }
         return true;
@@ -25,7 +25,7 @@ public class StringUtil {
      */
     public static boolean isNotEmpty(Object str) {
         boolean flag = true;
-        if (str != null && !str.equals("")) {
+        if (null != str && !"".equals(str)) {
             if (str.toString().length() > 0) {
                 flag = true;
             }

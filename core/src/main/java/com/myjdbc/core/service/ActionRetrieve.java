@@ -44,7 +44,7 @@ public interface ActionRetrieve extends ActionCriteriaQuery {
      * 查询表中符合条件的数据
      *
      * @param cls   实体类
-     * @param query 查询条件,Map<key,value>{@see key} 字段名，{@see value} 限定值。限定条件全部为EQ(完全相等)
+     * @param query 查询条件,Map<key,value>{@code key} 字段名，{@code value} 限定值。限定条件全部为EQ(完全相等)
      * @return List<T>  T实体集合，当查询不到数据时为Null
      * @author 陈文
      * @date 2019/7/15 8:57

@@ -8,7 +8,6 @@ import java.net.NetworkInterface;
 
 
 /**
- *
  * @Author 陈文
  * @Date 2020/3/26  11:25
  * @return
@@ -160,7 +159,7 @@ public class MacAddressAPI {
     }
 
     public static boolean isNull(Object strData) {
-        if (strData == null || String.valueOf(strData).trim().equals("")) {
+        if (strData == null || "".equals(String.valueOf(strData).trim())) {
             return true;
         }
         return false;

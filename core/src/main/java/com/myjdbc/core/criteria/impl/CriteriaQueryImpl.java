@@ -6,8 +6,6 @@ import com.myjdbc.core.entity.Criteria;
 import com.myjdbc.core.entity.OrderBo;
 import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.criteria.CriteriaQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +18,6 @@ import java.util.Map;
  * @Date: 2020/4/18 14:22
  */
 public class CriteriaQueryImpl<T> implements CriteriaQuery {
-    private static final Logger logger = LoggerFactory.getLogger(CriteriaQueryImpl.class);
 
     /**
      * 分页属性
@@ -35,7 +32,7 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
      */
     protected final T queryT;
     /**
-     * 查询条件
+     * 查询条件集合
      */
     protected final Map<String, Criteria> criteriaMap = new HashMap<>();
     /**
@@ -58,6 +55,16 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
         this.queryT = queryT;
     }
 
+    /**
+     * 添加一个查询标准
+     * <p>
+     * 话分两头，情况分两种。
+     * 1.{@code criteriaMap}查询标准集合中没有该字段的查询标准，则将该标准添加进去
+     * 2.{@code criteriaMap}查询标准集合中已经有该字段的查询标准，
+     * 则将该标准的查询条件添加给已有标准，让已有标准成为条件集合。
+     *
+     * @param criteria 一个查询标准
+     */
     private void add(Criteria criteria) {
         String filedName = criteria.getFieldName();
         if (criteriaMap.containsKey(filedName)) {

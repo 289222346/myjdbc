@@ -117,7 +117,7 @@ public interface ActionSaveAndUpdate extends BaseServiceType {
      * 该方法是带有查询限制条件的删除方法
      *
      * @param cls   实体类
-     * @param query 查询条件,Map<key,value>{@see key} 字段名，{@see value} 限定值。限定条件全部为EQ(完全相等)
+     * @param query 查询条件,Map<key,value>{@code key} 字段名，{@code value} 限定值。限定条件全部为EQ(完全相等)
      * @return 查询到的结果集（已经删除）
      * @Author 陈文
      * @Date: 2020/4/20 8:29

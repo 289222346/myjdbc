@@ -6,9 +6,17 @@ package com.myjdbc.core.constants;
  * @author 陈文
  * @date 2019/7/15 11:00
  */
+@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum OrderType {
-    ASC(0, " ASC ","正序排列"),
-    DESC(1, " DESC ","倒序排列");
+
+    /**
+     * 升序排列
+     */
+    ASC(0, " ASC ", "升序排列"),
+    /**
+     * 降序排列
+     */
+    DESC(1, " DESC ", "降序排列");
 
     private int code;
     private String value;

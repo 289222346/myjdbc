@@ -5,8 +5,12 @@ package com.myjdbc.core.constants;
  * @Date 2019/12/26  9:48
  * @Description 所有配置文件记载
  */
+@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum PropertiesFile {
 
+    /**
+     * JDBC配置文件
+     */
     JDBC("dbconfig.properties", "JDBC配置文件");
 
     private String code;

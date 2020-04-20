@@ -3,8 +3,6 @@ package com.myjdbc.mymongodb.service.impl;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +22,6 @@ public class MyMongoRetrieveImpl extends MyMongoCriteriaQueryImpl implements Act
         super(mongoTemplate);
         this.mongoTemplate = mongoTemplate;
     }
-
 
     @Override
     public <T> T findById(Class<T> cls, Serializable id) {

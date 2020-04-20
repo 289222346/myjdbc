@@ -6,10 +6,20 @@ package com.myjdbc.core.constants;
  * @Author: 陈文
  * @Date: 2020/4/20 12:24
  */
+@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum DBType {
 
+    /**
+     * Oracle数据库
+     */
     ORACLE("oracle", "Oracle数据库", "oracle.jdbc.OracleDriver"),
+    /**
+     * MySql数据库
+     */
     MYSQL("mysql", "MySql数据库", "com.mysql.jdbc.Driver"),
+    /**
+     * MongoDB数据库
+     */
     MONGO("mongodb", "MongoDB数据库", null);
 
     /**

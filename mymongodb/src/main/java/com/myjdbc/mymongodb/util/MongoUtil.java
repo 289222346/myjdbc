@@ -118,7 +118,7 @@ public class MongoUtil {
 
     /**
      * 将{@link Map}转换成 {@link Query}。
-     * 内容示意：Map{key,value} 其中{@see key} 是字段名，{@see value} 是限定值。限定条件全部为EQ(完全相等)
+     * 内容示意：Map{key,value} 其中{@code key} 是字段名，{@code value} 是限定值。限定条件全部为EQ(完全相等)
      *
      * @Author: 陈文
      * @Date: 2020/4/20 12:40
