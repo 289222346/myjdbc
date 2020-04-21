@@ -27,9 +27,9 @@ import java.util.Map;
  */
 public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
 
-    private  MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
 
-    private  ActionRetrieve actionRetrieve;
+    private ActionRetrieve actionRetrieve;
 
     public MyMongoSaveAndUpdateImpl(MongoTemplate mongoTemplate, ActionRetrieve actionRetrieve) {
         this.mongoTemplate = mongoTemplate;
@@ -153,15 +153,15 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             }
             //序列化ID
             Serializable id = (Serializable) document.get("_id");
-            if (ObjectUtils.isEmpty(id)) {
-                //保存失败，IP属性为空
+            if (actionType != ActionSaveAndUpdate.ACTION_SAVE && ObjectUtils.isEmpty(id)) {
+                //操作失败，IP属性为空
                 return FAILURE_IP_NULL;
             }
             /**
              * 进入对应操作
              */
             if (actionType == ActionSaveAndUpdate.ACTION_SAVE) {
-                //执行更新操作
+                //执行保存操作
                 return saveAction(id, document, collectionName, t.getClass());
             }
             if (actionType == ActionSaveAndUpdate.ACTION_UPDATE) {
