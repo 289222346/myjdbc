@@ -187,10 +187,12 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
      * @Description 保存操作
      */
     private <T> int saveAction(Serializable id, Document document, String collectionName, Class<T> cls) {
-        T tempT = actionRetrieve.findById(cls, id);
-        if (tempT != null) {
-            //保存失败，ID冲突
-            return FAILURE_ID_CLASH;
+        if (id != null) {
+            T tempT = actionRetrieve.findById(cls, id);
+            if (tempT != null) {
+                //保存失败，ID冲突
+                return FAILURE_ID_CLASH;
+            }
         }
         mongoTemplate.getCollection(collectionName).insertOne(document);
         //保存成功
