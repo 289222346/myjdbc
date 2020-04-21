@@ -6,7 +6,7 @@
 
     <groupId>com.myjdbc</groupId>
     <artifactId>mymongodb</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <packaging>jar</packaging>
     <name>mymongodb</name>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.myjdbc</groupId>
             <artifactId>core</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.8</version>
         </dependency>
 
         <!--mongoDB独有依赖Start-->
@@ -55,6 +55,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.10.2</version>
         </dependency>
         <!--mongoDB独有依赖End-->
         <!--临时引用Start-->

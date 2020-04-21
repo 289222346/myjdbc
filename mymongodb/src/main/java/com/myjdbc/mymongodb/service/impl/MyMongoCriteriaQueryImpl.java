@@ -7,17 +7,26 @@ import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
 import com.myjdbc.core.entity.Criterion;
 import com.myjdbc.core.entity.OrderBo;
 import com.myjdbc.core.service.ActionCriteriaQuery;
+import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.mymongodb.util.MongoUtil;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import net.bytebuddy.description.annotation.AnnotationDescription.AnnotationInvocationHandler;
 
 import java.util.List;
 import java.util.regex.Pattern;
+
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.Map;
 
 /**
  * mongodb的查询构造器操作实现类
@@ -89,6 +98,23 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
         }
         List<T> list = mongoTemplate.find(query, criteriaQuery.getCls(), collectionName);
         return list;
+    }
+
+    private void ss(java.lang.reflect.Field field) throws NoSuchFieldException, IllegalAccessException {
+        ComponentScan componentScan = field.getAnnotation(ComponentScan.class);
+        InvocationHandler invocationHandler = Proxy.getInvocationHandler(componentScan);
+
+        java.lang.reflect.Field value = invocationHandler.getClass().getDeclaredField("memberValues");
+        value.setAccessible(true);
+        Map<String, Object> memberValues = (Map<String, Object>) value.get(invocationHandler);
+
+        String[] values = (String[]) memberValues.get("value");
+
+        String[] newValues = new String[values.length + 1];
+        System.arraycopy(values, 0, newValues, 0, values.length);
+        newValues[newValues.length - 1] = "cn.jiangzeyin";
+
+        memberValues.put("value", newValues);
     }
 
 
