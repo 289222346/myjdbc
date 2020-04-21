@@ -39,7 +39,9 @@ public class Criterion {
      */
     public Criterion(OpType op, Object[] fieldValues) {
         this.op = op;
-        this.fieldValue.addAll(fieldValue);
+        for (Object fieldValue : fieldValues) {
+            this.fieldValue.add(fieldValue);
+        }
     }
 
     public OpType getOp() {
