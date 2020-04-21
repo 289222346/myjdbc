@@ -2,6 +2,7 @@ package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
  * @Date: 2020/4/20 10:59
  */
 public class MyMongoAction {
-
     /**
      * 查询操作
      *
@@ -29,8 +29,10 @@ public class MyMongoAction {
     protected ActionSaveAndUpdate actionSaveAndUpdate;
 
 
-    public MyMongoAction(MongoTemplate mongoTemplate) {
-        actionRetrieve = new MyMongoRetrieveImpl(mongoTemplate);
+    protected MyMongoAction(MongoTemplate mongoTemplate, String ip, int port, String databaseName) {
+        //暂时写死，等到需要时在做成配置文件
+        MongoDAO dao = new MongoDAO(ip, port, databaseName);
+        actionRetrieve = new MyMongoRetrieveImpl(mongoTemplate, dao);
         actionSaveAndUpdate = new MyMongoSaveAndUpdateImpl(mongoTemplate, actionRetrieve);
     }
 

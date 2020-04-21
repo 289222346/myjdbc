@@ -2,6 +2,8 @@ package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.service.BaseService;
+//import com.myjdbc.mymongodb.dao.MongoDAO;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ public class MongodbServiceImpl extends MyMongoAction implements BaseService {
 
     @Autowired
     public MongodbServiceImpl(MongoTemplate mongoTemplate) {
-        super(mongoTemplate);
+        super(mongoTemplate, "localhost", 27017, "imapi");
     }
 
     @Override

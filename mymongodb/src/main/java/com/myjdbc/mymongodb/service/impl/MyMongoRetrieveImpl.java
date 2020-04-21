@@ -1,6 +1,7 @@
 package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.service.ActionRetrieve;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -16,11 +17,9 @@ import java.util.Map;
  */
 public class MyMongoRetrieveImpl extends MyMongoCriteriaQueryImpl implements ActionRetrieve {
 
-    private MongoTemplate mongoTemplate;
 
-    public MyMongoRetrieveImpl(MongoTemplate mongoTemplate) {
-        super(mongoTemplate);
-        this.mongoTemplate = mongoTemplate;
+    public MyMongoRetrieveImpl(MongoTemplate mongoTemplate, MongoDAO dao) {
+        super(mongoTemplate, dao);
     }
 
     @Override

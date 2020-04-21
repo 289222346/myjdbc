@@ -97,7 +97,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             Query query = new Query();
             List<Serializable> ids = new ArrayList<>();
             for (T t : list) {
-                Document document = MongoUtil.poToDocument(t);
+                Document document = MongoUtil.mongoPOJOToDocument(t);
                 Serializable id = (Serializable) document.get("_id");
                 ids.add(id);
             }
@@ -146,14 +146,14 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             //表（集合）名
             String collectionName = apiModel.value();
             //要保存的mongoDB文件（对象）
-            Document document = MongoUtil.poToDocument(t);
+            Document document = MongoUtil.mongoPOJOToDocument(t);
             if (document == null || document.size() == 0) {
                 //保存失败，对象所有属性为空
                 return FAILURE_ALL_NULL;
             }
             //序列化ID
             Serializable id = (Serializable) document.get("_id");
-            if (actionType != ActionSaveAndUpdate.ACTION_SAVE && ObjectUtils.isEmpty(id)) {
+            if (ObjectUtils.isEmpty(id)) {
                 //操作失败，IP属性为空
                 return FAILURE_IP_NULL;
             }
@@ -187,13 +187,12 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
      * @Description 保存操作
      */
     private <T> int saveAction(Serializable id, Document document, String collectionName, Class<T> cls) {
-        if (id != null) {
-            T tempT = actionRetrieve.findById(cls, id);
-            if (tempT != null) {
-                //保存失败，ID冲突
-                return FAILURE_ID_CLASH;
-            }
+        T tempT = actionRetrieve.findById(cls, id);
+        if (tempT != null) {
+            //保存失败，ID冲突
+            return FAILURE_ID_CLASH;
         }
+
         mongoTemplate.getCollection(collectionName).insertOne(document);
         //保存成功
         return SUCCESS;
