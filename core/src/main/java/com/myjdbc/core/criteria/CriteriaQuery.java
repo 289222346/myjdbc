@@ -16,6 +16,15 @@ import java.util.Map;
 public interface CriteriaQuery<T> {
 
     /**
+     * 获取查询实体
+     * 该实体在实现构造器时传入
+     * 为实现不同数据库实现之间的解耦，对查询实体的操作，由具体数据库业务层来执行
+     *
+     * @return 查询实体
+     */
+    T getQueryT();
+
+    /**
      * 执行 {@literal $eq} 相等运算
      *
      * @param fieldName 限定字段
@@ -84,6 +93,20 @@ public interface CriteriaQuery<T> {
      * @Description 两个字段内容完全相等，例如SELECT * FROM TABLE WHERE TABLE.A=TABLE.B
      */
     void eqProperty(String fieldName, String fieldName2);
+
+    /**
+     * 指定字段要 等于 空值 Null 或者 空字符串
+     *
+     * @param fieldName 限定字段
+     */
+    void isNull(String fieldName);
+
+    /**
+     * 指定字段要 不等于 空值 Null 或者 空字符串
+     *
+     * @param fieldName 限定字段
+     */
+    void isNotNull(String fieldName);
 
     /**
      * 获取排序规则

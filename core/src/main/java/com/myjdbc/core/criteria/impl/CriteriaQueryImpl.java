@@ -22,30 +22,37 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     /**
      * 分页属性
      */
-    protected Pag pag;
+    private Pag pag;
     /**
      * 查询实体
      */
-    protected final Class<T> cls;
+    private final Class<T> cls;
     /**
      * 实体查询条件
      */
-    protected final T queryT;
+    private final T queryT;
     /**
      * 查询条件集合
      */
-    protected final Map<String, Criteria> criteriaMap = new HashMap<>();
+    private final Map<String, Criteria> criteriaMap = new HashMap<>();
     /**
      * 排序条件
      */
-    protected OrderBo orderBo;
+    private OrderBo orderBo;
 
+    /**
+     * 基本构造器
+     *
+     * @param cls 查询数据的类型
+     */
     public CriteriaQueryImpl(Class<T> cls) {
         this.cls = cls;
         queryT = null;
     }
 
     /**
+     * @param cls    查询数据的类型
+     * @param queryT 查询条件（EQ匹配）
      * @Author 陈文
      * @Date 2019/12/10  10:53
      * @Description 实体中的参数转换成eq参数
@@ -53,6 +60,11 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     public CriteriaQueryImpl(Class<T> cls, T queryT) {
         this.cls = cls;
         this.queryT = queryT;
+    }
+
+    @Override
+    public T getQueryT() {
+        return queryT;
     }
 
     /**
@@ -107,6 +119,16 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     @Override
     public void in(String fieldName, Object... value) {
         add(Restrictions.in(fieldName, value));
+    }
+
+    @Override
+    public void isNull(String fieldName) {
+        add(Restrictions.isNull(fieldName));
+    }
+
+    @Override
+    public void isNotNull(String fieldName) {
+        add(Restrictions.isNotNull(fieldName));
     }
 
     @Override

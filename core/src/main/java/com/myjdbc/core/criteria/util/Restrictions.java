@@ -4,6 +4,7 @@ package com.myjdbc.core.criteria.util;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.entity.Criteria;
 import com.myjdbc.core.entity.Criterion;
+
 /**
  * 限制条件标准生成器
  *
@@ -89,6 +90,28 @@ public class Restrictions {
     public static Criteria in(String fieldName, Object... values) {
         return getCriteria(fieldName, OpType.IN, values);
     }
+
+
+    /**
+     * 等于空值
+     *
+     * @param fieldName 限定字段名
+     * @return 字段查询条件
+     */
+    public static Criteria isNull(String fieldName) {
+        return getCriteria(fieldName, OpType.IS_NULL);
+    }
+
+    /**
+     * 不等于空值
+     *
+     * @param fieldName 限定字段名
+     * @return 字段查询条件
+     */
+    public static Criteria isNotNull(String fieldName) {
+        return getCriteria(fieldName, OpType.IS_NOT_NULL);
+    }
+
 
     /**
      * 模糊匹配

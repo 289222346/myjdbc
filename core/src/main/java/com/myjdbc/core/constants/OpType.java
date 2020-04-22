@@ -39,7 +39,15 @@ public enum OpType {
     /**
      * 属性匹配
      */
-    EQ_PROPERTY(7, "属性匹配");
+    EQ_PROPERTY(7, "属性匹配"),
+    /**
+     * 等于空值
+     */
+    IS_NULL(7, "等于空值"),
+    /**
+     * 不等于空值
+     */
+    IS_NOT_NULL(8, "不等于空值");
 
     /**
      * 运算符编码

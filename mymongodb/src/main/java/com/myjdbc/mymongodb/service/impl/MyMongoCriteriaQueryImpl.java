@@ -1,5 +1,6 @@
 package com.myjdbc.mymongodb.service.impl;
 
+import ch.qos.logback.classic.layout.TTLLLayout;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
@@ -61,6 +62,7 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
 
     @Override
     public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery) {
+        criteriaQuery = spliceCriteriaQuery(criteriaQuery);
         //MongoDB的Query查询构造器
         BasicDBObject query = new BasicDBObject();
         //遍历Myjdbc查询构造器，并适配成MongoDB的Query查询构造器
@@ -76,32 +78,14 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
         String collectionName = MongoUtil.getModelName(criteriaQuery.getCls());
         //判断是否需要分页
 //        if (criteriaQuery.getPag() != null) {
-//            //总数据量
+        //总数据量
 //            long total = mongoTemplate.count(query, collectionName);
 //            criteriaQuery.setTotal(total);
-//            //当前页
-//            int page = criteriaQuery.getPage();
-//            //每页显示数据
-//            int rows = criteriaQuery.getRows();
-//            //分页查询条件
-//            query.with(PageRequest.of(page, rows));
-//        }
-        //判断是否需要排序
-//        if (criteriaQuery.getOrder() != null) {
-//            OrderBo order = criteriaQuery.getOrder();
-//            if (order.getOrderType().equals(OrderType.ASC)) {
-//                for (String string : order.getFieldNames()) {
-//                    query.with(Sort.by(Sort.Order.asc(string)));
-//                }
-//            } else {
-//                for (String string : order.getFieldNames()) {
-//                    query.with(Sort.by(Sort.Order.desc(string)));
-//                }
-//            }
 //        }
 
+
 //        List<T> list = mongoTemplate.find(query, criteriaQuery.getCls(), collectionName);
-        List<T> list = dao.find(query, criteriaQuery.getCls());
+        List<T> list = dao.find(query, criteriaQuery.getCls(), criteriaQuery.getPag(), criteriaQuery.getOrder());
         return list;
     }
 
@@ -126,10 +110,22 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
         criterionList.forEach(criterion -> {
             //限定条件
             OpType op = criterion.getOp();
+
+            //字段值为空匹配
+            if (op == OpType.IS_NULL) {
+                query.append(filedName, new BasicDBObject("$exists", false));
+                return;
+            }
+
+            if (op == OpType.IS_NOT_NULL) {
+                query.append(filedName, new BasicDBObject("$exists", true));
+                return;
+            }
+
             //限定值
             List<Object> values = criterion.getFieldValue();
             if (ListUtil.isEmpty(values)) {
-                throw new NullPointerException("限定值不能为空！");
+                throw new NullPointerException(op.getRemark() + "  限定条件,限定值不能为空！");
             }
 
             //完全相等
@@ -143,8 +139,7 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
                 values.forEach(value -> {
                     //正则表达式
                     Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
-                    query.append(filedName, new BasicDBObject("$gt", values.get(0)));
-
+                    query.append(filedName, new BasicDBObject("$regex", pattern));
                 });
                 return;
             }
@@ -181,88 +176,17 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
         });
     }
 
-    /**
-     * 匹配成mongoDB查询器
-     *
-     * @param query         mongoDB查询器
-     * @param filedName     限定字段名
-     * @param criterionList 限定条件集
-     * @return
-     * @Author 陈文
-     * @Date 2020/4/13  21:19
-     */
-//    @Deprecated
-//    private void getCriteria(Query query, String filedName, List<Criterion> criterionList) {
-//        if (query == null) {
-//            throw new NullPointerException("query-查询器不能为空！");
-//        }
-//
-//        if (StringUtil.isEmpty(filedName)) {
-//            throw new NullPointerException("filedName-限定字段名不能为空！");
-//        }
-//
-//        if (ListUtil.isEmpty(criterionList)) {
-//            throw new NullPointerException("criterionList-限定条件不能为空！");
-//        }
-//        Criteria criteria = Criteria.where(filedName);
-//
-//        criterionList.forEach(criterion -> {
-//            //限定条件
-//            OpType op = criterion.getOp();
-//            //限定值
-//            List<Object> values = criterion.getFieldValue();
-//            if (ListUtil.isEmpty(values)) {
-//                throw new NullPointerException("限定值不能为空！");
-//            }
-//
-//            //完全相等
-//            if (op == OpType.EQ) {
-//                criteria.is(values.get(0));
-//                return;
-//            }
-//
-//            //模糊查询
-//            if (op == OpType.LIKE) {
-//                values.forEach(value -> {
-//                    //正则表达式
-//                    Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
-//                    criteria.regex(pattern);
-//                });
-//                return;
-//            }
-//
-//            //包含相等
-//            if (op == OpType.IN) {
-//                criteria.in(values);
-//                return;
-//            }
-//
-//            //大于
-//            if (op == OpType.GT) {
-//                criteria.gt(values.get(0));
-//                return;
-//            }
-//
-//            //小于
-//            if (op == OpType.LT) {
-//                criteria.lt(values.get(0));
-//                return;
-//            }
-//
-//            //大于等于
-//            if (op == OpType.GE) {
-//                criteria.gte(values.get(0));
-//                return;
-//            }
-//
-//            //小于等于
-//            if (op == OpType.LE) {
-//                criteria.lte(values.get(0));
-//                return;
-//            }
-//        });
-//        query.addCriteria(criteria);
-//    }
+    private <T> CriteriaQuery<T> spliceCriteriaQuery(CriteriaQuery<T> criteriaQuery) {
+        T t = criteriaQuery.getQueryT();
+        if (t == null) {
+            return criteriaQuery;
+        }
+        Document document = MongoUtil.mongoPOJOToDocument(t);
+        document.forEach((fieldName, value) -> {
+            criteriaQuery.eq(fieldName, value);
+        });
+        return criteriaQuery;
+    }
 
 
 }
