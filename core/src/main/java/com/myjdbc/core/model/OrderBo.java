@@ -1,4 +1,4 @@
-package com.myjdbc.core.entity;
+package com.myjdbc.core.model;
 
 
 import com.myjdbc.core.constants.OrderType;

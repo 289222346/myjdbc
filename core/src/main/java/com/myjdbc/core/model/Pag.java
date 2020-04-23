@@ -1,4 +1,4 @@
-package com.myjdbc.core.entity;
+package com.myjdbc.core.model;
 
 public class Pag {
     private long total = 0;//总记录数

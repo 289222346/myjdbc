@@ -6,12 +6,11 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.myjdbc.core.constants.OrderType;
-import com.myjdbc.core.entity.OrderBo;
-import com.myjdbc.core.entity.Pag;
+import com.myjdbc.core.model.OrderBo;
+import com.myjdbc.core.model.Pag;
+import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
-import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +44,26 @@ public class MongoDAO {
         return find(null, cls, null, null);
     }
 
+    public <T> List<T> find(BasicDBObject query, Class<T> cls) {
+        return find(query, cls, null, null);
+    }
+
+    public <T> List<T> find(BasicDBObject query, Class<T> cls, Pag pag) {
+        return find(query, cls, pag, null);
+    }
+
+    public long findCount(BasicDBObject query, String collectionName) {
+        return findCount(query, getMongoCollection(collectionName));
+    }
+
+    public long findCount(MongoCollection collection) {
+        return collection.countDocuments();
+    }
+
+    public long findCount(BasicDBObject query, MongoCollection collection) {
+        return collection.countDocuments(query);
+    }
+
     /**
      * @param query 查询过滤器
      * @param cls   指定实体类型
@@ -54,14 +73,12 @@ public class MongoDAO {
      * @Date 2020/4/21  19:22
      */
     public <T> List<T> find(BasicDBObject query, Class<T> cls, Pag pag, OrderBo order) {
-        String collectionName = MongoUtil.getModelName(cls);
-        //获取mongo集合
-        MongoCollection collection = mongoDatabase.getCollection(collectionName);
+        MongoCollection collection = getMongoCollection(cls);
         //查询迭代器
         FindIterable findIterable = collection.find(query);
         //添加分页
         if (pag != null) {
-            long total = collection.countDocuments(query);
+            long total = collection.countDocuments();
             pag.setTotal(total);
             int page = (pag.getPage() * pag.getRows());
             int rows = pag.getRows();
@@ -92,6 +109,30 @@ public class MongoDAO {
             }
         }
         return list;
+    }
+
+    /**
+     * 获取mongo集合
+     *
+     * @param collectionName 数据集合名称（数据库表名）
+     * @return
+     */
+    private MongoCollection getMongoCollection(String collectionName) {
+        MongoCollection collection = mongoDatabase.getCollection(collectionName);
+        return collection;
+    }
+
+    /**
+     * 获取mongo集合
+     *
+     * @param cls 实体类
+     * @return
+     */
+    private MongoCollection getMongoCollection(Class cls) {
+        String collectionName = ModelUtil.getModelName(cls);
+        //获取mongo集合
+        MongoCollection collection = mongoDatabase.getCollection(collectionName);
+        return collection;
     }
 
 }

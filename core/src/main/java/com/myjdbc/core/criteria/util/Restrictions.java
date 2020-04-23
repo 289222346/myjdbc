@@ -2,8 +2,8 @@ package com.myjdbc.core.criteria.util;
 
 
 import com.myjdbc.core.constants.OpType;
-import com.myjdbc.core.entity.Criteria;
-import com.myjdbc.core.entity.Criterion;
+import com.myjdbc.core.model.Criteria;
+import com.myjdbc.core.model.Criterion;
 
 /**
  * 限制条件标准生成器

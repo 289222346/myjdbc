@@ -1,7 +1,11 @@
 package com.myjdbc.mymongodb.util;
 
+import com.mongodb.BasicDBObject;
+import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.util.ClassUtil;
+import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.core.util.StringUtil;
+import com.myjdbc.mymongodb.constants.MongodbConstants;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
@@ -16,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class MongoUtil {
 
@@ -60,7 +65,7 @@ public class MongoUtil {
                 // 声明类函数方法，并获取和设置该方法型参类型
                 Method getMethod = cls.getMethod(getField);
                 //属性名
-                String propertyName = getPropertyName(field);
+                String propertyName = ModelUtil.getPropertyName(field);
                 // 把获得的值设置给map对象
                 Object value = getMethod.invoke(obj);
                 if (!ObjectUtils.isEmpty(value)) {
@@ -93,7 +98,7 @@ public class MongoUtil {
                     // 声明类函数方法，并获取和设置该方法型参类型
                     Method setMethod = cls.getMethod(setField, field.getType());
                     //属性名
-                    String propertyName = getPropertyName(field);
+                    String propertyName = ModelUtil.getPropertyName(field);
                     Object value = map.get(propertyName);
                     setMethod.invoke(t, value);
                 } catch (NoSuchMethodException e) {
@@ -115,53 +120,6 @@ public class MongoUtil {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * 获取属性名称
-     * 如果存在{@link ApiModelProperty}注解的 ,且其{@code name}参数不为空，则用{@code name}作为属性名称
-     * 如果不存在{@link ApiModelProperty}注解的 ,或者{@code name}参数为空的，则使用属性本身名字
-     *
-     * @param field 实体属性
-     * @return 经过处理后的属性名称
-     * @Author 陈文
-     * @Date 2020/4/21  17:03
-     */
-    public static String getPropertyName(Field field) {
-        Id id = field.getAnnotation(Id.class);
-        //mongodb中，默认使用_id作为主键
-        // 因为mongodb会自动为该字段创建索引，所以主键不管在实体中是何名称，到数据库统一使用_id
-        if (id != null) {
-            return "_id";
-        }
-        ApiModelProperty apiModelProperty = field.getAnnotation(ApiModelProperty.class);
-        /**
-         * 没有模型属性，或者{@code name}参数为空，则返回属性原本的名字
-         */
-        if (apiModelProperty == null || StringUtil.isEmpty(apiModelProperty.name())) {
-            return field.getName();
-        }
-        //返回模型属性重定义的名字
-        return apiModelProperty.name();
-    }
-
-    /**
-     * 获取模型名称(数据库表名)
-     *
-     * @Author: 陈文
-     * @Date: 2020/4/20 11:26
-     */
-    public static String getModelName(Class cls) {
-        ApiModel apiModel = (ApiModel) cls.getAnnotation(ApiModel.class);
-        String modelName = null;
-        if (apiModel != null) {
-            //collectionName
-            modelName = apiModel.value();
-        }
-        if (StringUtil.isEmpty(modelName)) {
-            modelName = cls.getSimpleName();
-        }
-        return modelName;
     }
 
     /**
@@ -191,6 +149,60 @@ public class MongoUtil {
         }
         //整理后的有效属性名
         return fieldList.toArray(new Field[fieldList.size()]);
+    }
+
+    public static BasicDBObject toCondition(OpType op, Object value) {
+        //字段值为空匹配
+        if (op == OpType.IS_NULL) {
+            return new BasicDBObject(MongodbConstants.OP_EXISTS, false);
+        }
+
+        if (op == OpType.IS_NOT_NULL) {
+            return new BasicDBObject(MongodbConstants.OP_EXISTS, true);
+        }
+
+        //限定值
+        if (ObjectUtils.isEmpty(value)) {
+            throw new NullPointerException(op.getRemark() + "  限定条件,限定值不能为空！");
+        }
+
+        //完全相等
+        if (op == OpType.EQ) {
+            return new BasicDBObject(MongodbConstants.OP_EQ, value);
+        }
+
+        //模糊查询
+        if (op == OpType.LIKE) {
+            Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
+            return new BasicDBObject(MongodbConstants.OP_REGEX, pattern);
+        }
+
+        //包含相等
+        if (op == OpType.IN) {
+            return new BasicDBObject(MongodbConstants.OP_IN, value);
+        }
+
+        //大于
+        if (op == OpType.GT) {
+            return new BasicDBObject(MongodbConstants.OP_GT, value);
+        }
+
+        //小于
+        if (op == OpType.LT) {
+            return new BasicDBObject(MongodbConstants.OP_LT, value);
+        }
+
+        //大于等于
+        if (op == OpType.GE) {
+            return new BasicDBObject(MongodbConstants.OP_GE, value);
+        }
+
+        //小于等于
+        if (op == OpType.LE) {
+            return new BasicDBObject(MongodbConstants.OP_LE, value);
+        }
+
+        throw new NullPointerException(op.getRemark() + "  无效限定条件！");
     }
 
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.myjdbc</groupId>
     <artifactId>core</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <packaging>jar</packaging>
     <name>core</name>
@@ -46,6 +46,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -185,6 +191,18 @@
         <!--</dependency>-->
         <!-- redis cache end -->
         <!--Redis相关-->
+
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>2.1.6.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <version>2.1.6.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <!--阿里私有云Maven仓库-->

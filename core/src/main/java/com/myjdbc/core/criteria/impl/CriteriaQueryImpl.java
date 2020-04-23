@@ -1,11 +1,12 @@
 package com.myjdbc.core.criteria.impl;
 
 import com.myjdbc.core.criteria.util.Restrictions;
-import com.myjdbc.core.entity.Pag;
-import com.myjdbc.core.entity.Criteria;
-import com.myjdbc.core.entity.OrderBo;
+import com.myjdbc.core.model.Pag;
+import com.myjdbc.core.model.Criteria;
+import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.criteria.CriteriaQuery;
+import com.myjdbc.core.util.ModelUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,10 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
      */
     private Pag pag;
     /**
+     * 模型名称（数据库表名）
+     */
+    private final String modelName;
+    /**
      * 查询实体
      */
     private final Class<T> cls;
@@ -40,6 +45,12 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
      */
     private OrderBo orderBo;
 
+    public CriteriaQueryImpl(String modelName) {
+        this.modelName = modelName;
+        this.cls = null;
+        queryT = null;
+    }
+
     /**
      * 基本构造器
      *
@@ -47,6 +58,7 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
      */
     public CriteriaQueryImpl(Class<T> cls) {
         this.cls = cls;
+        this.modelName = ModelUtil.getModelName(cls);
         queryT = null;
     }
 
@@ -59,6 +71,7 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
      */
     public CriteriaQueryImpl(Class<T> cls, T queryT) {
         this.cls = cls;
+        this.modelName = ModelUtil.getModelName(cls);
         this.queryT = queryT;
     }
 
@@ -186,4 +199,8 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
         return pag.getRows();
     }
 
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
 }

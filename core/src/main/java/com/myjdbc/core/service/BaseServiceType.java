@@ -25,9 +25,9 @@ public interface BaseServiceType {
      */
     int FAILURE_ALL_NULL = 3;
     /**
-     * 操作结果：操作失败，IP属性为空
+     * 操作结果：操作失败，ID属性为空
      */
-    int FAILURE_IP_NULL = 4;
+    int FAILURE_ID_NULL = 4;
     /**
      * 操作结果：操作失败，内部错误
      */
@@ -50,7 +50,7 @@ public interface BaseServiceType {
             "操作失败,实体（对象）没有ApiModel注解",
             "操作失败，ID冲突",
             "操作失败，对象所有属性为空",
-            "操作失败，IP属性为空",
+            "操作失败，ID属性为空",
             "操作失败，内部错误",
             "操作失败，不允许传入集合",
             "操作失败，找不到没有数据",

@@ -2,6 +2,7 @@ package com.myjdbc.core.service;
 
 import com.myjdbc.core.criteria.CriteriaQuery;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,6 +15,14 @@ import java.util.List;
  * @Date: 2020/4/20 8:45
  */
 public interface ActionCriteriaQuery {
+
+    /**
+     * @param criteriaQuery 查询构造器
+     * @Author 陈文
+     * @Date 2020/3/8  5:45
+     * @Description 返回，存在符合条件记录的，数量
+     */
+    long findCount(CriteriaQuery criteriaQuery);
 
     /**
      * 返回条件查询语句(单字段查询)
@@ -48,13 +57,7 @@ public interface ActionCriteriaQuery {
      */
     <T> List<T> findAll(CriteriaQuery<T> criteriaQuery);
 
-    /**
-     * @param criteriaQuery 查询构造器
-     * @Author 陈文
-     * @Date 2020/3/8  5:45
-     * @Description 返回，存在符合条件记录的，数量
-     */
-    int getCount(CriteriaQuery criteriaQuery);
+
 
 }
 

@@ -1,4 +1,4 @@
-package com.myjdbc.core.entity;
+package com.myjdbc.core.model;
 
 import com.myjdbc.core.util.ListUtil;
 
@@ -36,7 +36,7 @@ public class Criteria {
     public void addCriterion(Criteria criteria) {
         List<Criterion> criterions = criteria.getCriterions();
         if (ListUtil.isNotEmpty(criterions)) {
-            criterions.addAll(criterions);
+            this.criterions.addAll(criterions);
         }
     }
 

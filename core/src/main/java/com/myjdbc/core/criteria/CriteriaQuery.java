@@ -1,9 +1,9 @@
 package com.myjdbc.core.criteria;
 
 import com.myjdbc.core.constants.OrderType;
-import com.myjdbc.core.entity.Criteria;
-import com.myjdbc.core.entity.OrderBo;
-import com.myjdbc.core.entity.Pag;
+import com.myjdbc.core.model.Criteria;
+import com.myjdbc.core.model.OrderBo;
+import com.myjdbc.core.model.Pag;
 
 import java.util.Map;
 
@@ -179,4 +179,6 @@ public interface CriteriaQuery<T> {
      * @return 查询条件集合
      */
     Map<String, Criteria> getCriteriaMap();
+
+    String getModelName();
 }
