@@ -7,7 +7,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -17,9 +19,40 @@ import java.util.List;
  * @Description 类和字段的工具类
  */
 public class ClassUtil {
-
-    /* 获取用于数据库映射的字段 */
+    /**
+     * 获取用于数据库映射的字段
+     */
     public static final String DB = "db";
+
+    /**
+     * 获取包括父类的属性
+     *
+     * @return Map[key, value]中，key是模型属性名，value是字段
+     * @Author 陈文
+     * @Date 2020/3/26  12:59
+     * @Description 获取包括父类的属性（所有）
+     */
+    public static List<String> getAllFieldName(final Class<?> cls) {
+        List<Field> list = getAllFieldsList(cls);
+        List<String> names = new ArrayList<>();
+        list.forEach(field -> names.add(ModelUtil.getPropertyName(field)));
+        return names;
+    }
+
+    /**
+     * 获取包括父类的属性
+     *
+     * @return Map[key, value]中，key是模型属性名，value是字段
+     * @Author 陈文
+     * @Date 2020/3/26  12:59
+     * @Description 获取包括父类的属性（所有）
+     */
+    public static Map<String, Field> getAllFieldMap(final Class<?> cls) {
+        List<Field> list = getAllFieldsList(cls);
+        Map<String, Field> map = new HashMap<>(16);
+        list.forEach(field -> map.put(ModelUtil.getPropertyName(field), field));
+        return map;
+    }
 
     /**
      * @return

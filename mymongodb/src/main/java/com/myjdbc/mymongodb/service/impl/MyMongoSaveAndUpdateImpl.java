@@ -131,6 +131,10 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
     @Override
     public <T> List<T> findAndDelete(CriteriaQuery<T> criteriaQuery) {
         List<T> list = actionRetrieve.findAll(criteriaQuery);
+        if (ListUtil.isEmpty(list)) {
+            return null;
+        }
+
         int code = batchDelete(list);
         if (code != SUCCESS) {
             throw new Error(getDesc(code));

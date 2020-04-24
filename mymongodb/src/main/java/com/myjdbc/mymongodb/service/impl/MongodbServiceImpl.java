@@ -2,6 +2,7 @@ package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.service.BaseService;
+import com.myjdbc.core.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,11 @@ public class MongodbServiceImpl extends MyMongoAction implements BaseService {
     @Autowired
     public MongodbServiceImpl(MongoTemplate mongoTemplate) {
         super(mongoTemplate, "localhost", 27017, "imapi");
+    }
+
+    @Override
+    public long findCount(Class cls, Serializable id) {
+        return actionRetrieve.findCount(ModelUtil.getModelName(cls), id);
     }
 
     @Override

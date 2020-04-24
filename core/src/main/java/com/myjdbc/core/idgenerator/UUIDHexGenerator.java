@@ -17,6 +17,11 @@ public class UUIDHexGenerator {
     private static String sep = "";
     private static short counter = 0;
 
+    public static void main(String[] atgs) {
+        System.out.println(getUUID());
+
+    }
+
     public static String getUUID() {
         return new StringBuffer(64).append(format(MAC)).append(sep).append(format(JVM)).append(sep).append(format(getHiTime())).append(sep).append(format(getLoTime())).append(sep).append(format(getCount())).toString();
     }

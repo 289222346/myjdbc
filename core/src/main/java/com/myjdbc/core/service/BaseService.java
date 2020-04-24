@@ -1,5 +1,7 @@
 package com.myjdbc.core.service;
 
+import java.io.Serializable;
+
 /**
  * 公共数据库服务层
  *
@@ -9,5 +11,6 @@ package com.myjdbc.core.service;
  */
 public interface BaseService extends ActionSaveAndUpdate, ActionRetrieve, ActionTransaction {
 
+    long findCount(Class cls, Serializable id);
 }
 
