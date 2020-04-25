@@ -131,9 +131,11 @@ public class MongoUtil {
      */
     public static Query mapToQuery(Map<String, Object> map) {
         Query query = new Query();
-        map.forEach((key, value) -> {
-            query.addCriteria(Criteria.where(key).is(value));
-        });
+        if (map != null) {
+            map.forEach((key, value) -> {
+                query.addCriteria(Criteria.where(key).is(value));
+            });
+        }
         return query;
     }
 

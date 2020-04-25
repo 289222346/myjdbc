@@ -32,6 +32,10 @@ public class MongodbServiceImpl extends MyMongoAction implements BaseService {
         super(mongoTemplate, "localhost", 27017, "imapi");
     }
 
+    public MongodbServiceImpl(String ip, int port, String databaseName) {
+        super(null, ip, port, databaseName);
+    }
+
     @Override
     public long findCount(Class cls, Serializable id) {
         return actionRetrieve.findCount(ModelUtil.getModelName(cls), id);

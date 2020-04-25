@@ -6,14 +6,18 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.model.Pag;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * mongoDB直接操作层
@@ -41,7 +45,7 @@ public class MongoDAO {
     }
 
     public <T> List<T> find(Class<T> cls) {
-        return find(null, cls, null, null);
+        return find(new BasicDBObject(), cls, null, null);
     }
 
     public <T> List<T> find(BasicDBObject query, Class<T> cls) {
@@ -85,18 +89,19 @@ public class MongoDAO {
             findIterable.skip(page).limit(rows);
         }
         //添加排序
-//        if (order != null) {
-//            if (order.getOrderType().equals(OrderType.ASC)) {
-//                for (String string : order.getFieldNames()) {
-////                    query.with(Sort.by(Sort.Order.asc(string)));
-////                    findIterable.sort(query);
-//                }
-//            } else {
-//                for (String string : order.getFieldNames()) {
-////                    query.with(Sort.by(Sort.Order.desc(string)));
-//                }
-//            }
-//        }
+        if (order != null) {
+            if (order.getOrderType().equals(OrderType.ASC)) {
+                for (String fieldName : order.getFieldNames()) {
+                    BasicDBObject sort = new BasicDBObject(fieldName, 1);
+                    findIterable.sort(sort);
+                }
+            } else {
+                for (String fieldName : order.getFieldNames()) {
+                    BasicDBObject sort = new BasicDBObject(fieldName, -1);
+                    findIterable.sort(sort);
+                }
+            }
+        }
 
         MongoCursor mongoCursor = findIterable.iterator();
         List<T> list = new ArrayList<>();
