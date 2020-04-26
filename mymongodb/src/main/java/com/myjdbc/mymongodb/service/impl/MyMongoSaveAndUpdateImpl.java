@@ -183,11 +183,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
                 saveAndUpdateBO.setCode(FAILURE_NO_LIST);
                 return saveAndUpdateBO;
             }
-            ApiModel apiModel = cls.getAnnotation(ApiModel.class);
-            if (apiModel == null) {
-                saveAndUpdateBO.setCode(FAILURE_LACK_MODEL);
-                return saveAndUpdateBO;
-            }
             /***
              * 前置条件判断
              */
@@ -220,7 +215,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
                     return saveAndUpdateBO;
                 }
             }
-            String collectionName = apiModel.value();
+            String collectionName = ModelUtil.getModelName(cls);
 
             saveAndUpdateBO.setCode(actionType);
             saveAndUpdateBO.setId(id);

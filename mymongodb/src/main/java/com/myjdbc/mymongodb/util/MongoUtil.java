@@ -142,13 +142,14 @@ public class MongoUtil {
     public static Field[] getValidFields(Class<?> cls) {
         // 获取该类所有属性名
         List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
-        //排除掉非ApiModelProperty属性
+        //排除拥有ApiModelProperty属性，且hidden属性为ture
         for (int i = 0; i < fieldList.size(); i++) {
             ApiModelProperty apiModelProperty = fieldList.get(i).getAnnotation(ApiModelProperty.class);
-            if (apiModelProperty == null) {
+            if (apiModelProperty != null && apiModelProperty.hidden() == true) {
                 fieldList.remove(i--);
             }
         }
+
         //整理后的有效属性名
         return fieldList.toArray(new Field[fieldList.size()]);
     }
