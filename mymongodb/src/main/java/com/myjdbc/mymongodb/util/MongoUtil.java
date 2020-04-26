@@ -166,7 +166,7 @@ public class MongoUtil {
 
         //限定值
         if (ObjectUtils.isEmpty(value)) {
-            throw new NullPointerException(op.getRemark() + "  限定条件,限定值不能为空！");
+            throw new NullPointerException("限定条件：【" + op.getRemark() + "】 ,限定值不能为空！");
         }
 
         //完全相等
@@ -205,7 +205,7 @@ public class MongoUtil {
             return new BasicDBObject(MongodbConstants.OP_LE, value);
         }
 
-        throw new NullPointerException(op.getRemark() + "  无效限定条件！");
+        throw new NullPointerException(op.getRemark() + ":  无效限定条件！");
     }
 
 }
