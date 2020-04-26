@@ -1,6 +1,10 @@
 package com.myjdbc.core.util;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+
 /**
  * @Author 陈文
  * @Date 2019/12/25  9:53
@@ -9,17 +13,24 @@ package com.myjdbc.core.util;
  */
 public class JsonUtil {
 
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+
     /**
      * 将Json转换成Bo，只会替换Json中存在的属性
      *
-     * @param bo
+     * @param cls
      * @param json
      * @param <T>
      * @return
      */
-    public static <T> T jsonToBo(T bo, String json) {
-//        bo = (T) JSONObject.parse(json);
-        return PojoUtil.jsonToBo(bo, json);
+    public static <T> T jsonToBo(Class<T> cls, String json) {
+        try {
+            return objectMapper.readValue(json, cls);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -30,11 +41,13 @@ public class JsonUtil {
      * @return
      */
     public static <T> String boToJson(T bo) {
-//        if (bo != null) {
-//            return JSONObject.toJSONString(bo);
-//        }
-//        return null;
-        return PojoUtil.boToJson(bo);
+        String str = "";
+        try {
+            str = objectMapper.writeValueAsString(bo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
 }

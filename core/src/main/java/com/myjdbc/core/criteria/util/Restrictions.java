@@ -120,7 +120,7 @@ public class Restrictions {
      * @param values    限定值
      * @return 字段查询条件
      */
-    public static Criteria like(String fieldName, Object... values) {
+    public static Criteria like(String fieldName, Object values) {
         return getCriteria(fieldName, OpType.LIKE, values);
     }
 
