@@ -26,6 +26,11 @@ public class MyMongoRetrieveImpl extends MyMongoCriteriaQueryImpl implements Act
     }
 
     @Override
+    public long findCount(Class cls, Serializable id) {
+        return findCount(ModelUtil.getModelName(cls), id);
+    }
+
+    @Override
     public long findCount(String collectionName, Serializable id) {
         BasicDBObject query = findByIdQuery(id);
         return dao.findCount(query, collectionName);

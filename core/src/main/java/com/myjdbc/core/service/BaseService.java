@@ -11,6 +11,5 @@ import java.io.Serializable;
  */
 public interface BaseService extends ActionSaveAndUpdate, ActionRetrieve, ActionTransaction {
 
-    long findCount(Class cls, Serializable id);
 }
 

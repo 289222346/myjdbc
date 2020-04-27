@@ -12,10 +12,5 @@ public class Test {
     public static String databaseName = "imapi";
 
 
-    public static BaseService getBaseService() {
-        BaseService baseService = new MongodbServiceImpl(ip, port, databaseName);
-        return baseService;
-    }
-
 
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.myjdbc</groupId>
     <artifactId>mymongodb</artifactId>
-    <version>1.1.5</version>
+    <version>1.1.6</version>
 
     <packaging>jar</packaging>
     <name>mymongodb</name>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.myjdbc</groupId>
             <artifactId>core</artifactId>
-            <version>1.1.5</version>
+            <version>1.1.6</version>
         </dependency>
 
         <!--mongoDB独有依赖Start-->

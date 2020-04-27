@@ -19,6 +19,19 @@ import java.util.Map;
  */
 public interface ActionRetrieve extends ActionCriteriaQuery {
 
+
+    /**
+     * 查询数量记录数
+     * 因为是主键查询，所以该方法一般用于查询该ID数据是否存在
+     *
+     * @param cls 实体类
+     * @param id  主键值
+     * @return 查询到的数据量
+     * @Author 陈文
+     * @Date 2020/4/23  15:54
+     */
+    long findCount(Class cls, Serializable id);
+
     /**
      * 查询数量记录数
      * 因为是主键查询，所以该方法一般用于查询该ID数据是否存在
@@ -27,7 +40,7 @@ public interface ActionRetrieve extends ActionCriteriaQuery {
      * @param id        主键值
      * @return 查询到的数据量
      * @Author 陈文
-     * @Date 2020/4/23  15:54 \
+     * @Date 2020/4/23  15:54
      */
     long findCount(String modelName, Serializable id);
 

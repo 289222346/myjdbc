@@ -25,7 +25,7 @@ import java.util.Map;
  * @Date: 2020/4/20 12:05
  */
 @Service("mongodbService")
-public class MongodbServiceImpl extends MyMongoAction implements BaseService {
+public abstract class MongodbServiceImpl extends MyMongoAction implements BaseService {
 
     @Autowired
     public MongodbServiceImpl(MongoTemplate mongoTemplate) {
@@ -38,7 +38,7 @@ public class MongodbServiceImpl extends MyMongoAction implements BaseService {
 
     @Override
     public long findCount(Class cls, Serializable id) {
-        return actionRetrieve.findCount(ModelUtil.getModelName(cls), id);
+        return actionRetrieve.findCount(cls, id);
     }
 
     @Override
