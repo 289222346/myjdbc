@@ -67,4 +67,23 @@ public final class ListUtil {
         return List.class.isAssignableFrom(cls);
     }
 
+    /**
+     * 对象为List集合对象,且为非空集合
+     *
+     * @param obj 对象
+     * @return 是否为List集合对象，如果为{@code null} 返回false
+     * @Author 陈文
+     * @Date 2020/4/13  20:55
+     */
+    public static boolean isListAndNotEmpty(Object obj) {
+        if (null == obj) {
+            return false;
+        }
+        Class<?> cls = obj.getClass();
+        if (List.class.isAssignableFrom(cls)) {
+            return isNotEmpty((List) obj);
+        }
+        return false;
+    }
+
 }

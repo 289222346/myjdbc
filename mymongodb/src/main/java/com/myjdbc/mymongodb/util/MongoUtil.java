@@ -1,22 +1,25 @@
 package com.myjdbc.mymongodb.util;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.model.Aggregates;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.util.ClassUtil;
+import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.mymongodb.constants.MongodbConstants;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
-import org.springframework.data.annotation.Id;
+import org.bson.conversions.Bson;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.ObjectUtils;
 
+import javax.persistence.OneToOne;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,14 +95,37 @@ public class MongoUtil {
             t = cls.newInstance();
             Field[] fields = getValidFields(cls);
             for (Field field : fields) {
-                // 获取要设置的属性的set方法名称
-                String setField = ClassUtil.setField(field.getName());
                 try {
-                    // 声明类函数方法，并获取和设置该方法型参类型
-                    Method setMethod = cls.getMethod(setField, field.getType());
-                    //属性名
+                    //数据库字段名
                     String propertyName = ModelUtil.getPropertyName(field);
+                    //预备赋与的属性值
                     Object value = map.get(propertyName);
+                    //属性类型
+                    Class fileType = field.getType();
+
+                    //如果值为List<Document>集合，则进入关联表处理
+                    if (ListUtil.isListAndNotEmpty(value)) {
+                        List valueList = (List) value;
+                        if (valueList.get(0).getClass().equals(Document.class)) {
+                            List list = handleForeignResult(field, (List<Document>) value);
+                            if (!fileType.equals(List.class)) {
+                                value = list.get(0);
+                            } else {
+                                value = list;
+                            }
+                        }
+                    }
+
+                    //如果属性值为空，则不赋值
+                    if (ObjectUtils.isEmpty(value)) {
+                        continue;
+                    }
+
+
+                    // 获取要设置的属性的set方法名称
+                    String setField = ClassUtil.setField(field.getName());
+                    // 声明类函数方法，并获取和设置该方法型参类型
+                    Method setMethod = cls.getMethod(setField, fileType);
                     setMethod.invoke(t, value);
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
@@ -206,6 +232,85 @@ public class MongoUtil {
         }
 
         throw new NullPointerException(op.getRemark() + ":  无效限定条件！");
+    }
+
+
+    /**
+     * Document集合转成List实体集合
+     *
+     * @param documents mongo文档集合
+     * @param cls       实体类型
+     * @param <T>       实体类指定泛型
+     * @return
+     */
+    public static <T> List<T> documentIterableToPOJOList(Iterable<Document> documents, Class<T> cls) {
+        List<T> list = new ArrayList<>();
+        for (Document document : documents) {
+            T t = documentToMongoPOJO(document, cls);
+            if (t != null) {
+                list.add(t);
+            }
+        }
+        return list;
+    }
+
+
+    /**
+     * 处理表关联
+     *
+     * @param cls 实体类
+     * @return
+     */
+    public static List<Bson> handleForeign(Class cls) {
+        List<Bson> joinList = new ArrayList<>();
+        for (Field field : ClassUtil.getAllFieldsList(cls)) {
+            if (field.getAnnotation(OneToOne.class) != null) {
+                joinList.add(handleOneToOne(field));
+            }
+        }
+        return joinList;
+    }
+
+    /**
+     * 处理一对一关联
+     *
+     * @param field 字段
+     * @return
+     */
+    private static Bson handleOneToOne(Field field) {
+        OneToOne oneToOne = field.getAnnotation(OneToOne.class);
+        String table = ModelUtil.getModelName(field.getType());
+        String localField = "_id";
+        String foreignField = oneToOne.mappedBy();
+        String as = field.getName();
+        if (StringUtil.isEmpty(foreignField)) {
+            foreignField = field.getName();
+        }
+        //创建一个$lookup管道阶段，将当前集合与通过使用本地字段和外部字段之间的相等匹配指定的集合连接在一起
+        Bson join = Aggregates.lookup(table, localField, foreignField, as);
+        return join;
+    }
+
+    /**
+     * 处理表关联结果
+     *
+     * @param field     关联字段(关联表）
+     * @param documents 结果
+     * @return
+     */
+    public static <T> List<T> handleForeignResult(Field field, List<Document> documents) {
+        if (field.getAnnotation(OneToOne.class) != null) {
+            return handleOneToOneResult(field, documents);
+        }
+        return null;
+    }
+
+
+    private static <T> List<T> handleOneToOneResult(Field field, List<Document> documents) {
+        OneToOne oneToOne = field.getAnnotation(OneToOne.class);
+        Class<T> cls = (Class<T>) field.getType();
+        List<T> list = documentIterableToPOJOList(documents, cls);
+        return list;
     }
 
 }

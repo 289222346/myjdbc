@@ -1,18 +1,25 @@
 package com.myjdbc.mymongodb.service.impl;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.model.Aggregates;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
 import com.myjdbc.core.model.Criterion;
 import com.myjdbc.core.service.ActionCriteriaQuery;
+import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
+import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import javax.persistence.OneToOne;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,9 +62,11 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
     @Override
     public <T> List<T> findAll(CriteriaQuery<T> criteriaQuery) {
         BasicDBObject query = spliceQuery(criteriaQuery);
-        List<T> list = dao.find(query, criteriaQuery.getCls(), criteriaQuery.getPag(), criteriaQuery.getOrder());
+        List<Bson> joinList = MongoUtil.handleForeign(criteriaQuery.getCls());
+        List<T> list = dao.find(query, criteriaQuery.getCls(), criteriaQuery.getPag(), criteriaQuery.getOrder(), joinList);
         return list;
     }
+
 
     private <T> BasicDBObject spliceQuery(CriteriaQuery<T> criteriaQuery) {
         criteriaQuery = spliceCriteriaQuery(criteriaQuery);

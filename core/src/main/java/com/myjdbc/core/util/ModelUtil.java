@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 import org.springframework.data.annotation.Id;
 
+import javax.persistence.OneToOne;
 import java.lang.reflect.Field;
+import java.util.List;
 
 public class ModelUtil {
 
@@ -55,4 +57,5 @@ public class ModelUtil {
         }
         return modelName;
     }
+
 }

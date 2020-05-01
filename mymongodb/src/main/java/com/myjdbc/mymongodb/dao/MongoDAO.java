@@ -2,16 +2,17 @@ package com.myjdbc.mymongodb.dao;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import com.myjdbc.core.constants.OrderType;
+import com.myjdbc.core.model.ExtenTable;
 import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.model.Pag;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -45,74 +46,74 @@ public class MongoDAO {
     }
 
     public <T> List<T> find(Class<T> cls) {
-        return find(new BasicDBObject(), cls, null, null);
+        return find(new BasicDBObject(), cls);
     }
 
     public <T> List<T> find(BasicDBObject query, Class<T> cls) {
-        return find(query, cls, null, null);
+        return find(query, cls, null);
     }
 
     public <T> List<T> find(BasicDBObject query, Class<T> cls, Pag pag) {
         return find(query, cls, pag, null);
     }
 
-    public long findCount(BasicDBObject query, String collectionName) {
-        return findCount(query, getMongoCollection(collectionName));
+    public <T> List<T> find(BasicDBObject query, Class<T> cls, Pag pag, OrderBo order) {
+        return find(query, cls, pag, order, null);
     }
 
-    public long findCount(MongoCollection collection) {
-        return collection.countDocuments();
+
+    public long findCount(BasicDBObject query, String collectionName) {
+        return findCount(query, getMongoCollection(collectionName));
     }
 
     public long findCount(BasicDBObject query, MongoCollection collection) {
         return collection.countDocuments(query);
     }
 
+
     /**
-     * @param query 查询过滤器
-     * @param cls   指定实体类型
-     * @param <T>   指定目标接收实体
+     * @param query    查询过滤器
+     * @param cls      指定实体类型
+     * @param joinList 关联查询
+     * @param <T>      指定目标接收实体
      * @return 指定的实体集合
      * @Author 陈文
      * @Date 2020/4/21  19:22
      */
-    public <T> List<T> find(BasicDBObject query, Class<T> cls, Pag pag, OrderBo order) {
+    public <T> List<T> find(BasicDBObject query, Class<T> cls, Pag pag, OrderBo order, List<Bson> joinList) {
         MongoCollection collection = getMongoCollection(cls);
-        //查询迭代器
-        FindIterable findIterable = collection.find(query);
+        List<Bson> aggregateList = new ArrayList<>(1);
+        //匹配查询条件
+        aggregateList.add(Aggregates.match(query));
+        //增加表关联查询
+        for (Bson join : joinList) {
+            aggregateList.add(join);
+        }
         //添加分页
         if (pag != null) {
             long total = collection.countDocuments();
             pag.setTotal(total);
             int page = (pag.getPage() * pag.getRows());
             int rows = pag.getRows();
-            findIterable.skip(page).limit(rows);
+            aggregateList.add(Aggregates.skip(page));
+            aggregateList.add(Aggregates.limit(rows));
         }
+
         //添加排序
         if (order != null) {
+            //默认DESC
+            int orderType = -1;
             if (order.getOrderType().equals(OrderType.ASC)) {
-                for (String fieldName : order.getFieldNames()) {
-                    BasicDBObject sort = new BasicDBObject(fieldName, 1);
-                    findIterable.sort(sort);
-                }
-            } else {
-                for (String fieldName : order.getFieldNames()) {
-                    BasicDBObject sort = new BasicDBObject(fieldName, -1);
-                    findIterable.sort(sort);
-                }
+                orderType = 1;
+            }
+            for (String fieldName : order.getFieldNames()) {
+                BasicDBObject sort = new BasicDBObject(fieldName, orderType);
+                aggregateList.add(Aggregates.sort(sort));
             }
         }
 
-        MongoCursor mongoCursor = findIterable.iterator();
-        List<T> list = new ArrayList<>();
-        while (mongoCursor.hasNext()) {
-            Object object = mongoCursor.next();
-            Document document = (Document) object;
-            T t = MongoUtil.documentToMongoPOJO(document, cls);
-            if (t != null) {
-                list.add(t);
-            }
-        }
+        AggregateIterable<Document> aggregateIterable = collection.aggregate(aggregateList);
+        List<T> list = MongoUtil.documentIterableToPOJOList(aggregateIterable, cls);
         return list;
     }
 
