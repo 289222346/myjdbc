@@ -9,6 +9,7 @@ import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.model.ExtenTable;
 import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.model.Pag;
+import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
@@ -86,8 +87,10 @@ public class MongoDAO {
         //匹配查询条件
         aggregateList.add(Aggregates.match(query));
         //增加表关联查询
-        for (Bson join : joinList) {
-            aggregateList.add(join);
+        if (ListUtil.isNotEmpty(joinList)) {
+            for (Bson join : joinList) {
+                aggregateList.add(join);
+            }
         }
         //添加分页
         if (pag != null) {
