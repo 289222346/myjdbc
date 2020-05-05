@@ -8,14 +8,7 @@
 
 #### 软件使用方法
 
-一、直接使用BaseService
-   
-    @Autowired
-    private BaseService baseService; 
-    
-    
-    //直接使用
-    List<TSUser> userPoList = baseService.findAll(TSUser.class);
+暂无
     
 
 
