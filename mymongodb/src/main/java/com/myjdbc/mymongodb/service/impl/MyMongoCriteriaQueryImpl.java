@@ -67,8 +67,9 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
         return list;
     }
 
-
     private <T> BasicDBObject spliceQuery(CriteriaQuery<T> criteriaQuery) {
+        Class cls = criteriaQuery.getCls();
+
         criteriaQuery = spliceCriteriaQuery(criteriaQuery);
         //MongoDB的Query查询构造器
         BasicDBObject query = new BasicDBObject();
@@ -77,13 +78,13 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
             //查询条件
             List<Criterion> criterions = criteria.getCriterions();
             //限定字段名
-            String filedName = criteria.getFieldName();
+            String filedName = ModelUtil.getPropertyName(cls, criteria.getFieldName());
             //获取匹配方式
             getCriteria(query, filedName, criterions);
         });
         return query;
-    }
 
+    }
 
     private void getCriteria(BasicDBObject query, String filedName, List<Criterion> criterionList) {
         if (query == null) {

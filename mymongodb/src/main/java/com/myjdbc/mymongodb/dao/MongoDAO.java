@@ -29,8 +29,8 @@ import java.util.Map;
  */
 public class MongoDAO {
 
-    MongoClient mongoClient;
-    MongoDatabase mongoDatabase;
+    private MongoClient mongoClient;
+    private MongoDatabase mongoDatabase;
 
     /**
      * @param ip           数据库IP地址

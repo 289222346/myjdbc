@@ -7,9 +7,16 @@ import org.springframework.data.annotation.Id;
 
 import javax.persistence.OneToOne;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModelUtil {
+
+    /**
+     * 内部模型属性集合存储器
+     */
+    private static final Map<String, Map<String, String>> MODEL_PROPERTY_MAP = new HashMap<>();
 
     /**
      * 获取属性名称
@@ -37,6 +44,20 @@ public class ModelUtil {
         }
         //返回模型属性重定义的名字
         return apiModelProperty.name();
+    }
+
+    public static String getPropertyName(Class cls, String fieldName) {
+        if (cls == null) {
+            return fieldName;
+        }
+        Field[] fields = ClassUtil.getValidFields(cls);
+        for (Field field : fields) {
+            //符合其中一个属性名，则返回
+            if (fieldName.equals(field)) {
+                return ModelUtil.getPropertyName(field);
+            }
+        }
+        return fieldName;
     }
 
     /**

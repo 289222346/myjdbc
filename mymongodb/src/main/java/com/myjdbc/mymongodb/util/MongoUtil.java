@@ -58,7 +58,7 @@ public class MongoUtil {
      */
     public static <T> Map<String, Object> mongoPOJOToMap(T obj) {
         Class<?> cls = obj.getClass();
-        Field[] fields = getValidFields(cls);
+        Field[] fields = ClassUtil.getValidFields(cls);
         // 声明Map对象，存储属性
         Map map = new LinkedHashMap();
         for (Field field : fields) {
@@ -93,7 +93,7 @@ public class MongoUtil {
         T t = null;
         try {
             t = cls.newInstance();
-            Field[] fields = getValidFields(cls);
+            Field[] fields = ClassUtil.getValidFields(cls);
             for (Field field : fields) {
                 try {
                     //数据库字段名
@@ -165,20 +165,6 @@ public class MongoUtil {
         return query;
     }
 
-    public static Field[] getValidFields(Class<?> cls) {
-        // 获取该类所有属性名
-        List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
-        //排除拥有ApiModelProperty属性，且hidden属性为ture
-        for (int i = 0; i < fieldList.size(); i++) {
-            ApiModelProperty apiModelProperty = fieldList.get(i).getAnnotation(ApiModelProperty.class);
-            if (apiModelProperty != null && apiModelProperty.hidden() == true) {
-                fieldList.remove(i--);
-            }
-        }
-
-        //整理后的有效属性名
-        return fieldList.toArray(new Field[fieldList.size()]);
-    }
 
     public static BasicDBObject toCondition(OpType op, Object value) {
         //字段值为空匹配
