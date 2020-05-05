@@ -32,6 +32,11 @@ public abstract class MongodbServiceImpl extends MyMongoAction implements BaseSe
         super(mongoTemplate, "localhost", 27017, "imapi");
     }
 
+    @Autowired
+    public MongodbServiceImpl(MongoTemplate mongoTemplate, String ip, Integer port, String databaseName) {
+        super(mongoTemplate, ip, port, databaseName);
+    }
+
     public MongodbServiceImpl(String ip, int port, String databaseName) {
         super(null, ip, port, databaseName);
     }

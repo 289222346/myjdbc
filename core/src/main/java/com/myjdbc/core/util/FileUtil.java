@@ -51,6 +51,24 @@ public class FileUtil {
         return fileName;
     }
 
+    public static void main(String[] args) {
+        String type = getFileType("abcdefgh.txt");
+        System.out.println(type);
+    }
+
+    /**
+     * @Author 陈文
+     * @Date 2020/05/05  11:14
+     * @Description 获取文件后缀名
+     */
+    public static String getFileType(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        if (index != -1) {
+            fileName = StringUtil.rightSubstring(fileName, index + 1);
+        }
+        return fileName;
+    }
+
     /**
      * @Author 陈文
      * @Date 2019/12/6  15:41

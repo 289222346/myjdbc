@@ -46,6 +46,15 @@ public class ModelUtil {
         return apiModelProperty.name();
     }
 
+    /**
+     * 获取属性名称
+     *
+     * @param cls       实体类
+     * @param fieldName 实体属性名称
+     * @return 经过处理后的属性名称，如果属性不存在，则返回{@code fieldName}本身
+     * @Author 陈文
+     * @Date 2020/4/21  17:03
+     */
     public static String getPropertyName(Class cls, String fieldName) {
         if (cls == null) {
             return fieldName;
@@ -54,7 +63,7 @@ public class ModelUtil {
         for (Field field : fields) {
             //符合其中一个属性名，则返回
             if (fieldName.equals(field)) {
-                return ModelUtil.getPropertyName(field);
+                return getPropertyName(field);
             }
         }
         return fieldName;

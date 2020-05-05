@@ -50,7 +50,7 @@ public class StringUtil {
      * @Description 从右边截取字符串
      */
     public static String rightSubstring(String str, int index) {
-        return str.substring(str.length() - index, str.length() - 1);
+        return str.substring(index, str.length());
     }
 
 }
