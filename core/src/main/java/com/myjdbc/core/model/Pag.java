@@ -1,10 +1,24 @@
 package com.myjdbc.core.model;
 
+/**
+ * 分页辅助实体
+ *
+ * @author 陈文
+ */
 public class Pag {
-    private long total = 0;//总记录数
-    private int page = 1;// 当前页
-    private int rows = 10;// 每页显示记录数
-    private String sql;//用于保存查询总记录数的SQL
+
+    /**
+     * 总记录数
+     */
+    private long total = 0;
+    /**
+     * 当前页
+     */
+    private int page = 1;
+    /**
+     * 每页显示记录数
+     */
+    private int rows = 10;
 
     public Pag(int page, int rows) {
         this.page = page;
@@ -25,13 +39,5 @@ public class Pag {
 
     public void setTotal(long total) {
         this.total = total;
-    }
-
-    public String getSql() {
-        return sql;
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
     }
 }

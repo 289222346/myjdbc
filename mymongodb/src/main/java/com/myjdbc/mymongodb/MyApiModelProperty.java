@@ -120,13 +120,13 @@ public @interface MyApiModelProperty {
 
 
     /**
-     * Specifies a reference to the corresponding type definition, overrides any other metadata specified
+     * 指定对相应类型定义的引用，覆盖指定的任何其他元数据
      */
 
     String reference() default "";
 
     /**
-     * Allows passing an empty value
+     * 允许传递一个空值
      *
      * @since 1.5.11
      */
