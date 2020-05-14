@@ -3,6 +3,7 @@ package com.myjdbc.mymongodb.util;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Aggregates;
 import com.myjdbc.core.constants.OpType;
+import com.myjdbc.core.model.Criterion;
 import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
@@ -165,59 +166,82 @@ public class MongoUtil {
         return query;
     }
 
-
     public static BasicDBObject toCondition(OpType op, Object value) {
-        //字段值为空匹配
-        if (op == OpType.IS_NULL) {
-            return new BasicDBObject(MongodbConstants.OP_EXISTS, false);
-        }
+        List<Criterion> criterionList = new ArrayList<>();
+        Criterion criterion = new Criterion(op, value);
+        return toCondition(criterionList);
+    }
 
-        if (op == OpType.IS_NOT_NULL) {
-            return new BasicDBObject(MongodbConstants.OP_EXISTS, true);
-        }
+    public static BasicDBObject toCondition(List<Criterion> criterionList) {
 
-        //限定值
-        if (ObjectUtils.isEmpty(value)) {
-            throw new NullPointerException("限定条件：【" + op.getRemark() + "】 ,限定值不能为空！");
-        }
+        BasicDBObject basicDBObject = new BasicDBObject();
+        for (Criterion criterion : criterionList) {
+            OpType op = criterion.getOp();
+            Object value = criterion.getFieldValue();
 
-        //完全相等
-        if (op == OpType.EQ) {
-            return new BasicDBObject(MongodbConstants.OP_EQ, value);
-        }
 
-        //模糊查询
-        if (op == OpType.LIKE) {
-            Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
-            return new BasicDBObject(MongodbConstants.OP_REGEX, pattern);
-        }
+            //字段值为空匹配
+            if (op == OpType.IS_NULL) {
+                basicDBObject.append(MongodbConstants.OP_EXISTS, false);
+                continue;
+            }
 
-        //包含相等
-        if (op == OpType.IN) {
-            return new BasicDBObject(MongodbConstants.OP_IN, value);
-        }
+            if (op == OpType.IS_NOT_NULL) {
+                basicDBObject.append(MongodbConstants.OP_EXISTS, true);
+                continue;
+            }
 
-        //大于
-        if (op == OpType.GT) {
-            return new BasicDBObject(MongodbConstants.OP_GT, value);
-        }
+            //限定值
+            if (ObjectUtils.isEmpty(value)) {
+                throw new NullPointerException("限定条件：【" + op.getRemark() + "】 ,限定值不能为空！");
+            }
 
-        //小于
-        if (op == OpType.LT) {
-            return new BasicDBObject(MongodbConstants.OP_LT, value);
-        }
+            //完全相等
+            if (op == OpType.EQ) {
+                basicDBObject.append(MongodbConstants.OP_EQ, value);
+                continue;
+            }
 
-        //大于等于
-        if (op == OpType.GE) {
-            return new BasicDBObject(MongodbConstants.OP_GE, value);
-        }
+            //模糊查询
+            if (op == OpType.LIKE) {
+                Pattern pattern = Pattern.compile("^.*" + value + ".*$", Pattern.CASE_INSENSITIVE);
+                basicDBObject.append(MongodbConstants.OP_REGEX, pattern);
+                continue;
+            }
 
-        //小于等于
-        if (op == OpType.LE) {
-            return new BasicDBObject(MongodbConstants.OP_LE, value);
-        }
+            //包含相等
+            if (op == OpType.IN) {
+                basicDBObject.append(MongodbConstants.OP_IN, value);
+                continue;
+            }
 
-        throw new NullPointerException(op.getRemark() + ":  无效限定条件！");
+            //大于
+            if (op == OpType.GT) {
+                basicDBObject.append(MongodbConstants.OP_GT, value);
+                continue;
+            }
+
+            //小于
+            if (op == OpType.LT) {
+                basicDBObject.append(MongodbConstants.OP_LT, value);
+                continue;
+            }
+
+            //大于等于
+            if (op == OpType.GE) {
+                basicDBObject.append(MongodbConstants.OP_GE, value);
+                continue;
+            }
+
+            //小于等于
+            if (op == OpType.LE) {
+                basicDBObject.append(MongodbConstants.OP_LE, value);
+                continue;
+            }
+
+            throw new NullPointerException(op.getRemark() + ":  无效限定条件！");
+        }
+        return basicDBObject;
     }
 
 

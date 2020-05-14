@@ -98,13 +98,9 @@ public class MyMongoCriteriaQueryImpl implements ActionCriteriaQuery {
         if (ListUtil.isEmpty(criterionList)) {
             throw new NullPointerException("criterionList-限定条件不能为空！");
         }
-        criterionList.forEach(criterion -> {
-            //限定条件
-            OpType op = criterion.getOp();
-            BasicDBObject condition = MongoUtil.toCondition(op, criterion.getFieldValue());
-            query.append(filedName, condition);
-        });
 
+        BasicDBObject condition = MongoUtil.toCondition(criterionList);
+        query.append(filedName, condition);
     }
 
     private <T> CriteriaQuery<T> spliceCriteriaQuery(CriteriaQuery<T> criteriaQuery) {

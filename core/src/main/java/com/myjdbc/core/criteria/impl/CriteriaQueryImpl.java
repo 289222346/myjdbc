@@ -9,6 +9,7 @@ import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.util.ModelUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -132,6 +133,11 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     @Override
     public void in(String fieldName, Object... value) {
         add(Restrictions.in(fieldName, value));
+    }
+
+    @Override
+    public void in(String fieldName, List value) {
+        add(Restrictions.in(fieldName, value.toArray()));
     }
 
     @Override

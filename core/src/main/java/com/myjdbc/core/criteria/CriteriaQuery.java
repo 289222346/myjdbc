@@ -5,6 +5,7 @@ import com.myjdbc.core.model.Criteria;
 import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.model.Pag;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,10 +72,20 @@ public interface CriteriaQuery<T> {
      * 对多个值，执行 {@literal $eq} 相等运算，只要一个满足即可
      *
      * @param fieldName 限定字段
-     * @param value     限定值
+     * @param value     限定值(限定值为数组)
      * @Description 字段内容完全等于某一些值
      */
     void in(String fieldName, Object... value);
+
+    /**
+     * 执行包含运算，可以理解为：
+     * 对多个值，执行 {@literal $eq} 相等运算，只要一个满足即可
+     *
+     * @param fieldName 限定字段
+     * @param value     限定值(集合)
+     * @Description 字段内容完全等于某一些值
+     */
+    void in(String fieldName, List<Object> value);
 
     /**
      * 模糊匹配

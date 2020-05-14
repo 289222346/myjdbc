@@ -2,15 +2,17 @@ package com.myjdbc.core.util;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.OneToOne;
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * Model工具类
+ *
+ * @author 陈文
+ */
 public class ModelUtil {
 
     /**
@@ -62,7 +64,7 @@ public class ModelUtil {
         Field[] fields = ClassUtil.getValidFields(cls);
         for (Field field : fields) {
             //符合其中一个属性名，则返回
-            if (fieldName.equals(field)) {
+            if (fieldName.equals(field.getName())) {
                 return getPropertyName(field);
             }
         }
