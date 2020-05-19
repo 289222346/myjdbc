@@ -169,6 +169,7 @@ public class MongoUtil {
     public static BasicDBObject toCondition(OpType op, Object value) {
         List<Criterion> criterionList = new ArrayList<>();
         Criterion criterion = new Criterion(op, value);
+        criterionList.add(criterion);
         return toCondition(criterionList);
     }
 

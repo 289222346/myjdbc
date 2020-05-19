@@ -6,7 +6,7 @@
 
     <groupId>com.myjdbc</groupId>
     <artifactId>mymongodb</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
 
     <packaging>jar</packaging>
     <name>mymongodb</name>
