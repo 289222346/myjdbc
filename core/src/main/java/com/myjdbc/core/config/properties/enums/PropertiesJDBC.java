@@ -1,5 +1,7 @@
-package com.myjdbc.core.constants;
+package com.myjdbc.core.config.properties.enums;
 
+
+import com.myjdbc.core.constants.DBType;
 
 /**
  * @Author 陈文
@@ -7,7 +9,7 @@ package com.myjdbc.core.constants;
  * @Description JDBC配置
  */
 @SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
-public enum PropertiesJDBC {
+public enum PropertiesJDBC implements PropertiesEnum {
 
     /**
      * 数据库类型
@@ -59,14 +61,17 @@ public enum PropertiesJDBC {
         this.defaultValue = defaultValue;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public String getRemark() {
         return remark;
     }
 
+    @Override
     public Object getDefaultValue() {
         return defaultValue;
     }

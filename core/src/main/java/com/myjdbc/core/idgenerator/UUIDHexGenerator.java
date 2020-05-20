@@ -6,6 +6,8 @@ import com.myjdbc.core.util.more.MacAddressAPI;
 /**
  * 该类参考了Hibernate的写法
  * 生成32位UUID字符串
+ *
+ * @author 陈文
  */
 public class UUIDHexGenerator {
 
@@ -19,7 +21,6 @@ public class UUIDHexGenerator {
 
     public static void main(String[] atgs) {
         System.out.println(getUUID());
-
     }
 
     public static String getUUID() {

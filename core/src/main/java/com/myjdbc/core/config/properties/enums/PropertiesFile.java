@@ -1,0 +1,50 @@
+package com.myjdbc.core.config.properties.enums;
+
+/**
+ * @Author 陈文
+ * @Date 2019/12/26  9:48
+ * @Description 所有配置文件记载
+ */
+@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
+public enum PropertiesFile {
+
+    /**
+     * JDBC配置
+     */
+    JDBC("application.properties", "JDBC配置", PropertiesJDBC.values()),
+    /**
+     * ID生成器配置
+     */
+    ID_GENERATOR("application.properties", "ID生成器配置", PropertiesIdGenerator.values());
+
+    /**
+     * 配置文件名
+     */
+    private String fileName;
+    /**
+     * 备注
+     */
+    private String remark;
+    /**
+     * 属性配置枚举
+     */
+    private Enum<? extends PropertiesEnum>[] propertiesEnums;
+
+    PropertiesFile(String fileName, String remark, Enum<? extends PropertiesEnum>[] propertiesEnums) {
+        this.fileName = fileName;
+        this.remark = remark;
+        this.propertiesEnums = propertiesEnums;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public Enum<? extends PropertiesEnum>[] getPropertiesEnums() {
+        return propertiesEnums;
+    }
+}
