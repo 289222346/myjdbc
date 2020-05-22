@@ -1,6 +1,5 @@
 package com.myjdbc.core.idgenerator;
 
-
 import com.myjdbc.core.util.more.MacAddressAPI;
 
 /**

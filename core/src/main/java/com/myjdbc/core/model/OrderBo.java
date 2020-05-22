@@ -2,6 +2,7 @@ package com.myjdbc.core.model;
 
 
 import com.myjdbc.core.constants.OrderType;
+import com.myjdbc.core.util.ModelUtil;
 
 /**
  * @Author 陈文
