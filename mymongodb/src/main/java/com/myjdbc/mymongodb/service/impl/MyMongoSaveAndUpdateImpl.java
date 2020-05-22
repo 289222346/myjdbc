@@ -200,7 +200,8 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             if (ObjectUtils.isEmpty(id)) {
                 //允许ID生成
                 if (actionType == ActionSaveAndUpdate.ACTION_SAVE) {
-                    id = IdGeneratorUtil.generateID(cls.getAnnotation(IDAutoGenerator.class));
+                    IDAutoGenerator idAutoGenerator = cls.getAnnotation(IDAutoGenerator.class);
+                    id = IdGeneratorUtil.generateID(idAutoGenerator);
                     if (ObjectUtils.isEmpty(id)) {
                         //操作失败，ID属性为空
                         saveAndUpdateBO.setCode(FAILURE_ID_NULL);
