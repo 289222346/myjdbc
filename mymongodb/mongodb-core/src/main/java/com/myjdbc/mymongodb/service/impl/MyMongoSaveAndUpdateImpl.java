@@ -1,4 +1,4 @@
-package com.myjdbc.mongodb.service.impl;
+package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.annotations.IDAutoGenerator;
 import com.myjdbc.core.criteria.CriteriaQuery;
@@ -8,7 +8,7 @@ import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.idgenerator.IdGeneratorUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
-import com.myjdbc.mongodb.model.SaveAndUpdateBO;
+import com.myjdbc.mymongodb.model.SaveAndUpdateBO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;

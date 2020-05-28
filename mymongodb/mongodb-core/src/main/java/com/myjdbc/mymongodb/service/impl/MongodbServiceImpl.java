@@ -1,4 +1,4 @@
-package com.myjdbc.mongodb.service.impl;
+package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.config.properties.DbConfig;
 import com.myjdbc.core.criteria.CriteriaQuery;

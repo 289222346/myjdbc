@@ -1,11 +1,11 @@
-package com.myjdbc.mongodb.service.impl;
+package com.myjdbc.mymongodb.service.impl;
 
 import com.mongodb.BasicDBObject;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
-import com.myjdbc.mongodb.dao.MongoDAO;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.springframework.data.mongodb.core.MongoTemplate;
 

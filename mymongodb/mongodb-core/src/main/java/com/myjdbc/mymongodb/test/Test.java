@@ -1,4 +1,4 @@
-package com.myjdbc.mongodb.test;
+package com.myjdbc.mymongodb.test;
 
 public class Test {
     public static String ip = "localhost";

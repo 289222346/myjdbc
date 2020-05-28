@@ -1,4 +1,4 @@
-package com.myjdbc.mongodb.service.impl;
+package com.myjdbc.mymongodb.service.impl;
 
 import com.mongodb.BasicDBObject;
 import com.myjdbc.core.criteria.CriteriaQuery;
@@ -8,7 +8,7 @@ import com.myjdbc.core.service.ActionCriteriaQuery;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.core.util.StringUtil;
-import com.myjdbc.mongodb.dao.MongoDAO;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;

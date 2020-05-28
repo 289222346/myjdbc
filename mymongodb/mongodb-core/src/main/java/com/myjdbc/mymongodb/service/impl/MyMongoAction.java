@@ -1,12 +1,12 @@
-package com.myjdbc.mongodb.service.impl;
+package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.config.ConfigUtil;
 import com.myjdbc.core.config.properties.DbConfig;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.util.StringUtil;
-import com.myjdbc.mongodb.dao.MongoDAO;
-import com.myjdbc.mongodb.pool.MongoPool;
+import com.myjdbc.mymongodb.dao.MongoDAO;
+import com.myjdbc.mymongodb.pool.MongoPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 

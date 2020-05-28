@@ -1,8 +1,7 @@
-package com.myjdbc.mongodb.dao;
+package com.myjdbc.mymongodb.dao;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;

@@ -1,4 +1,4 @@
-package com.myjdbc.mongodb.service;
+package com.myjdbc.mymongodb.service;
 
 import com.myjdbc.core.service.BaseService;
 

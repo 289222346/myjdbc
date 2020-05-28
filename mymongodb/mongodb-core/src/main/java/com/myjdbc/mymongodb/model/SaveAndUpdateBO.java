@@ -1,4 +1,4 @@
-package com.myjdbc.mongodb.model;
+package com.myjdbc.mymongodb.model;
 
 import org.bson.Document;
 

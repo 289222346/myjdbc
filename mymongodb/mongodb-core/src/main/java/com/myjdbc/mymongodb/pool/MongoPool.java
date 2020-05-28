@@ -1,8 +1,8 @@
-package com.myjdbc.mongodb.pool;
+package com.myjdbc.mymongodb.pool;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.myjdbc.mongodb.dao.MongoDAO;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 
 import java.util.LinkedHashMap;

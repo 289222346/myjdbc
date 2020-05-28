@@ -6,9 +6,9 @@
     <parent>
         <groupId>com.myjdbc.mongodb</groupId>
         <artifactId>mongodb-parent</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.3</version>
     </parent>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <groupId>com.myjdbc.mongodb</groupId>
     <artifactId>mongodb-util</artifactId>
 
@@ -27,4 +27,21 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!--上传source.jar 非必须 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

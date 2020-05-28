@@ -1,6 +1,6 @@
-package com.myjdbc.mongodb.service.impl;
+package com.myjdbc.mymongodb.service.impl;
 
-import com.myjdbc.mongodb.service.SystemMongoService;
+import com.myjdbc.mymongodb.service.SystemMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
