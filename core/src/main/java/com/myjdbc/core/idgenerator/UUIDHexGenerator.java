@@ -1,6 +1,6 @@
 package com.myjdbc.core.idgenerator;
 
-import com.myjdbc.core.util.more.MacAddressAPI;
+import com.myjdbc.core.util.MacAddressUtil;
 
 /**
  * 该类参考了Hibernate的写法
@@ -13,7 +13,7 @@ public class UUIDHexGenerator {
     /**
      * 网卡MAC地址
      */
-    private static final int MAC = BytesHelper.toInt(MacAddressAPI.getMACAddress().getBytes());
+    private static final int MAC = BytesHelper.toInt(MacAddressUtil.getMACAddress().getBytes());
     private static final int JVM = (int) (System.currentTimeMillis() >>> 8);
     private static String sep = "";
     private static short counter = 0;

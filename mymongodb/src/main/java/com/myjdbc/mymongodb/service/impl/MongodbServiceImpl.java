@@ -2,7 +2,6 @@ package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.service.BaseService;
-import com.myjdbc.core.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;

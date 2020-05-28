@@ -1,6 +1,6 @@
 package com.myjdbc.core.idgenerator;
 
-import com.myjdbc.core.util.more.MacAddressAPI;
+import com.myjdbc.core.util.MacAddressUtil;
 
 /**
  * 雪花ID生成器
@@ -135,7 +135,7 @@ public class SnowFlakeGenerator {
 
     public static void main(String[] args) {
 
-        int x = BytesHelper.toInt(MacAddressAPI.getMACAddress().getBytes());
+        int x = BytesHelper.toInt(MacAddressUtil.getMACAddress().getBytes());
         System.out.println(x);
 
 //        SnowFlakeGenerator snowFlake = new SnowFlakeGenerator(2, 3);

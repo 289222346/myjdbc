@@ -1,4 +1,4 @@
-package com.myjdbc.core.util.more;
+package com.myjdbc.core.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.net.NetworkInterface;
  * @Description 获取Mac地址
  * 本代码引用自 https://www.cnblogs.com/kabi/p/5209222.html
  */
-public class MacAddressAPI {
+public class MacAddressUtil {
     /**
      * 获取当前操作系统名称. return 操作系统名称 例如:windows xp,linux 等.
      */

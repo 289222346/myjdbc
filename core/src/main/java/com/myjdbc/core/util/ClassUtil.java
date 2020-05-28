@@ -1,7 +1,6 @@
 package com.myjdbc.core.util;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.apache.commons.lang.Validate;
 
 import javax.persistence.MappedSuperclass;
 import java.lang.reflect.Field;
@@ -95,7 +94,7 @@ public class ClassUtil {
      * 作为可能的数据库字段被映射）
      */
     public static List<Field> getAllFieldsList(final Class<?> cls, String type) {
-        Validate.isTrue(cls != null, "The class must not be null");
+//        Validate.isTrue(cls != null, "The class must not be null");
         final List<Field> allFields = new ArrayList<Field>();
         Class<?> currentClass = cls;
         while (currentClass != null) {
@@ -125,7 +124,7 @@ public class ClassUtil {
      * @Description 获取指定名称的属性（包括可能存在父类中的属性，但如果子类由重写父类属性，则返回子类的属性）
      */
     public static Field findField(final Class<?> cls, String fieldName) {
-        Validate.isTrue(cls != null, "The class must not be null");
+//        Validate.isTrue(cls != null, "The class must not be null");
         Field myField = null;
         Class<?> currentClass = cls;
         while (currentClass != null) {
