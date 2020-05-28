@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.myjdbc</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.4.0</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>core</module>
+        <module>mymongodb</module>
+        <module>base-util</module>
+    </modules>
+    <properties>
+        <!-- myjdbc各组件版本控制 -->
+        <that.version>1.4.0</that.version>
+        <!-- 核心 -->
+        <myjdbc.core.version>${that.version}</myjdbc.core.version>
+        <!-- 核心 -->
+        <myjdbc.core.util.version>${that.version}</myjdbc.core.util.version>
+        <!-- mongodb组件 -->
+        <myjdbc.mymongodb.version>${that.version}</myjdbc.mymongodb.version>
+        <!-- mongodb组件_工具 -->
+        <myjdbc.mymongodb.util.version>${that.version}</myjdbc.mymongodb.util.version>
+        <!--   版本控制   -->
+        <!--SpringBoot版本-->
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+
+
+        <!--    版本控制    -->
+        <!--  公共引用  -->
+        <!--标准化接口文档 -->
+        <swagger.version>2.6.0</swagger.version>
+        <!--JPA规范-->
+        <jpa.version>1.0</jpa.version>
+        <!--JSON数据支持-->
+        <jackson-databind.version>2.9.10.1</jackson-databind.version>
+        <!--SpringBoot版本-->
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+
+        <!-- 固定配置 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+
+    <!--阿里私有云Maven仓库-->
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://repo.rdc.aliyun.com/repository/49922-release-Ezq88P/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://repo.rdc.aliyun.com/repository/49922-snapshot-RvgibH/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <build>
+        <plugins>
+            <!--上传source.jar 非必须 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- maven的插件方式来升级整个项目的版本号 -->
+            <!--设置新的版本号未1.2.0-SNAPSHOT-->
+            <!--mvn versions:set -DnewVersion=1.2.0-SNAPSHOT-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

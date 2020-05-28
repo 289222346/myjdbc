@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>com.myjdbc</groupId>
-        <artifactId>parent</artifactId>
+        <groupId>com.myjdbc.mongodb</groupId>
+        <artifactId>mongodb-parent</artifactId>
         <version>1.4.0</version>
     </parent>
     <packaging>pom</packaging>
-    <artifactId>core</artifactId>
-
-    <url>http://www.myjdbc.com</url>
+    <groupId>com.myjdbc.mongodb</groupId>
+    <artifactId>mongodb-util</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.myjdbc</groupId>
-            <artifactId>base-util</artifactId>
-            <version>${myjdbc.core.util.version}</version>
+            <artifactId>core</artifactId>
+            <version>${myjdbc.core.version}</version>
         </dependency>
 
-        <!--SpringBoot支持-->
+        <!--mongoDB独有依赖Start-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <version>${spring-boot.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
+
 </project>
