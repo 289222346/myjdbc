@@ -3,7 +3,8 @@ package com.myjdbc.core.util;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
