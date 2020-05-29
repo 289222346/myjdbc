@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.myjdbc</groupId>
     <artifactId>parent</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
@@ -14,7 +14,7 @@
     </modules>
     <properties>
         <!-- myjdbc各组件版本控制 -->
-        <that.version>1.4.3</that.version>
+        <that.version>1.4.4</that.version>
         <!-- 核心 -->
         <myjdbc.core.version>${that.version}</myjdbc.core.version>
         <!-- 核心 -->
