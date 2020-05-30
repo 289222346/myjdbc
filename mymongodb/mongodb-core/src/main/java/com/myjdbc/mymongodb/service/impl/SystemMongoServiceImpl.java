@@ -2,7 +2,6 @@ package com.myjdbc.mymongodb.service.impl;
 
 import com.myjdbc.mymongodb.service.SystemMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,8 +13,8 @@ import org.springframework.stereotype.Service;
 public final class SystemMongoServiceImpl extends MongodbServiceImpl implements SystemMongoService {
 
     @Autowired
-    public SystemMongoServiceImpl(MongoTemplate mongoTemplate) {
-        super(mongoTemplate);
+    public SystemMongoServiceImpl() {
+        super();
     }
 
 }

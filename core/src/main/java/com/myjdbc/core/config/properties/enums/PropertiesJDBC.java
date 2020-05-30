@@ -28,6 +28,14 @@ public enum PropertiesJDBC implements PropertiesEnum {
      */
     PASSWORD("myjdbc.password", "数据库登录密码", "root"),
     /**
+     * 数据库
+     */
+    DATABASE("myjdbc.database", "数据库", null),
+    /**
+     * 公钥
+     */
+    PUBLIC_KEY("myjdbc.publicKey", "公钥", null),
+    /**
      * 连接池中最大连接数
      */
     MAX_ACTIVE("myjdbc.maxActive", "连接池中最大连接数", 20),

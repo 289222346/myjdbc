@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.myjdbc</groupId>
         <artifactId>parent</artifactId>
-        <version>1.4.4</version>
+        <version>1.4.5</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
@@ -39,12 +39,12 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-databind.version}</version>
         </dependency>
-
-        <!--mongoDB独有依赖Start-->
+        <!-- Spring相关支持 -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>${spring-boot.version}</version>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>${spring.data.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

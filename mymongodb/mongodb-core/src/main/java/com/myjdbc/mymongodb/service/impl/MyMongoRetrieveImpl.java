@@ -7,7 +7,6 @@ import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.util.MongoUtil;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,8 +20,8 @@ import java.util.Map;
  */
 public class MyMongoRetrieveImpl extends MyMongoCriteriaQueryImpl implements ActionRetrieve {
 
-    public MyMongoRetrieveImpl(MongoTemplate mongoTemplate, MongoDAO dao) {
-        super(mongoTemplate, dao);
+    public MyMongoRetrieveImpl(MongoDAO dao) {
+        super(dao);
     }
 
     @Override
@@ -32,24 +31,18 @@ public class MyMongoRetrieveImpl extends MyMongoCriteriaQueryImpl implements Act
 
     @Override
     public long findCount(String collectionName, Serializable id) {
-        BasicDBObject query = findByIdQuery(id);
+        BasicDBObject query = MongoUtil.idToFilter(id);
         return dao.findCount(query, collectionName);
     }
 
     @Override
     public <T> T findById(Class<T> cls, Serializable id) {
-        BasicDBObject query = findByIdQuery(id);
+        BasicDBObject query = MongoUtil.idToFilter(id);
         List<T> list = dao.find(query, cls);
         if (ListUtil.isEmpty(list)) {
             return null;
         }
         return list.get(0);
-    }
-
-    private BasicDBObject findByIdQuery(Serializable id) {
-        BasicDBObject condition = MongoUtil.toCondition(OpType.EQ, id);
-        BasicDBObject query = new BasicDBObject("_id", condition);
-        return query;
     }
 
     @Override
@@ -59,8 +52,9 @@ public class MyMongoRetrieveImpl extends MyMongoCriteriaQueryImpl implements Act
 
     @Override
     public <T> List<T> findAll(Class<T> cls, Map<String, Object> map) {
-        return mongoTemplate.find(MongoUtil.mapToQuery(map), cls, ModelUtil.getModelName(cls));
+        BasicDBObject query = MongoUtil.mapToFilter(cls, map);
+        List<T> list = dao.find(query, cls);
+        return list;
     }
-
 
 }

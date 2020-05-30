@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.myjdbc</groupId>
     <artifactId>parent</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
@@ -14,7 +14,7 @@
     </modules>
     <properties>
         <!-- myjdbc各组件版本控制 -->
-        <that.version>1.4.4</that.version>
+        <that.version>1.4.5</that.version>
         <!-- 核心 -->
         <myjdbc.core.version>${that.version}</myjdbc.core.version>
         <!-- 核心 -->
@@ -38,6 +38,9 @@
         <jackson-databind.version>2.9.10.1</jackson-databind.version>
         <!--SpringBoot版本-->
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+        <!--Spring支持-->
+        <spring.data.version>2.1.10.RELEASE</spring.data.version>
+        <spring.context.version>5.1.9.RELEASE</spring.context.version>
 
         <!-- 固定配置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,6 +48,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
 
     <!--阿里私有云Maven仓库-->
     <distributionManagement>

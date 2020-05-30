@@ -6,6 +6,7 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.result.DeleteResult;
 import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.model.Pag;
@@ -36,6 +37,38 @@ public class MongoDAO {
      */
     public MongoDAO(MongoClient mongoClient, String databaseName) {
         this.mongoDatabase = mongoClient.getDatabase(databaseName);
+    }
+
+    public DeleteResult delete(Class cls, BasicDBObject filter) throws Exception {
+        MongoCollection collection = getMongoCollection(cls);
+        DeleteResult deleteResult = collection.deleteOne(filter);
+        return deleteResult;
+    }
+
+//    public DeleteResult batchDelete(Class cls, BasicDBObject filter) throws Exception {
+//        MongoCollection collection = getMongoCollection(cls);
+//        collection.remo
+//        return deleteResult;
+//    }
+
+    public void add(String collectionName, Document document) throws Exception {
+        MongoCollection collection = getMongoCollection(collectionName);
+        collection.insertOne(document);
+    }
+
+    public void batchAdd(String collectionName, List<Document> document) throws Exception {
+        MongoCollection collection = getMongoCollection(collectionName);
+        collection.insertMany(document);
+    }
+
+    public void update(String collectionName, Bson filter, Bson update) throws Exception {
+        MongoCollection collection = getMongoCollection(collectionName);
+        collection.updateOne(filter, update);
+    }
+
+    public void replace(String collectionName, Bson filter, Bson update) throws Exception {
+        MongoCollection collection = getMongoCollection(collectionName);
+        collection.replaceOne(filter, update);
     }
 
     public <T> List<T> find(Class<T> cls) {
@@ -135,5 +168,6 @@ public class MongoDAO {
         MongoCollection collection = mongoDatabase.getCollection(collectionName);
         return collection;
     }
+
 
 }

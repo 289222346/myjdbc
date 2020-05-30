@@ -4,7 +4,6 @@ import com.myjdbc.core.config.properties.DbConfig;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -18,7 +17,6 @@ import java.util.Map;
  * {@code actionRetrieve} 是查询操作
  * {@code actionSaveAndUpdate} 是增删操作
  * <p>
- * {@link MongoTemplate} 本实现，完全依赖于spring框架下的mongo模板，底层完全使用该模板。
  * 本实现的作用是使myjdbc用户保持一致的操作习惯，而不用关系mongo底层原理(包括mongodb模板).
  *
  * @Author: 陈文
@@ -28,23 +26,13 @@ import java.util.Map;
 public abstract class MongodbServiceImpl extends MyMongoAction implements BaseService {
 
     @Autowired
-    public MongodbServiceImpl(MongoTemplate mongoTemplate) {
-        super(mongoTemplate);
+    public MongodbServiceImpl() {
+        super();
     }
 
     @Autowired
-    public MongodbServiceImpl(MongoTemplate mongoTemplate, DbConfig dbConfig) {
-        super(mongoTemplate, dbConfig);
-    }
-
-    @Autowired
-    public MongodbServiceImpl(MongoTemplate mongoTemplate, String ip, Integer port, String databaseName) {
-        super(mongoTemplate, ip + ":" + port, databaseName);
-    }
-
-    @Autowired
-    public MongodbServiceImpl(MongoTemplate mongoTemplate, String url, String databaseName) {
-        super(mongoTemplate, url, databaseName);
+    public MongodbServiceImpl(String databaseName) {
+        super(databaseName);
     }
 
     @Override

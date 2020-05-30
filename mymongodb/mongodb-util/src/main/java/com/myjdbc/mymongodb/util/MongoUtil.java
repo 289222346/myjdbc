@@ -3,6 +3,9 @@ package com.myjdbc.mymongodb.util;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Aggregates;
 import com.myjdbc.core.constants.OpType;
+import com.myjdbc.core.criteria.CriteriaQuery;
+import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
+import com.myjdbc.core.model.Criteria;
 import com.myjdbc.core.model.Criterion;
 import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
@@ -12,11 +15,10 @@ import com.myjdbc.mymongodb.constants.MongodbConstants;
 import com.myjdbc.core.util.SecretUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.OneToOne;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -151,21 +153,76 @@ public class MongoUtil {
         return null;
     }
 
+    public static <T> BasicDBObject modelToFilter(T t) {
+        Map<String, Object> map = mongoPOJOToMap(t);
+        return mapToFilter(t.getClass(), map);
+    }
+
     /**
-     * 将{@link Map}转换成 {@link Query}。
+     * 将{@link Map}转换成 {@link BasicDBObject filter}。
      * 内容示意：Map{key,value} 其中{@code key} 是字段名，{@code value} 是限定值。限定条件全部为EQ(完全相等)
      *
      * @Author: 陈文
      * @Date: 2020/4/20 12:40
      */
-    public static Query mapToQuery(Map<String, Object> map) {
-        Query query = new Query();
-        if (map != null) {
-            map.forEach((key, value) -> {
-                query.addCriteria(Criteria.where(key).is(value));
-            });
+    public static BasicDBObject mapToFilter(Class cls, Map<String, Object> map) {
+        CriteriaQuery criteriaQuery = new CriteriaQueryImpl(cls);
+        for (String key : map.keySet()) {
+            criteriaQuery.eq(key, map.get(key));
         }
+        return spliceQuery(criteriaQuery);
+    }
+
+    public static BasicDBObject idToFilter(Serializable id) {
+        BasicDBObject condition = MongoUtil.toCondition(OpType.EQ, id);
+        BasicDBObject query = new BasicDBObject("_id", condition);
         return query;
+    }
+
+    public static void getCriteria(BasicDBObject query, String filedName, List<Criterion> criterionList) {
+        if (query == null) {
+            throw new NullPointerException("query-查询器不能为空！");
+        }
+
+        if (StringUtil.isEmpty(filedName)) {
+            throw new NullPointerException("filedName-限定字段名不能为空！");
+        }
+
+        if (ListUtil.isEmpty(criterionList)) {
+            throw new NullPointerException("criterionList-限定条件不能为空！");
+        }
+
+        BasicDBObject condition = MongoUtil.toCondition(criterionList);
+        query.append(filedName, condition);
+    }
+
+    public static <T> BasicDBObject spliceQuery(CriteriaQuery<T> criteriaQuery) {
+        Class cls = criteriaQuery.getCls();
+        criteriaQuery = spliceCriteriaQuery(criteriaQuery);
+        //MongoDB的Query查询构造器
+        BasicDBObject query = new BasicDBObject();
+        //遍历Myjdbc查询构造器，并适配成MongoDB的Query查询构造器
+        criteriaQuery.getCriteriaMap().values().forEach(criteria -> {
+            //查询条件
+            List<Criterion> criterions = criteria.getCriterions();
+            //限定字段名
+            String filedName = ModelUtil.getPropertyName(cls, criteria.getFieldName());
+            //获取匹配方式
+            MongoUtil.getCriteria(query, filedName, criterions);
+        });
+        return query;
+    }
+
+    public static <T> CriteriaQuery<T> spliceCriteriaQuery(CriteriaQuery<T> criteriaQuery) {
+        T t = criteriaQuery.getQueryT();
+        if (t == null) {
+            return criteriaQuery;
+        }
+        Document document = MongoUtil.mongoPOJOToDocument(t);
+        document.forEach((fieldName, value) -> {
+            criteriaQuery.eq(fieldName, value);
+        });
+        return criteriaQuery;
     }
 
     public static BasicDBObject toCondition(OpType op, Object value) {
@@ -176,7 +233,6 @@ public class MongoUtil {
     }
 
     public static BasicDBObject toCondition(List<Criterion> criterionList) {
-
         BasicDBObject basicDBObject = new BasicDBObject();
         for (Criterion criterion : criterionList) {
             OpType op = criterion.getOp();

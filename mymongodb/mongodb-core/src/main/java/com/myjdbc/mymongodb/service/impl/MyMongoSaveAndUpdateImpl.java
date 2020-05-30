@@ -1,5 +1,6 @@
 package com.myjdbc.mymongodb.service.impl;
 
+import com.mongodb.BasicDBObject;
 import com.myjdbc.core.annotations.IDAutoGenerator;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
@@ -8,13 +9,11 @@ import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.idgenerator.IdGeneratorUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
+import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.model.SaveAndUpdateBO;
 import com.myjdbc.mymongodb.util.MongoUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
@@ -30,12 +29,12 @@ import java.util.Map;
  */
 public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
 
-    private MongoTemplate mongoTemplate;
+    protected MongoDAO dao;
 
     private ActionRetrieve actionRetrieve;
 
-    public MyMongoSaveAndUpdateImpl(MongoTemplate mongoTemplate, ActionRetrieve actionRetrieve) {
-        this.mongoTemplate = mongoTemplate;
+    public MyMongoSaveAndUpdateImpl(ActionRetrieve actionRetrieve, MongoDAO dao) {
+        this.dao = dao;
         this.actionRetrieve = actionRetrieve;
     }
 
@@ -80,7 +79,8 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             return FAILURE_NO_LIST;
         }
         try {
-            mongoTemplate.remove(t, ModelUtil.getModelName(t.getClass()));
+            BasicDBObject filter = MongoUtil.modelToFilter(t);
+            dao.delete(t.getClass(), filter);
         } catch (Exception e) {
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
@@ -91,8 +91,8 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
     @Override
     public int delete(Serializable id, Class<?> cls) {
         try {
-            Query query = Query.query(Criteria.where("_id").is(id));
-            mongoTemplate.remove(query, ModelUtil.getModelName(cls));
+            BasicDBObject filter = MongoUtil.idToFilter(id);
+            dao.delete(cls, filter);
         } catch (Exception e) {
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
@@ -105,26 +105,29 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
         if (ListUtil.isEmpty(list)) {
             return FAILURE_ALL_NULL;
         }
-        try {
-            Query query = new Query();
-            List<Serializable> ids = new ArrayList<>();
-            for (T t : list) {
-                Document document = MongoUtil.mongoPOJOToDocument(t);
-                Serializable id = (Serializable) document.get("_id");
-                ids.add(id);
-            }
-            query.addCriteria(Criteria.where("_id").in(ids.toArray()));
-            mongoTemplate.remove(query, ModelUtil.getModelName(list.get(0).getClass()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return FAILURE_INSIDE_ERROR;
+        for (T t : list) {
+            delete(t);
         }
+//        try {
+//            CriteriaQuery criteriaQuery = new CriteriaQueryImpl(ArrayList.class);
+//            List<Serializable> ids = new ArrayList<>();
+//            for (T t : list) {
+//                Document document = MongoUtil.mongoPOJOToDocument(t);
+//                Serializable id = (Serializable) document.get("_id");
+//                ids.add(id);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return FAILURE_INSIDE_ERROR;
+//        }
         return SUCCESS;
     }
 
     @Override
     public <T> List<T> findAndDelete(Class<T> cls, Map<String, Object> query) {
-        return mongoTemplate.findAllAndRemove(MongoUtil.mapToQuery(query), cls, ModelUtil.getModelName(cls));
+        List<T> list = actionRetrieve.findAll(cls, query);
+        batchDelete(list);
+        return list;
     }
 
     @Override
@@ -272,9 +275,14 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             //保存失败，ID冲突
             return FAILURE_ID_CLASH;
         }
-        mongoTemplate.getCollection(collectionName).insertOne(document);
+        try {
+            dao.add(collectionName, document);
+            return SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FAILURE_INSIDE_ERROR;
+        }
         //保存成功
-        return SUCCESS;
     }
 
 
@@ -293,9 +301,14 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
         if (count > 0) {
             return FAILURE_ID_CLASH;
         }
-        mongoTemplate.getCollection(collectionName).insertMany(documents);
+        try {
+            dao.batchAdd(collectionName, documents);
+            return SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FAILURE_INSIDE_ERROR;
+        }
         //保存成功
-        return SUCCESS;
     }
 
     /**
@@ -309,8 +322,13 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
         Bson filter = new Document("_id", id);
         //存储对象
         Bson update = new Document("$set", document);
-        mongoTemplate.getCollection(collectionName).updateOne(filter, update);
-        return SUCCESS;
+        try {
+            dao.update(collectionName, filter, update);
+            return SUCCESS;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FAILURE_INSIDE_ERROR;
+        }
     }
 
     /**
@@ -322,7 +340,11 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
     private int replaceAction(Serializable id, Document document, String collectionName) {
         //查询条件
         Bson filter = new Document("_id", id);
-        mongoTemplate.getCollection(collectionName).replaceOne(filter, document);
+        try {
+            dao.replace(collectionName, filter, document);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return SUCCESS;
     }
 
