@@ -36,13 +36,20 @@ public class IdGeneratorUtil {
      */
     public static Serializable generateID(IDAutoGenerator idAutoGenerator) {
         if (idAutoGenerator != null) {
+            Class cls;
+            if (idAutoGenerator.type() != IDAutoGenerator.Type.DEFAULT) {
+                cls = idAutoGenerator.type().getCls();
+            } else {
+                cls = idAutoGenerator.value();
+            }
+
             //生成String类型,默认UUID
-            if (String.class.equals(idAutoGenerator.value())) {
+            if (String.class.equals(cls)) {
                 return UUIDHexGenerator.getUUID();
             }
 
             //生成Integer类型,默认snowflake(雪花算法)
-            if (Integer.class.equals(idAutoGenerator.value())) {
+            if (Integer.class.equals(cls)) {
                 return snowFlakeGenerator.nextId();
             }
         }
