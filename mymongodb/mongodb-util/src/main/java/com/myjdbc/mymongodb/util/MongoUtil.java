@@ -5,16 +5,12 @@ import com.mongodb.client.model.Aggregates;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
-import com.myjdbc.core.model.Criteria;
 import com.myjdbc.core.model.Criterion;
-import com.myjdbc.core.util.ClassUtil;
-import com.myjdbc.core.util.ListUtil;
-import com.myjdbc.core.util.ModelUtil;
-import com.myjdbc.core.util.StringUtil;
+import com.myjdbc.core.util.*;
 import com.myjdbc.mymongodb.constants.MongodbConstants;
-import com.myjdbc.core.util.SecretUtil;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.springframework.data.annotation.Id;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.OneToOne;
@@ -73,7 +69,7 @@ public class MongoUtil {
                 // 声明类函数方法，并获取和设置该方法型参类型
                 Method getMethod = cls.getMethod(getField);
                 //属性名
-                String propertyName = ModelUtil.getPropertyName(field);
+                String propertyName = getPropertyName(field);
                 // 把获得的值设置给map对象
                 Object value = getMethod.invoke(obj);
                 if (!ObjectUtils.isEmpty(value)) {
@@ -102,7 +98,7 @@ public class MongoUtil {
             for (Field field : fields) {
                 try {
                     //数据库字段名
-                    String propertyName = ModelUtil.getPropertyName(field);
+                    String propertyName = getPropertyName(field);
                     //预备赋与的属性值
                     Object value = map.get(propertyName);
                     //属性类型
@@ -206,7 +202,7 @@ public class MongoUtil {
             //查询条件
             List<Criterion> criterions = criteria.getCriterions();
             //限定字段名
-            String filedName = ModelUtil.getPropertyName(cls, criteria.getFieldName());
+            String filedName = getPropertyName(cls, criteria.getFieldName());
             //获取匹配方式
             MongoUtil.getCriteria(query, filedName, criterions);
         });
@@ -370,6 +366,7 @@ public class MongoUtil {
         if (field.getAnnotation(OneToOne.class) != null) {
             return handleOneToOneResult(field, documents);
         }
+        //增加关联处理，扩展位置
         return null;
     }
 
@@ -399,10 +396,42 @@ public class MongoUtil {
     }
 
     private static <T> List<T> handleOneToOneResult(Field field, List<Document> documents) {
-        OneToOne oneToOne = field.getAnnotation(OneToOne.class);
         Class<T> cls = (Class<T>) field.getType();
         List<T> list = documentIterableToPOJOList(documents, cls);
         return list;
+    }
+
+    public static String getPropertyName(Field field) {
+        Id id = field.getAnnotation(Id.class);
+        //mongodb中，默认使用_id作为主键
+        // 因为mongodb会自动为该字段创建索引，所以主键不管在实体中是何名称，到数据库统一使用_id
+        if (id != null) {
+            return "_id";
+        }
+        return ModelUtil.getPropertyName(field);
+    }
+
+    /**
+     * 获取属性名称
+     *
+     * @param cls       实体类
+     * @param fieldName 实体属性名称
+     * @return 经过处理后的属性名称，如果属性不存在，则返回{@code fieldName}本身
+     * @Author 陈文
+     * @Date 2020/4/21  17:03
+     */
+    public static String getPropertyName(Class cls, String fieldName) {
+        if (cls == null) {
+            return fieldName;
+        }
+        Field[] fields = ClassUtil.getValidFields(cls);
+        for (Field field : fields) {
+            //符合其中一个属性名，则返回
+            if (fieldName.equals(field.getName())) {
+                return getPropertyName(field);
+            }
+        }
+        return fieldName;
     }
 
 }

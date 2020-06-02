@@ -16,17 +16,7 @@ public class IdGeneratorUtil {
     /**
      * 雪花生成器-默认机器编码0
      */
-    private static SnowFlakeGenerator snowFlakeGenerator = new SnowFlakeGenerator(IdGeneratorConfig.DATACENTERID, IdGeneratorConfig.MACHINEID);
-
-    /**
-     * 初始化雪花ID生成器
-     *
-     * @param datacenterId
-     * @param machineId
-     */
-    public static void initSnowFlakeGenerator(int datacenterId, int machineId) {
-        snowFlakeGenerator = new SnowFlakeGenerator(datacenterId, machineId);
-    }
+    private static final SnowFlakeGenerator snowFlakeGenerator = new SnowFlakeGenerator(IdGeneratorConfig.DATACENTERID, IdGeneratorConfig.MACHINEID);
 
     /**
      * 通过注解来生成ID

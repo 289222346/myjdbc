@@ -3,15 +3,15 @@ package com.myjdbc.mymongodb.service.impl;
 import com.mongodb.BasicDBObject;
 import com.myjdbc.core.annotations.IDAutoGenerator;
 import com.myjdbc.core.criteria.CriteriaQuery;
-import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
+import com.myjdbc.core.idgenerator.IdGeneratorUtil;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
-import com.myjdbc.core.idgenerator.IdGeneratorUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.dao.MongoDAO;
 import com.myjdbc.mymongodb.model.SaveAndUpdateBO;
 import com.myjdbc.mymongodb.util.MongoUtil;
+import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.util.ObjectUtils;
@@ -218,6 +218,11 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
                     return saveAndUpdateBO;
                 }
             }
+
+//            ApiModelProperty apiModelProperty
+            //字段禁止为空
+
+
             String collectionName = ModelUtil.getModelName(cls);
 
             saveAndUpdateBO.setCode(actionType);
@@ -271,10 +276,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
      * @Description 保存操作
      */
     private <T> int saveAction(Serializable id, Document document, String collectionName) {
-        if (actionRetrieve.findCount(collectionName, id) > 0) {
-            //保存失败，ID冲突
-            return FAILURE_ID_CLASH;
-        }
         try {
             dao.add(collectionName, document);
             return SUCCESS;
@@ -282,7 +283,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
         }
-        //保存成功
     }
 
 
@@ -294,13 +294,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             ids.add(saveAndUpdateBO.getId());
             documents.add(saveAndUpdateBO.getDocument());
         }
-        //如果要保存的数据，有一部分已经存在于数据库中，则整体不再保存
-        CriteriaQuery criteriaQuery = new CriteriaQueryImpl(collectionName);
-        criteriaQuery.in("_id", ids.toArray());
-        long count = actionRetrieve.findCount(criteriaQuery);
-        if (count > 0) {
-            return FAILURE_ID_CLASH;
-        }
         try {
             dao.batchAdd(collectionName, documents);
             return SUCCESS;
@@ -308,7 +301,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
         }
-        //保存成功
     }
 
     /**

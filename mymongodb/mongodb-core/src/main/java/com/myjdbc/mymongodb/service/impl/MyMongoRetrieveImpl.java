@@ -1,7 +1,6 @@
 package com.myjdbc.mymongodb.service.impl;
 
 import com.mongodb.BasicDBObject;
-import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;

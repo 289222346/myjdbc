@@ -135,7 +135,7 @@ public class MongoDAO {
                 orderType = 1;
             }
             for (String fieldName : order.getFieldNames()) {
-                BasicDBObject sort = new BasicDBObject(ModelUtil.getPropertyName(cls, fieldName), orderType);
+                BasicDBObject sort = new BasicDBObject(MongoUtil.getPropertyName(cls, fieldName), orderType);
                 aggregateList.add(Aggregates.sort(sort));
             }
         }

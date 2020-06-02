@@ -80,10 +80,10 @@ public class SnowFlakeGenerator {
 
     public SnowFlakeGenerator(int datacenterId, int machineId) {
         if (datacenterId > MAX_DATACENTER_NUM || datacenterId < 0) {
-            throw new IllegalArgumentException("datacenterId can't be greater than MAX_DATACENTER_NUM or less than 0");
+            throw new IllegalArgumentException("数据中心编码(datacenter)不能大于31或小于0(datacenterId can't be greater than MAX_DATACENTER_NUM or less than 0)");
         }
         if (machineId > MAX_MACHINE_NUM || machineId < 0) {
-            throw new IllegalArgumentException("machineId can't be greater than MAX_MACHINE_NUM or less than 0");
+            throw new IllegalArgumentException("机器编码(machine)不能大于31或小于0(machineId can't be greater than MAX_MACHINE_NUM or less than 0)");
         }
         this.datacenterId = datacenterId;
         this.machineId = machineId;

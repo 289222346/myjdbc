@@ -32,12 +32,6 @@ public class ModelUtil {
      * @Date 2020/4/21  17:03
      */
     public static String getPropertyName(Field field) {
-        Id id = field.getAnnotation(Id.class);
-        //mongodb中，默认使用_id作为主键
-        // 因为mongodb会自动为该字段创建索引，所以主键不管在实体中是何名称，到数据库统一使用_id
-        if (id != null) {
-            return "_id";
-        }
         ApiModelProperty apiModelProperty = field.getAnnotation(ApiModelProperty.class);
         /**
          * 没有模型属性，或者{@code name}参数为空，则返回属性原本的名字
@@ -47,29 +41,6 @@ public class ModelUtil {
         }
         //返回模型属性重定义的名字
         return apiModelProperty.name();
-    }
-
-    /**
-     * 获取属性名称
-     *
-     * @param cls       实体类
-     * @param fieldName 实体属性名称
-     * @return 经过处理后的属性名称，如果属性不存在，则返回{@code fieldName}本身
-     * @Author 陈文
-     * @Date 2020/4/21  17:03
-     */
-    public static String getPropertyName(Class cls, String fieldName) {
-        if (cls == null) {
-            return fieldName;
-        }
-        Field[] fields = ClassUtil.getValidFields(cls);
-        for (Field field : fields) {
-            //符合其中一个属性名，则返回
-            if (fieldName.equals(field.getName())) {
-                return getPropertyName(field);
-            }
-        }
-        return fieldName;
     }
 
     /**
