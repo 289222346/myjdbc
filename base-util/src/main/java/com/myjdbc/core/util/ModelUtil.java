@@ -3,8 +3,6 @@ package com.myjdbc.core.util;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import org.springframework.data.annotation.Id;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +30,7 @@ public class ModelUtil {
      * @Date 2020/4/21  17:03
      */
     public static String getPropertyName(Field field) {
-        ApiModelProperty apiModelProperty = field.getAnnotation(ApiModelProperty.class);
+        ApiModelProperty apiModelProperty = AnnotationUtil.get(field, ApiModelProperty.class);
         /**
          * 没有模型属性，或者{@code name}参数为空，则返回属性原本的名字
          */

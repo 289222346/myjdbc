@@ -8,6 +8,8 @@ import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
 import com.myjdbc.core.model.Criterion;
 import com.myjdbc.core.util.*;
 import com.myjdbc.mymongodb.constants.MongodbConstants;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.springframework.data.annotation.Id;
@@ -43,7 +45,7 @@ public class MongoUtil {
      * @Description 获取Mongo的Document文档
      */
     public static <T> Document mongoPOJOToDocument(T t) {
-        Document document = new Document(MongoUtil.mongoPOJOToMap(t));
+        Document document = new Document(MongoUtil.poToMap(t));
         return document;
     }
 
@@ -57,7 +59,8 @@ public class MongoUtil {
      * @Date 2020/3/29  20:09
      * @Description 将对象属性反射成Map(Document)
      */
-    public static <T> Map<String, Object> mongoPOJOToMap(T obj) {
+    public static <T> Map<String, Object> poToMap(T obj) {
+        //字段禁止为空
         Class<?> cls = obj.getClass();
         Field[] fields = ClassUtil.getValidFields(cls);
         // 声明Map对象，存储属性
@@ -150,7 +153,7 @@ public class MongoUtil {
     }
 
     public static <T> BasicDBObject modelToFilter(T t) {
-        Map<String, Object> map = mongoPOJOToMap(t);
+        Map<String, Object> map = poToMap(t);
         return mapToFilter(t.getClass(), map);
     }
 

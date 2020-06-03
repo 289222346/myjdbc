@@ -6,6 +6,8 @@ import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.idgenerator.IdGeneratorUtil;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
+import com.myjdbc.core.util.AnnotationUtil;
+import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
 import com.myjdbc.mymongodb.dao.MongoDAO;
@@ -14,9 +16,12 @@ import com.myjdbc.mymongodb.util.MongoUtil;
 import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +33,9 @@ import java.util.Map;
  * @Date: 2020/4/20 10:59
  */
 public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
+
+    private Logger logger = LoggerFactory.getLogger(MyMongoSaveAndUpdateImpl.class);
+
 
     protected MongoDAO dao;
 
@@ -183,8 +191,10 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
         try {
             if (ListUtil.isList(t)) {
                 saveAndUpdateBO.setCode(FAILURE_NO_LIST);
+                logger.error(getDesc(FAILURE_NO_LIST));
                 return saveAndUpdateBO;
             }
+
             /***
              * 前置条件判断
              */
@@ -194,20 +204,35 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             if (document == null || document.size() == 0) {
                 //保存失败，对象所有属性为空
                 saveAndUpdateBO.setCode(FAILURE_ALL_NULL);
+                logger.error(getDesc(FAILURE_ALL_NULL));
                 return saveAndUpdateBO;
             }
+
+            List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
+            for (Field field : fieldList) {
+                ApiModelProperty apiModelProperty = AnnotationUtil.get(field, ApiModelProperty.class);
+                if (apiModelProperty.required()) {
+                    String propertyName = MongoUtil.getPropertyName(field);
+                    if (document.get(propertyName) == null) {
+                        saveAndUpdateBO.setCode(FAILURE_REQUIRED_NULL);
+                        logger.error(getDesc(FAILURE_REQUIRED_NULL) + t.getClass().getName() + ":" + propertyName);
+                        return saveAndUpdateBO;
+                    }
+                }
+            }
+
             //序列化ID
             Serializable id = (Serializable) document.get("_id");
-
             //判断ID
             if (ObjectUtils.isEmpty(id)) {
                 //允许ID生成
                 if (actionType == ActionSaveAndUpdate.ACTION_SAVE) {
-                    IDAutoGenerator idAutoGenerator = cls.getAnnotation(IDAutoGenerator.class);
+                    IDAutoGenerator idAutoGenerator = AnnotationUtil.get(cls, IDAutoGenerator.class);
                     id = IdGeneratorUtil.generateID(idAutoGenerator);
                     if (ObjectUtils.isEmpty(id)) {
                         //操作失败，ID属性为空
                         saveAndUpdateBO.setCode(FAILURE_ID_NULL);
+                        logger.error(getDesc(FAILURE_ID_NULL));
                         return saveAndUpdateBO;
                     } else {
                         document.put("_id", id);
@@ -215,16 +240,13 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
                 } else {
                     //操作失败，ID属性为空
                     saveAndUpdateBO.setCode(FAILURE_ID_NULL);
+                    logger.error(getDesc(FAILURE_ID_NULL));
                     return saveAndUpdateBO;
                 }
             }
 
-//            ApiModelProperty apiModelProperty
-            //字段禁止为空
-
-
+            //校验结束，开始保存处理
             String collectionName = ModelUtil.getModelName(cls);
-
             saveAndUpdateBO.setCode(actionType);
             saveAndUpdateBO.setId(id);
             saveAndUpdateBO.setDocument(document);
@@ -232,6 +254,8 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             return saveAndUpdateBO;
         } catch (Exception e) {
             saveAndUpdateBO.setCode(FAILURE_INSIDE_ERROR);
+            logger.error(getDesc(FAILURE_INSIDE_ERROR));
+            e.printStackTrace();
             return saveAndUpdateBO;
         }
     }
@@ -266,6 +290,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             return replaceAction(id, document, collectionName);
         }
         //找不到操作响应
+        logger.error(getDesc(FAILURE_TYPE_NULL));
         return FAILURE_TYPE_NULL;
     }
 
@@ -280,6 +305,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             dao.add(collectionName, document);
             return SUCCESS;
         } catch (Exception e) {
+            logger.error(getDesc(FAILURE_INSIDE_ERROR));
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
         }
@@ -298,6 +324,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             dao.batchAdd(collectionName, documents);
             return SUCCESS;
         } catch (Exception e) {
+            logger.error(getDesc(FAILURE_INSIDE_ERROR));
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
         }
@@ -318,6 +345,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             dao.update(collectionName, filter, update);
             return SUCCESS;
         } catch (Exception e) {
+            logger.error(getDesc(FAILURE_INSIDE_ERROR));
             e.printStackTrace();
             return FAILURE_INSIDE_ERROR;
         }
@@ -339,5 +367,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
         }
         return SUCCESS;
     }
+
 
 }

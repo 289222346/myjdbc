@@ -41,6 +41,10 @@ public interface BaseServiceType {
      */
     int FAILURE_NO_DATA = 7;
     /**
+     * 操作结果：操作失败，必要属性为空
+     */
+    int FAILURE_REQUIRED_NULL = 8;
+    /**
      * 操作结果：操作失败，非法操作
      */
     int FAILURE_TYPE_NULL = 99;
@@ -54,6 +58,7 @@ public interface BaseServiceType {
             "操作失败，内部错误",
             "操作失败，不允许传入集合",
             "操作失败，找不到没有数据",
+            "操作失败，必填属性为空",
             "操作失败，非法操作"
     };
 
