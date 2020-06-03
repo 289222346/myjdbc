@@ -208,15 +208,18 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
                 return saveAndUpdateBO;
             }
 
+            //校验必填字段是否非空
             List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
             for (Field field : fieldList) {
                 ApiModelProperty apiModelProperty = AnnotationUtil.get(field, ApiModelProperty.class);
-                if (apiModelProperty.required()) {
-                    String propertyName = MongoUtil.getPropertyName(field);
-                    if (document.get(propertyName) == null) {
-                        saveAndUpdateBO.setCode(FAILURE_REQUIRED_NULL);
-                        logger.error(getDesc(FAILURE_REQUIRED_NULL) + t.getClass().getName() + ":" + propertyName);
-                        return saveAndUpdateBO;
+                if (apiModelProperty != null) {
+                    if (apiModelProperty.required()) {
+                        String propertyName = MongoUtil.getPropertyName(field);
+                        if (document.get(propertyName) == null) {
+                            saveAndUpdateBO.setCode(FAILURE_REQUIRED_NULL);
+                            logger.error(getDesc(FAILURE_REQUIRED_NULL) + t.getClass().getName() + ":" + propertyName);
+                            return saveAndUpdateBO;
+                        }
                     }
                 }
             }

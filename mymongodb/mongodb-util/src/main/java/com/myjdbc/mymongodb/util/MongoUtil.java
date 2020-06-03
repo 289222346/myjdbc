@@ -8,10 +8,10 @@ import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
 import com.myjdbc.core.model.Criterion;
 import com.myjdbc.core.util.*;
 import com.myjdbc.mymongodb.constants.MongodbConstants;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.util.ObjectUtils;
 
@@ -30,13 +30,7 @@ import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class MongoUtil {
 
-    public static void main(String[] args) {
-//        UserExample userExample = new UserExample();
-//        userExample.setPhone("18676826110");
-//        userExample.setName("陈文");
-//        Document document = getDocument(userExample);
-//        System.out.println(document);
-    }
+    private static Logger logger = LoggerFactory.getLogger(MongoUtil.class);
 
     /**
      * @return
@@ -67,8 +61,8 @@ public class MongoUtil {
         Map map = new LinkedHashMap();
         for (Field field : fields) {
             // 获取要设置的属性的set方法名称
-            String getField = ClassUtil.getField(field.getName());
             try {
+                String getField = ClassUtil.getField(field.getName());
                 // 声明类函数方法，并获取和设置该方法型参类型
                 Method getMethod = cls.getMethod(getField);
                 //属性名
@@ -78,16 +72,9 @@ public class MongoUtil {
                 if (!ObjectUtils.isEmpty(value)) {
                     map.put(propertyName, value);
                 }
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                //单个属性如果映射不成功，则警告
+                logger.warn(e.getMessage());
             }
         }
         return map;
@@ -125,22 +112,19 @@ public class MongoUtil {
                         continue;
                     }
 
-
                     // 获取要设置的属性的set方法名称
                     String setField = ClassUtil.setField(field.getName());
                     // 声明类函数方法，并获取和设置该方法型参类型
                     Method setMethod = cls.getMethod(setField, fileType);
                     setMethod.invoke(t, value);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    //单个属性如果映射不成功，则警告
+                    StringBuffer msg = new StringBuffer()
+                            .append(cls.getName()).append("  ")
+                            .append(field.getName())
+                            .append("  ")
+                            .append(e.getMessage());
+                    logger.warn(msg.toString());
                 }
             }
             return t;
