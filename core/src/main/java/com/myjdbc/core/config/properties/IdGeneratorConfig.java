@@ -23,8 +23,8 @@ public class IdGeneratorConfig {
     static {
         //属性工具
         PropertiesConfigUtil util = new PropertiesConfigUtil(PropertiesFile.ID_GENERATOR);
-        DATACENTERID = Integer.parseInt(util.readProperty(PropertiesIdGenerator.DATACENTERID.getCode()) + "");
-        MACHINEID = Integer.parseInt(util.readProperty(PropertiesIdGenerator.MACHINEID.getCode()) + "");
+        DATACENTERID = Integer.parseInt(util.readProperty(PropertiesIdGenerator.DATA_CENTER_ID.getCode()) + "");
+        MACHINEID = Integer.parseInt(util.readProperty(PropertiesIdGenerator.MACHINE_ID.getCode()) + "");
     }
 
 }

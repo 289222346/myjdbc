@@ -5,19 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.myjdbc</groupId>
     <artifactId>parent</artifactId>
-    <version>1.4.8</version>
+    <version>1.4.9-WEB</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
         <module>mymongodb</module>
         <module>base-util</module>
+        <module>web</module>
     </modules>
     <properties>
         <!-- myjdbc各组件版本控制 -->
-        <that.version>1.4.8</that.version>
+        <that.version>1.4.9-WEB</that.version>
         <!-- 核心 -->
         <myjdbc.core.version>${that.version}</myjdbc.core.version>
-        <!-- 核心 -->
+        <!-- 核心工具 -->
         <myjdbc.core.util.version>${that.version}</myjdbc.core.util.version>
         <!-- mongodb组件 -->
         <myjdbc.mymongodb.version>${that.version}</myjdbc.mymongodb.version>

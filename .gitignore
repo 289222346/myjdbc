@@ -23,4 +23,4 @@ mvnw.cmd
 /.nb-gradle/
 
 ### resource  ###
-*.properties
+#*.properties

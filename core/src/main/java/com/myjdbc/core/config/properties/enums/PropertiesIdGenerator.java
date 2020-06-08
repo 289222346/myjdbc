@@ -6,17 +6,16 @@ package com.myjdbc.core.config.properties.enums;
  * @Date 2019/12/26  9:48
  * @Description JDBC配置
  */
-@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum PropertiesIdGenerator implements PropertiesEnum {
 
     /**
      * 雪花-数据中心编码
      */
-    DATACENTERID("myjdbc.id.datacenter", "雪花-数据中心编码", 0),
+    DATA_CENTER_ID("myjdbc.id.datacenter", "雪花-数据中心编码", 0),
     /**
      * 雪花-机器编码
      */
-    MACHINEID("myjdbc.id.machine", "雪花-机器编码", 0);
+    MACHINE_ID("myjdbc.id.machine", "雪花-机器编码", 0);
 
     /**
      * 配置属性名
