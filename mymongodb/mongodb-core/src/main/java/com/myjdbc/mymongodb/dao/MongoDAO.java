@@ -92,6 +92,10 @@ public class MongoDAO {
         return findCount(query, getMongoCollection(collectionName));
     }
 
+    public long findCount(BasicDBObject query, Class cls) {
+        return findCount(query, getMongoCollection(cls));
+    }
+
     public long findCount(BasicDBObject query, MongoCollection collection) {
         return collection.countDocuments(query);
     }
@@ -117,16 +121,6 @@ public class MongoDAO {
                 aggregateList.add(join);
             }
         }
-        //添加分页
-        if (pag != null) {
-            long total = collection.countDocuments();
-            pag.setTotal(total);
-            int page = (pag.getPage() * pag.getRows());
-            int rows = pag.getRows();
-            aggregateList.add(Aggregates.skip(page));
-            aggregateList.add(Aggregates.limit(rows));
-        }
-
         //添加排序
         if (order != null) {
             //默认DESC
@@ -138,6 +132,16 @@ public class MongoDAO {
                 BasicDBObject sort = new BasicDBObject(MongoUtil.getPropertyName(cls, fieldName), orderType);
                 aggregateList.add(Aggregates.sort(sort));
             }
+        }
+
+        //添加分页
+        if (pag != null) {
+            long total = findCount(query, cls);
+            pag.setTotal(total);
+            int page = (pag.getPage() * pag.getRows());
+            int rows = pag.getRows();
+            aggregateList.add(Aggregates.skip(page));
+            aggregateList.add(Aggregates.limit(rows));
         }
 
         AggregateIterable<Document> aggregateIterable = collection.aggregate(aggregateList);
