@@ -21,11 +21,8 @@ public class PublicInfoController extends BaseController {
 
     @RequestMapping("/hello")
     public JSONObject helloHtml() {
+        System.out.println("收到请求1");
         return createError("可能是错误吧");
     }
 
-    @RequestMapping("/hello2")
-    public ModelAndView helloHtml2() {
-        return new ModelAndView("/hello");
-    }
 }

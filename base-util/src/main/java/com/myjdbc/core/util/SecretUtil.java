@@ -1,10 +1,6 @@
 package com.myjdbc.core.util;
 
-import com.myjdbc.core.util.StringUtil;
-
-import java.io.UnsupportedEncodingException;
 import java.util.Base64;
-import java.util.Random;
 
 /**
  * 密码配置工具
@@ -95,22 +91,6 @@ public class SecretUtil {
     private static byte keyQueue(int index, byte[] key) {
         index = index % key.length;
         return key[index];
-    }
-
-    public static void main(String[] args) throws UnsupportedEncodingException {
-//        test("中国A");
-        for (int i = 0; i < 100; i++) {
-            String publicKey = (new Random().nextInt()) + "";
-            System.out.println(publicKey);
-            String value = encryption("wip", publicKey);
-            System.out.println("加密:" + value);
-            String value2 = decrypt(value, publicKey);
-            System.out.println("解密:" + value2);
-            String value3 = encryption("wipinf0123", publicKey);
-            System.out.println("加密:" + value3);
-            String value4 = decrypt(value3, publicKey);
-            System.out.println("解密:" + value4);
-        }
     }
 
 }

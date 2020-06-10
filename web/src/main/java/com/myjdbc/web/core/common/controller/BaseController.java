@@ -14,13 +14,28 @@ import com.myjdbc.web.core.common.model.ResultInfo;
 public abstract class BaseController implements BaseServiceType {
 
     /**
+     * 控制层主动抛出错误
+     */
+    private int ERROR = -1;
+
+    /**
      * 调用接口失败返回
      *
      * @param msg
      * @return
      */
     protected JSONObject createError(String msg) {
-        return createResultInfo(FAILURE_TYPE_NULL, msg, null);
+        return createError(msg, null);
+    }
+
+    /**
+     * 调用接口失败返回
+     *
+     * @param msg
+     * @return
+     */
+    protected JSONObject createError(String msg, Object data) {
+        return createResultInfo(ERROR, msg, data);
     }
 
     /**
@@ -56,7 +71,6 @@ public abstract class BaseController implements BaseServiceType {
         return toResultInfo(code, msg, data);
     }
 
-
     /**
      * 转换成JSONMessage格式输出
      *
@@ -67,9 +81,6 @@ public abstract class BaseController implements BaseServiceType {
     private JSONObject toResultInfo(int code, String msg, Object data) {
         ResultInfo resultInfo = new ResultInfo();
         resultInfo.setResultMsg(msg);
-        if (BaseServiceType.SUCCESS != code) {
-            code = -1;
-        }
         resultInfo.setCode(code);
         resultInfo.setData(data);
         return resultInfo;

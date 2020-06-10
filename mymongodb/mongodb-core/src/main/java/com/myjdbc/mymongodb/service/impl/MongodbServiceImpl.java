@@ -1,7 +1,7 @@
 package com.myjdbc.mymongodb.service.impl;
 
-import com.myjdbc.core.config.properties.DbConfig;
 import com.myjdbc.core.criteria.CriteriaQuery;
+import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
 import com.myjdbc.core.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,11 +30,6 @@ public abstract class MongodbServiceImpl extends MyMongoAction implements BaseSe
         super();
     }
 
-    @Autowired
-    public MongodbServiceImpl(String databaseName) {
-        super(databaseName);
-    }
-
     @Override
     public long findCount(Class cls, Serializable id) {
         return actionRetrieve.findCount(cls, id);
@@ -43,6 +38,13 @@ public abstract class MongodbServiceImpl extends MyMongoAction implements BaseSe
     @Override
     public long findCount(String collectionName, Serializable id) {
         return actionRetrieve.findCount(collectionName, id);
+    }
+
+    @Override
+    public long findCount(Class cls, String fieldName, Object value) {
+        CriteriaQuery criteriaQuery = new CriteriaQueryImpl(cls);
+        criteriaQuery.eq(fieldName, value);
+        return actionRetrieve.findCount(criteriaQuery);
     }
 
     @Override

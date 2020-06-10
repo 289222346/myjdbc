@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="/web/js/util/test.js"></script>
+</head>
+
+
+<body>
+<div w3-include-html="common/config_file.html"></div>
+
+<div>
+    <input id="userName" type="text" placeholder="请输入用户名">
+    <input id="password" type="password" placeholder="请输入密码">
+    <button type="button" name="login" id="login">登陆</button>
+</div>
+</body>
+
+
+<script type="text/javascript">
+    $("#login").click(function () {
+        var userName = $("#userName").val();
+        var password = $("#password").val();
+        if (checkUser(userName, password)) {
+            add_user(userName, password);
+        }
+    });
+
+    function checkUser(userName, password) {
+        if (isEmpty(userName)) {
+            alert("用户名不能为空");
+            return false;
+        }
+        if (isEmpty(password)) {
+            alert("密码不能为空");
+            return false;
+        }
+        return true;
+    }
+
+    function isNotEmpty(data) {
+        if (data != null && data != '') {
+            return true;
+        }
+        return false;
+    }
+
+    function isEmpty(data) {
+        return !isNotEmpty(data);
+    }
+
+    function server_request_callback(data) {
+        alert(data.resultMsg);
+    }
+</script>
+</html>
