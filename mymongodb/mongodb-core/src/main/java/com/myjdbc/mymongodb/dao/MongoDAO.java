@@ -100,7 +100,6 @@ public class MongoDAO {
         return collection.countDocuments(query);
     }
 
-
     /**
      * @param query    查询过滤器
      * @param cls      指定实体类型
