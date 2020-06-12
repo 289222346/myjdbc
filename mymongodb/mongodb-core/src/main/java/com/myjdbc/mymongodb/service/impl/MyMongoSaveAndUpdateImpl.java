@@ -3,12 +3,12 @@ package com.myjdbc.mymongodb.service.impl;
 import com.mongodb.BasicDBObject;
 import com.myjdbc.api.annotations.IDAutoGenerator;
 import com.myjdbc.api.annotations.MyApiModelProperty;
-import com.myjdbc.api.model.IDAutoGeneratorAO;
+import com.myjdbc.api.annotations.MyID;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.idgenerator.IdGeneratorUtil;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
-import com.myjdbc.core.util.AnnotationUtil;
+import com.myjdbc.api.util.AnnotationUtil;
 import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.ListUtil;
 import com.myjdbc.core.util.ModelUtil;
@@ -210,37 +210,29 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             }
 
             //序列化ID
-            Serializable id = (Serializable) document.get("_id");
-            //判断ID
-            if (ObjectUtils.isEmpty(id)) {
-                //允许ID生成
-                if (actionType == ActionSaveAndUpdate.ACTION_SAVE) {
-                    IDAutoGeneratorAO idAutoGenerator = ModelUtil.getAnnotationObject(IDAutoGeneratorAO.class, cls, IDAutoGenerator.class);
-                    id = IdGeneratorUtil.generateID(idAutoGenerator);
-                    if (ObjectUtils.isEmpty(id)) {
-                        //操作失败，ID属性为空
-                        saveAndUpdateBO.setCode(FAILURE_ID_NULL);
-                        logger.error(getDesc(FAILURE_ID_NULL));
-                        return saveAndUpdateBO;
-                    } else {
-                        document.put("_id", id);
-                    }
-                } else {
-                    //操作失败，ID属性为空
-                    saveAndUpdateBO.setCode(FAILURE_ID_NULL);
-                    logger.error(getDesc(FAILURE_ID_NULL));
-                    return saveAndUpdateBO;
-                }
-            }
+            Serializable id = null;
 
             //校验必填字段是否非空
             List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
             for (Field field : fieldList) {
-                MyApiModelProperty apiModelProperty = (MyApiModelProperty) AnnotationUtil.get(field, MyApiModelProperty.class).getAnnotation();
+                MyApiModelProperty apiModelProperty = AnnotationUtil.findAnnotaion(field, MyApiModelProperty.class);
                 if (apiModelProperty != null) {
                     if (apiModelProperty.required()) {
                         String propertyName = MongoUtil.getPropertyName(field);
                         if (document.get(propertyName) == null) {
+                            //如果是ID，且新增并有自动生成器，允许ID生成
+                            MyID myID = AnnotationUtil.findAnnotaion(field, MyID.class);
+                            if (myID != null) {
+                                if (actionType == ActionSaveAndUpdate.ACTION_SAVE) {
+                                    IDAutoGenerator idAutoGenerator = AnnotationUtil.findAnnotaion(field, IDAutoGenerator.class);
+                                    id = IdGeneratorUtil.generateID(idAutoGenerator);
+                                    if (!ObjectUtils.isEmpty(id)) {
+                                        document.put("_id", id);
+                                        continue;
+                                    }
+                                }
+                            }
+                            //必填字段为空，结束
                             saveAndUpdateBO.setCode(FAILURE_REQUIRED_NULL);
                             logger.error(getDesc(FAILURE_REQUIRED_NULL) + t.getClass().getName() + ":" + propertyName);
                             return saveAndUpdateBO;
@@ -248,7 +240,6 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
                     }
                 }
             }
-
             //校验结束，开始保存处理
             String collectionName = ModelUtil.getModelName(cls);
             saveAndUpdateBO.setCode(actionType);

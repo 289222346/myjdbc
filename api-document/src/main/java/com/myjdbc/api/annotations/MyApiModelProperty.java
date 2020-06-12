@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 /**
  * @author 陈文
  */
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface MyApiModelProperty {

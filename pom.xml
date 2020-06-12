@@ -34,6 +34,8 @@
 
         <!--    版本控制    -->
         <!--  公共引用  -->
+        <!--标准化接口文档 -->
+        <swagger.version>2.6.0</swagger.version>
         <!--JPA规范-->
         <jpa.version>1.0</jpa.version>
         <!--JSON数据支持-->

@@ -2,6 +2,7 @@ package com.myjdbc.mymongodb.util;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.model.Aggregates;
+import com.myjdbc.api.annotations.MyID;
 import com.myjdbc.core.constants.OpType;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.criteria.impl.CriteriaQueryImpl;
@@ -18,9 +19,7 @@ import org.springframework.util.ObjectUtils;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -32,6 +31,11 @@ public class MongoUtil {
     private static Logger logger = LoggerFactory.getLogger(MongoUtil.class);
 
     /**
+     * MongoDB  ID属性名称
+     */
+    private static final String ID_ATTRIBUTE_NAME = "_id";
+
+    /**
      * @return
      * @Author 陈文
      * @Date 2020/3/26  14:26
@@ -39,6 +43,11 @@ public class MongoUtil {
      */
     public static <T> Document mongoPOJOToDocument(T t) {
         Document document = new Document(ModelUtil.poToMap(t));
+        //如果存在ID属性，则将ID属性名称替换为MongoDB特殊形式
+        if (document.containsKey(MyID.ID_ATTRIBUTE_NAME)) {
+            document.put(ID_ATTRIBUTE_NAME, document.get(MyID.ID_ATTRIBUTE_NAME));
+            document.remove(MyID.ID_ATTRIBUTE_NAME);
+        }
         return document;
     }
 
@@ -59,7 +68,6 @@ public class MongoUtil {
 //        }
         return t;
     }
-
 
 
     public static <T> BasicDBObject modelToFilter(T t) {
@@ -313,6 +321,7 @@ public class MongoUtil {
         List<T> list = documentIterableToPOJOList(documents, cls);
         return list;
     }
+
 
     public static String getPropertyName(Field field) {
         Id id = field.getAnnotation(Id.class);

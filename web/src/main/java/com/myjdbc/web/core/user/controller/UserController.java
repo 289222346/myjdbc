@@ -2,10 +2,10 @@ package com.myjdbc.web.core.user.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.myjdbc.api.annotations.IDAutoGenerator;
+import com.myjdbc.api.annotations.MyApiModel;
 import com.myjdbc.api.annotations.MyApiModelProperty;
 import com.myjdbc.api.annotations.MyID;
-import com.myjdbc.api.model.AnnotationObject;
-import com.myjdbc.core.util.AnnotationUtil;
+import com.myjdbc.core.util.ClassUtil;
 import com.myjdbc.core.util.SecretUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.mymongodb.service.SystemMongoService;
@@ -14,12 +14,16 @@ import com.myjdbc.web.core.common.util.Md5Util;
 import com.myjdbc.web.core.user.model.BaseUserPO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * 公共信息开放接口
@@ -32,13 +36,27 @@ import java.lang.reflect.Field;
 public class UserController extends BaseController {
 
     @Test
-    public void test() throws NoSuchFieldException {
+    public void test() throws NoSuchFieldException, NoSuchMethodException {
+//        Field field = BaseUserPO.class.getDeclaredField("id");
+//        MyID myID = field.getAnnotation(MyID.class);
+//        System.out.println(myID);
+//        AnnotationAttributes annotationAttributes = AnnotationUtils.getAnnotationAttributes(MyApiModelProperty.class, myID);
+//        MyApiModelProperty myApiModelProperty = AnnotationUtils.synthesizeAnnotation(annotationAttributes, MyApiModelProperty.class, myID.annotationType());
+//        System.out.println(myApiModelProperty);
+
+
+//        MyApiModel a = AnnotationUtils.findAnnotation(BaseUserPO.class, MyApiModel.class);
+//        MyID annotations = AnnotationUtils.findAnnotation(BaseUserPO.class.getMethod("getId"), MyID.class);
+
+//        AnnotatedElementUtils.
+//        MyApiModelProperty myApiModel = AnnotatedElementUtils.getMergedAnnotation(BaseUserPO.class, MyApiModelProperty.class);
+//        System.out.println(myApiModel);
+
         Field field = BaseUserPO.class.getDeclaredField("id");
-        MyID myID = field.getAnnotation(MyID.class);
-        System.out.println(myID);
-        AnnotationAttributes annotationAttributes = AnnotationUtils.getAnnotationAttributes(MyApiModelProperty.class, myID);
-        MyApiModelProperty myApiModelProperty = AnnotationUtils.synthesizeAnnotation(annotationAttributes, MyApiModelProperty.class, myID.annotationType());
-        System.out.println(myApiModelProperty);
+        MyApiModelProperty idAutoGenerator = AnnotatedElementUtils.findMergedAnnotation(field, MyApiModelProperty.class);
+        System.out.println(idAutoGenerator);
+
+
     }
 
     public UserController() {
@@ -59,6 +77,8 @@ public class UserController extends BaseController {
         if (userCount != 0) {
             return createError("用户已存在！");
         }
+
+        baseUserPO.setId(i++);
         //密码加密
         String password = handPassword(baseUserPO.getUserPassword(), userName);
         baseUserPO.setUserPassword(password);
@@ -67,6 +87,8 @@ public class UserController extends BaseController {
         System.out.println("用户已保存");
         return createResultInfo(code);
     }
+
+    int i = 22222;
 
 
     private String handPassword(String password, String publicKey) {

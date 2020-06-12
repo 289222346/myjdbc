@@ -1,14 +1,16 @@
 package com.myjdbc.api.annotations;
 
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
 /**
  * @author 陈文
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
+//@IDAutoGenerator
 public @interface MyApiModel {
 
     /**
@@ -23,4 +25,9 @@ public @interface MyApiModel {
      */
     String description() default "";
 
+//    /**
+//     * ID自动生成器工作方式
+//     */
+//    @AliasFor(attribute = "type", annotation = IDAutoGenerator.class)
+//    IDAutoGenerator.Type type() default IDAutoGenerator.Type.DEFAULT;
 }
