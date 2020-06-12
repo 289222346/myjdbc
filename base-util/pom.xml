@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.myjdbc</groupId>
         <artifactId>parent</artifactId>
-        <version>1.4.9-WEB</version>
+        <version>1.5.0-WEB</version>
     </parent>
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
@@ -13,17 +13,10 @@
 
     <dependencies>
         <!-- 标准化接口文档 -->
-        <!-- swagger注解依赖  -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.myjdbc</groupId>
+            <artifactId>api-document</artifactId>
+            <version>${myjdbc.api.version}</version>
         </dependency>
 
         <!--JPA规范-->

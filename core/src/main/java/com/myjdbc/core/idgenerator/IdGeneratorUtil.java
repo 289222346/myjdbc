@@ -1,6 +1,6 @@
 package com.myjdbc.core.idgenerator;
 
-import com.myjdbc.core.annotations.IDAutoGenerator;
+import com.myjdbc.api.annotations.IDAutoGenerator;
 import com.myjdbc.core.config.properties.IdGeneratorConfig;
 
 import java.io.Serializable;

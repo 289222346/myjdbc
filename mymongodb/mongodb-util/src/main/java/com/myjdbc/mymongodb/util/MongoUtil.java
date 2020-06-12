@@ -18,7 +18,6 @@ import org.springframework.util.ObjectUtils;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -39,105 +38,32 @@ public class MongoUtil {
      * @Description 获取Mongo的Document文档
      */
     public static <T> Document mongoPOJOToDocument(T t) {
-        Document document = new Document(MongoUtil.poToMap(t));
+        Document document = new Document(ModelUtil.poToMap(t));
         return document;
     }
 
     public static <T> T documentToMongoPOJO(Document document, Class<T> cls) {
-        return mapToMongoPOJO(document, cls);
+        T t = ModelUtil.mapToPO(document, cls);
+//        一对一关联，暂时无法实现
+//        //如果值为List<Document>集合，则进入关联表处理
+//        if (ListUtil.isListAndNotEmpty(value)) {
+//            List valueList = (List) value;
+//            if (valueList.get(0).getClass().equals(Document.class)) {
+//                List list = handleForeignResult(field, (List<Document>) value);
+//                if (!fileType.equals(List.class)) {
+//                    value = list.get(0);
+//                } else {
+//                    value = list;
+//                }
+//            }
+//        }
+        return t;
     }
 
-    /**
-     * @return
-     * @Author 陈文
-     * @Date 2020/3/29  20:09
-     * @Description 将对象属性反射成Map(Document)
-     */
-    public static <T> Map<String, Object> poToMap(T obj) {
-        //字段禁止为空
-        Class<?> cls = obj.getClass();
-        Field[] fields = ClassUtil.getValidFields(cls);
-        // 声明Map对象，存储属性
-        Map map = new LinkedHashMap();
-        for (Field field : fields) {
-            // 获取要设置的属性的set方法名称
-            try {
-                String getField = ClassUtil.getField(field.getName());
-                // 声明类函数方法，并获取和设置该方法型参类型
-                Method getMethod = cls.getMethod(getField);
-                //属性名
-                String propertyName = getPropertyName(field);
-                // 把获得的值设置给map对象
-                Object value = getMethod.invoke(obj);
-                if (!ObjectUtils.isEmpty(value)) {
-                    map.put(propertyName, value);
-                }
-            } catch (Exception e) {
-                //单个属性如果映射不成功，则警告
-                logger.warn(e.getMessage());
-            }
-        }
-        return map;
-    }
 
-    public static <T> T mapToMongoPOJO(Map<String, Object> map, Class<T> cls) {
-        T t = null;
-        try {
-            t = cls.newInstance();
-            Field[] fields = ClassUtil.getValidFields(cls);
-            for (Field field : fields) {
-                try {
-                    //数据库字段名
-                    String propertyName = getPropertyName(field);
-                    //预备赋与的属性值
-                    Object value = map.get(propertyName);
-                    //属性类型
-                    Class fileType = field.getType();
-
-                    //如果值为List<Document>集合，则进入关联表处理
-                    if (ListUtil.isListAndNotEmpty(value)) {
-                        List valueList = (List) value;
-                        if (valueList.get(0).getClass().equals(Document.class)) {
-                            List list = handleForeignResult(field, (List<Document>) value);
-                            if (!fileType.equals(List.class)) {
-                                value = list.get(0);
-                            } else {
-                                value = list;
-                            }
-                        }
-                    }
-
-                    //如果属性值为空，则不赋值
-                    if (ObjectUtils.isEmpty(value)) {
-                        continue;
-                    }
-
-                    // 获取要设置的属性的set方法名称
-                    String setField = ClassUtil.setField(field.getName());
-                    // 声明类函数方法，并获取和设置该方法型参类型
-                    Method setMethod = cls.getMethod(setField, fileType);
-                    setMethod.invoke(t, value);
-                } catch (Exception e) {
-                    //单个属性如果映射不成功，则警告
-                    StringBuffer msg = new StringBuffer()
-                            .append(cls.getName()).append("  ")
-                            .append(field.getName())
-                            .append("  ")
-                            .append(e.getMessage());
-                    logger.warn(msg.toString());
-                }
-            }
-            return t;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public static <T> BasicDBObject modelToFilter(T t) {
-        Map<String, Object> map = poToMap(t);
+        Map<String, Object> map = ModelUtil.poToMap(t);
         return mapToFilter(t.getClass(), map);
     }
 

@@ -5,17 +5,20 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.myjdbc</groupId>
     <artifactId>parent</artifactId>
-    <version>1.4.9-WEB</version>
+    <version>1.5.0-WEB</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
         <module>mymongodb</module>
         <module>base-util</module>
+        <module>api-document</module>
         <module>web</module>
     </modules>
     <properties>
         <!-- myjdbc各组件版本控制 -->
-        <that.version>1.4.9-WEB</that.version>
+        <that.version>1.5.0-WEB</that.version>
+        <!-- API文档 -->
+        <myjdbc.api.version>${that.version}</myjdbc.api.version>
         <!-- 核心 -->
         <myjdbc.core.version>${that.version}</myjdbc.core.version>
         <!-- 核心工具 -->
@@ -31,8 +34,6 @@
 
         <!--    版本控制    -->
         <!--  公共引用  -->
-        <!--标准化接口文档 -->
-        <swagger.version>2.6.0</swagger.version>
         <!--JPA规范-->
         <jpa.version>1.0</jpa.version>
         <!--JSON数据支持-->

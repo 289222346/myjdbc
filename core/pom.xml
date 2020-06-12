@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.myjdbc</groupId>
         <artifactId>parent</artifactId>
-        <version>1.4.9-WEB</version>
+        <version>1.5.0-WEB</version>
     </parent>
     <packaging>jar</packaging>
     <artifactId>core</artifactId>
@@ -19,14 +19,6 @@
             <artifactId>base-util</artifactId>
             <version>${myjdbc.core.util.version}</version>
         </dependency>
-
-        <!--SpringBoot支持-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.boot</groupId>-->
-        <!--            <artifactId>spring-boot</artifactId>-->
-        <!--            <version>${spring-boot.version}</version>-->
-        <!--            <scope>compile</scope>-->
-        <!--        </dependency>-->
     </dependencies>
 
     <build>

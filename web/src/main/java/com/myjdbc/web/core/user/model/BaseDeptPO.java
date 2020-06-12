@@ -1,8 +1,7 @@
 package com.myjdbc.web.core.user.model;
 
-import com.myjdbc.core.annotations.IDAutoGenerator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.myjdbc.api.annotations.IDAutoGenerator;
+import com.myjdbc.api.annotations.MyApiModelProperty;
 import org.springframework.data.annotation.Id;
 
 /**
@@ -12,14 +11,14 @@ import org.springframework.data.annotation.Id;
  * @date 2020/06/01  20:36
  */
 @IDAutoGenerator(type = IDAutoGenerator.Type.SNOW_FLAKE)
-@ApiModel(value = "DEPT", description = "部门")
+//@ApiModel(value = "DEPT", description = "部门")
 public class BaseDeptPO {
 
     @Id
-    @ApiModelProperty(value = "唯一标识", name = "ID")
+    @MyApiModelProperty(value = "唯一标识", name = "ID")
     private Integer id;
 
-    @ApiModelProperty(value = "部门名称", name = "DEPT_NAME")
+    @MyApiModelProperty(value = "部门名称", name = "DEPT_NAME")
     private String deptName;
 
 }

@@ -3,6 +3,9 @@ package com.myjdbc.web.core.common.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * @author 陈文
+ */
 public final class Md5Util {
 
     public static String md5Hex(String data) {
