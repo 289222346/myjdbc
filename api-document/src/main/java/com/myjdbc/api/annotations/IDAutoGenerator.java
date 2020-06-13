@@ -19,7 +19,7 @@ import java.lang.annotation.ElementType;
  * @Author 陈文
  * @Date 2020/4/23 19:12
  */
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.ANNOTATION_TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface IDAutoGenerator {
