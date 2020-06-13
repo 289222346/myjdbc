@@ -1,7 +1,7 @@
 package com.myjdbc.web.core.user.model;
 
-import com.myjdbc.api.annotations.MyApiModel;
-import com.myjdbc.api.annotations.MyApiModelProperty;
+import com.myjdbc.api.annotations.MyModel;
+import com.myjdbc.api.annotations.MyModelProperty;
 import lombok.Data;
 
 /**
@@ -10,20 +10,20 @@ import lombok.Data;
  * @author 陈文
  * @date 2020/06/01  19:31
  */
-@MyApiModel(value = "USER")
+@MyModel(value = "USER")
 @Data
 public class BaseUserPO extends BaseID {
 
     /**
      * 用户名称
      */
-    @MyApiModelProperty(value = "用户名称", name = "USER_NAME", required = true)
+    @MyModelProperty(value = "用户名称", name = "USER_NAME", required = true)
     private String userName;
 
     /**
      * 用户密码
      */
-    @MyApiModelProperty(value = "用户密码", name = "USER_PASSWORD", required = true)
+    @MyModelProperty(value = "用户密码", name = "USER_PASSWORD", required = true)
     private String userPassword;
 
 

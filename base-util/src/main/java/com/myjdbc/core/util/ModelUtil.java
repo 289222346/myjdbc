@@ -1,7 +1,7 @@
 package com.myjdbc.core.util;
 
-import com.myjdbc.api.annotations.MyApiModel;
-import com.myjdbc.api.annotations.MyApiModelProperty;
+import com.myjdbc.api.annotations.MyModel;
+import com.myjdbc.api.annotations.MyModelProperty;
 import com.myjdbc.api.util.AnnotationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,8 +23,8 @@ public class ModelUtil {
 
     /**
      * 获取属性名称
-     * 如果存在{@link MyApiModelProperty}注解的 ,且其{@code name}参数不为空，则用{@code name}作为属性名称
-     * 如果不存在{@link MyApiModelProperty}注解的 ,或者{@code name}参数为空的，则使用属性本身名字
+     * 如果存在{@link MyModelProperty}注解的 ,且其{@code name}参数不为空，则用{@code name}作为属性名称
+     * 如果不存在{@link MyModelProperty}注解的 ,或者{@code name}参数为空的，则使用属性本身名字
      *
      * @param field 实体属性
      * @return 经过处理后的属性名称
@@ -33,7 +32,7 @@ public class ModelUtil {
      * @Date 2020/4/21  17:03
      */
     public static String getPropertyName(Field field) {
-        MyApiModelProperty myApiModelProperty = AnnotationUtil.findAnnotaion(field, MyApiModelProperty.class);
+        MyModelProperty myApiModelProperty = AnnotationUtil.findAnnotaion(field, MyModelProperty.class);
         /**
          * 没有模型属性，或者{@code name}参数为空，则返回属性原本的名字
          */
@@ -51,7 +50,7 @@ public class ModelUtil {
      * @Date: 2020/4/20 11:26
      */
     public static String getModelName(Class cls) {
-        MyApiModel apiModel = (MyApiModel) cls.getAnnotation(MyApiModel.class);
+        MyModel apiModel = (MyModel) cls.getAnnotation(MyModel.class);
         String modelName = null;
         if (apiModel != null) {
             //collectionName

@@ -1,11 +1,7 @@
 package com.myjdbc.web.core.user.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.myjdbc.api.annotations.IDAutoGenerator;
-import com.myjdbc.api.annotations.MyApiModel;
-import com.myjdbc.api.annotations.MyApiModelProperty;
-import com.myjdbc.api.annotations.MyID;
-import com.myjdbc.core.util.ClassUtil;
+import com.myjdbc.api.annotations.MyModelProperty;
 import com.myjdbc.core.util.SecretUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.mymongodb.service.SystemMongoService;
@@ -15,15 +11,10 @@ import com.myjdbc.web.core.user.model.BaseUserPO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * 公共信息开放接口
@@ -53,7 +44,7 @@ public class UserController extends BaseController {
 //        System.out.println(myApiModel);
 
         Field field = BaseUserPO.class.getDeclaredField("id");
-        MyApiModelProperty idAutoGenerator = AnnotatedElementUtils.findMergedAnnotation(field, MyApiModelProperty.class);
+        MyModelProperty idAutoGenerator = AnnotatedElementUtils.findMergedAnnotation(field, MyModelProperty.class);
         System.out.println(idAutoGenerator);
 
 

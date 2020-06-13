@@ -1,6 +1,6 @@
 package com.myjdbc.core.util;
 
-import com.myjdbc.api.annotations.MyApiModelProperty;
+import com.myjdbc.api.annotations.MyModelProperty;
 
 import javax.persistence.MappedSuperclass;
 import java.lang.reflect.Field;
@@ -146,7 +146,7 @@ public class ClassUtil {
         List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
         //排除拥有ApiModelProperty属性，且hidden属性为ture
         for (int i = 0; i < fieldList.size(); i++) {
-            MyApiModelProperty apiModelProperty = fieldList.get(i).getAnnotation(MyApiModelProperty.class);
+            MyModelProperty apiModelProperty = fieldList.get(i).getAnnotation(MyModelProperty.class);
             if (apiModelProperty != null && apiModelProperty.hidden() == true) {
                 fieldList.remove(i--);
             }

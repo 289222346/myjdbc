@@ -2,7 +2,7 @@ package com.myjdbc.mymongodb.service.impl;
 
 import com.mongodb.BasicDBObject;
 import com.myjdbc.api.annotations.IDAutoGenerator;
-import com.myjdbc.api.annotations.MyApiModelProperty;
+import com.myjdbc.api.annotations.MyModelProperty;
 import com.myjdbc.api.annotations.MyID;
 import com.myjdbc.core.criteria.CriteriaQuery;
 import com.myjdbc.core.idgenerator.IdGeneratorUtil;
@@ -215,7 +215,7 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
             //校验必填字段是否非空
             List<Field> fieldList = ClassUtil.getAllFieldsList(cls);
             for (Field field : fieldList) {
-                MyApiModelProperty apiModelProperty = AnnotationUtil.findAnnotaion(field, MyApiModelProperty.class);
+                MyModelProperty apiModelProperty = AnnotationUtil.findAnnotaion(field, MyModelProperty.class);
                 if (apiModelProperty != null) {
                     if (apiModelProperty.required()) {
                         String propertyName = MongoUtil.getPropertyName(field);

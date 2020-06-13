@@ -11,19 +11,19 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @IDAutoGenerator
-@MyApiModelProperty(required = true)
+@MyModelProperty(required = true)
 public @interface MyID {
 
     /**
      * 属性的描述
      */
-    @AliasFor(attribute = "value", annotation = MyApiModelProperty.class)
+    @AliasFor(attribute = "value", annotation = MyModelProperty.class)
     String value() default "实体唯一标识";
 
     /**
      * 属性的别名（数据库名称）
      */
-    @AliasFor(attribute = "name", annotation = MyApiModelProperty.class)
+    @AliasFor(attribute = "name", annotation = MyModelProperty.class)
     String name() default MyID.ID_ATTRIBUTE_NAME;
 
     /**
