@@ -1,23 +1,21 @@
-//基础服务
-
 /**
  * 发送请求的地址
  * @type {string}
  */
-var serverAddress = "http://127.0.0.1:9999/web";
+const serverAddress = "/web";
 
 /**
  * 请求方式（post或get）默认为get
  * 此接口修改默认为post
  * @type {string}
  */
-var serverType = "post";
+const serverType = "post";
 
 /**
  * 服务器返回数据类型
  * @type {string}
  */
-var serverDataType = "json";
+const serverDataType = "json";
 
 /**
  * 默认设置为true，所有请求均为异步请求。
@@ -25,14 +23,14 @@ var serverDataType = "json";
  * 注意，同步请求将锁住浏览器，用户其他操作必须等待请求完成才可以执行。
  * @type {boolean}
  */
-var serverAsync = true;
+const serverAsync = true;
 
 /**
  * 通用服务调用接口
  * @param apiName 接口名称
  * @param formData 调用参数
  */
-function server_request(apiName, formData) {
+function serverRequest(apiName, formData) {
     $.ajax({
         url: serverAddress + apiName,
         type: serverType,
@@ -40,10 +38,10 @@ function server_request(apiName, formData) {
         dataType: serverDataType,
         data: formData,
         success: function (result) {
-            server_request_callback(result);
+            serverRequestCallback(result);
         },
         error: function (data) {
-            server_request_callback(data);
+            serverRequestCallback(data);
         }
     });
 }
@@ -53,7 +51,12 @@ function server_request(apiName, formData) {
  * (不论接口调用是否正常，均会由此函数返回)
  * @param data 返回数据
  */
-function server_request_callback(data) {
+function serverRequestCallback(data) {
     console.log(data);
 }
+
+const pageData = {
+    ajaxData: {code: null, resultMsg: null}
+};
+
 

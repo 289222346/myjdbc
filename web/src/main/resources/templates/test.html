@@ -11,7 +11,6 @@
 <script type="text/javascript">
 
 
-
 </script>
 
 
@@ -19,24 +18,20 @@
 <div>
     <input id="userName" type="text" placeholder="请输入用户名">
     <input id="password" type="password" placeholder="请输入密码">
-    <button type="button" name="login" id="login"></button>
+    <button onclick="f()" type="button" name="login" id="login"></button>
 </div>
 </body>
 <script type="text/javascript">
 
     const data1 = {
-        userName: 'admin',
-        password: 123456,
-        login: "按钮"
+        userName: {val: 'admin', readOnly: true},
+        password: {val: 123456},
+        login: {val: '提交按钮'}
+    };
+    loadData(data1);
+
+    function f() {
+        data1.userName.val = '差安徽';
     }
-    setVal(data1);
-
-    const data2 = {
-        userName: true
-    }
-    setReadonly(data2)
-    // document.getElementById('userName').readOnly = true;
-
-
 </script>
 </html>

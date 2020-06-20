@@ -15,9 +15,9 @@ const ADD_PATH = "/add";
 /**
  * 添加用户
  */
-function add_user(userName, userPassword) {
-    var formData = {userName: userName, userPassword: userPassword};
-    server_user_request(ADD_PATH, formData);
+function addUser(userName, userPassword) {
+    let formData = {userName: userName, userPassword: userPassword};
+    serverRequestCallback(ADD_PATH, formData);
 }
 
 /**
@@ -25,6 +25,6 @@ function add_user(userName, userPassword) {
  * @param path
  * @param formData
  */
-function server_user_request(path, formData) {
-    server_request(MODULE_PATH + path, formData);
+function serverRequestCallback(path, formData) {
+    serverRequest(MODULE_PATH + path, formData);
 }
