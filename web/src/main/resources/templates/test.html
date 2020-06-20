@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <script src="/web/js/util/dataBind.js"></script>
+    <script src="/web/js/util/test.js"></script>
+</head>
+
+<script type="text/javascript">
+
+
+
+</script>
+
+
+<body>
+<div>
+    <input id="userName" type="text" placeholder="请输入用户名">
+    <input id="password" type="password" placeholder="请输入密码">
+    <button type="button" name="login" id="login"></button>
+</div>
+</body>
+<script type="text/javascript">
+
+    const data1 = {
+        userName: 'admin',
+        password: 123456,
+        login: "按钮"
+    }
+    setVal(data1);
+
+    const data2 = {
+        userName: true
+    }
+    setReadonly(data2)
+    // document.getElementById('userName').readOnly = true;
+
+
+</script>
+</html>

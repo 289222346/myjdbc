@@ -20,4 +20,11 @@ public class WebController extends BaseController {
         System.out.println("收到请求2");
         return "/hello";
     }
+
+    @RequestMapping("/test")
+    public String test() {
+        System.out.println("收到请求2");
+        return "/test";
+    }
+
 }
