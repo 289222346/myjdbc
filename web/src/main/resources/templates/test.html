@@ -3,35 +3,36 @@
 <head>
     <meta charset="utf-8">
     <title></title>
-
-    <script src="/web/js/util/dataBind.js"></script>
-    <script src="/web/js/util/test.js"></script>
+    <script src="/web/js/jquery-1.7.2.min.js"></script>
+    <script src="/web/js/util/DataBind.js"></script>
+    <script src="/web/js/util/BaseService.js"></script>
+    <script src="/web/js/util/ApiService.js"></script>
 </head>
-
 <script type="text/javascript">
 
-
 </script>
-
 
 <body>
 <div>
     <input id="userName" type="text" placeholder="请输入用户名">
     <input id="password" type="password" placeholder="请输入密码">
-    <button onclick="f()" type="button" name="login" id="login"></button>
+    <button onclick="test()" type="button" name="login" id="login"></button>
+    <input id="ajaxDataCode" type="text">
+    <input id="ajaxDataResultMsg" type="text">
 </div>
 </body>
 <script type="text/javascript">
-
+    //声明数据
     const data1 = {
-        userName: {val: 'admin', readOnly: true},
+        userName: {val: 'admin', readOnly: true,asb:'hello'},
         password: {val: 123456},
         login: {val: '提交按钮'}
     };
+    //绑定数据
     loadData(data1);
-
-    function f() {
-        data1.userName.val = '差安徽';
+    function test() {
+        data1.userName.val = '修改一下用户名';
+        hello();
     }
 </script>
 </html>

@@ -2,7 +2,9 @@
  * 发送请求的地址
  * @type {string}
  */
-const serverAddress = "/web";
+const SERVER_ADDRESS = "/web";
+
+const BASE_SERVICE = "/base";
 
 /**
  * 请求方式（post或get）默认为get
@@ -26,13 +28,23 @@ const serverDataType = "json";
 const serverAsync = true;
 
 /**
+ * 基本服务数据
+ * @type {{ajaxDataResultMsg: {val: null}, ajaxDataCode: {val: null}}}
+ */
+const baseServiceData = {
+    ajaxDataCode: {val: null},
+    ajaxDataResultMsg: {val: null}
+    // ajaxDataCode: {code: null, resultMsg: null}
+};
+
+/**
  * 通用服务调用接口
  * @param apiName 接口名称
  * @param formData 调用参数
  */
 function serverRequest(apiName, formData) {
     $.ajax({
-        url: serverAddress + apiName,
+        url: SERVER_ADDRESS + apiName,
         type: serverType,
         async: serverAsync,
         dataType: serverDataType,
@@ -40,10 +52,19 @@ function serverRequest(apiName, formData) {
         success: function (result) {
             serverRequestCallback(result);
         },
-        error: function (data) {
-            serverRequestCallback(data);
+        error: function (result) {
+            serverRequestCallback(result);
         }
     });
+}
+
+/**
+ * 通用服务调用接口本地镜像（对路径进行处理）
+ * @param path
+ * @param formData
+ */
+function serverRequestMirror(path, formData) {
+    serverRequest(BASE_SERVICE + path, formData);
 }
 
 /**
@@ -51,12 +72,24 @@ function serverRequest(apiName, formData) {
  * (不论接口调用是否正常，均会由此函数返回)
  * @param data 返回数据
  */
-function serverRequestCallback(data) {
-    console.log(data);
+function serverRequestCallback(result) {
+    console.log(result);
+    showResult(result.code, result.resultMsg);
 }
 
-const pageData = {
-    ajaxData: {code: null, resultMsg: null}
-};
+/**
+ * 显示返回结果
+ */
+function showResult(code, resultMsg) {
+    baseServiceData.ajaxDataCode.val = code;
+    baseServiceData.ajaxDataResultMsg.val = resultMsg;
+}
+
+
+window.onload = function () {
+    alert("页面加载完成====》onload");
+    loadData(baseServiceData)
+}
+
 
 

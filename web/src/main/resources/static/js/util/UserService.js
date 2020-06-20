@@ -17,7 +17,7 @@ const ADD_PATH = "/add";
  */
 function addUser(userName, userPassword) {
     let formData = {userName: userName, userPassword: userPassword};
-    serverRequestCallback(ADD_PATH, formData);
+    serverRequestMirror(ADD_PATH, formData);
 }
 
 /**
@@ -25,6 +25,6 @@ function addUser(userName, userPassword) {
  * @param path
  * @param formData
  */
-function serverRequestCallback(path, formData) {
+function serverRequestMirror(path, formData) {
     serverRequest(MODULE_PATH + path, formData);
 }

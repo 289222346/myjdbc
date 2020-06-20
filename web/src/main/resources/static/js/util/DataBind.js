@@ -15,7 +15,8 @@
  *  <input id="userName" type="text" placeholder="请输入用户名">
  *  <input id="password" type="password" placeholder="请输入密码">
  *  <button id="login" type="button"></button>
- * @author 陈文
+ * @author 陈文 https://github.com/289222346
+ *
  */
 
 /**
@@ -63,20 +64,14 @@ function defineProperty(pageData, model, element, property) {
         set(newValue) {
             //标签名
             let tagName = element.tagName;
-            //从标签库中找到对应标签
-            for (let tag in tagPool) {
-                if (tag == tagName) {
-                    //获取标签库中对应属性
-                    let propertyName = tagPool[tag][property];
-                    //如果找不到对应方法，则直接使用方法类型名
-                    if (isEmpty(propertyName)) {
-                        propertyName = property;
-                    }
-                    //操作DOM节点，修改对应标签值的指定属性值
-                    element[propertyName] = newValue;
-                    break;
-                }
+            //获取标签库中对应属性
+            let propertyName = tagPool[tagName][property];
+            //如果找不到对应方法，则直接使用方法类型名
+            if (isEmpty(propertyName)) {
+                propertyName = property;
             }
+            //操作DOM节点，修改对应标签值的指定属性值
+            element[propertyName] = newValue;
         }
     });
 }
