@@ -39,7 +39,7 @@
         <!--JPA规范-->
         <jpa.version>1.0</jpa.version>
         <!--JSON数据支持-->
-        <jackson-databind.version>2.9.10.1</jackson-databind.version>
+        <jackson-databind.version>2.9.10.4</jackson-databind.version>
         <!--SpringBoot版本-->
         <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
         <!--Spring支持-->
