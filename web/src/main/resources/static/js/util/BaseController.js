@@ -1,23 +1,21 @@
 /**
- * 发送请求的地址
+ * 服务器项目地址(允许为空)
  * @type {string}
  */
 const SERVER_ADDRESS = "/web";
-
-const BASE_SERVICE = "/base";
 
 /**
  * 请求方式（post或get）默认为get
  * 此接口修改默认为post
  * @type {string}
  */
-const serverType = "post";
+const SERVER_TYPE = "post";
 
 /**
  * 服务器返回数据类型
  * @type {string}
  */
-const serverDataType = "json";
+const SERVER_DATA_TYPE = "json";
 
 /**
  * 默认设置为true，所有请求均为异步请求。
@@ -25,7 +23,7 @@ const serverDataType = "json";
  * 注意，同步请求将锁住浏览器，用户其他操作必须等待请求完成才可以执行。
  * @type {boolean}
  */
-const serverAsync = true;
+const SERVER_ASYNC = true;
 
 /**
  * 基本服务数据
@@ -34,7 +32,6 @@ const serverAsync = true;
 const baseServiceData = {
     ajaxDataCode: {val: null},
     ajaxDataResultMsg: {val: null}
-    // ajaxDataCode: {code: null, resultMsg: null}
 };
 
 /**
@@ -45,9 +42,9 @@ const baseServiceData = {
 function serverRequest(apiName, formData) {
     $.ajax({
         url: SERVER_ADDRESS + apiName,
-        type: serverType,
-        async: serverAsync,
-        dataType: serverDataType,
+        type: SERVER_TYPE,
+        async: SERVER_ASYNC,
+        dataType: SERVER_DATA_TYPE,
         data: formData,
         success: function (result) {
             serverRequestCallback(result);
@@ -56,15 +53,6 @@ function serverRequest(apiName, formData) {
             serverRequestCallback(result);
         }
     });
-}
-
-/**
- * 通用服务调用接口本地镜像（对路径进行处理）
- * @param path
- * @param formData
- */
-function serverRequestMirror(path, formData) {
-    serverRequest(BASE_SERVICE + path, formData);
 }
 
 /**
@@ -85,9 +73,11 @@ function showResult(code, resultMsg) {
     baseServiceData.ajaxDataResultMsg.val = resultMsg;
 }
 
-
+/**
+ * 绑定基础服务数据
+ * 服务器返回Code和resultMsg
+ */
 window.onload = function () {
-    alert("页面加载完成====》onload");
     loadData(baseServiceData)
 }
 

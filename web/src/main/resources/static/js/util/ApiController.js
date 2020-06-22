@@ -19,8 +19,8 @@ function hello() {
 
 /**
  * 用户服务请求
- * @param path
- * @param formData
+ * @param path     接口路径(名称)
+ * @param formData 调用参数
  */
 function serverRequestMirror(path, formData) {
     serverRequest(API_SERVICE + path, formData);

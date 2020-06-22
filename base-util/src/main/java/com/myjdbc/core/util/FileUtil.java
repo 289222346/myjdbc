@@ -102,16 +102,23 @@ public class FileUtil {
         return sbf;
     }
 
-    public static StringBuffer getSql(String path) {
+    public static StringBuffer getFileValue(String path) {
         File file = new File(path);
-
         if (file.isFile()) {
             StringBuffer sql = readFileContent(file);
-
             return sql;
         }
         return null;
     }
 
+    @Deprecated
+    public static StringBuffer getSql(String path) {
+        File file = new File(path);
+        if (file.isFile()) {
+            StringBuffer sql = readFileContent(file);
+            return sql;
+        }
+        return null;
+    }
 
 }
