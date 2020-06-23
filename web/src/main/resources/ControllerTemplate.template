@@ -1,5 +1,12 @@
-//模块路径
-0000:const ${module_path} = ${module_path_value};
+//常量
+const ${constant_name} = ${constant_value};
 
-//方法路径
-0001:const ${method_path} = ${method_path_value};
+/**
+ * 方法
+ */
+function ${method_name}(formData) {serverRequestMirror(${method_path}, formData);}
+
+/**
+ * 基础服务方法
+ */
+function serverRequestMirror(path, formData) {serverRequest(${moudle_path} + path, formData);}

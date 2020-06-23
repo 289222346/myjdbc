@@ -58,4 +58,22 @@ public class StringUtil {
         return str.substring(index, str.length());
     }
 
+    /**
+     * 【驼峰】命名转【下划线】命名
+     *
+     * @param name 名称
+     * @return 转换后的名称
+     */
+    public static String humpToUnderline(String name) {
+        //排除首字母
+        String str = name.substring(1);
+        StringBuffer newStr = new StringBuffer(name.substring(0, 1));
+        for (char c : str.toCharArray()) {
+            //大写字母前面加下划线
+            newStr.append(Character.isUpperCase(c) ? "_" + c : c);
+        }
+        return newStr.toString().toUpperCase();
+    }
+
+
 }

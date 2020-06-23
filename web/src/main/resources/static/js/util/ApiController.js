@@ -13,8 +13,8 @@ const HELLO = "/hello";
 /**
  * 添加用户
  */
-function hello() {
-    serverRequestMirror(HELLO);
+function hello(formData) {
+    serverRequestMirror(HELLO, formData);
 }
 
 /**

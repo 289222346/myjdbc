@@ -1,6 +1,7 @@
 package com.myjdbc.web.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.myjdbc.web.core.automation.util.JavaScriptGenerate;
 import com.myjdbc.web.core.common.controller.BaseController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,14 +16,29 @@ import java.util.Map;
  * @date 2020/05/27  22:38
  */
 @RestController()
-@RequestMapping(value = "/api/public")
+@RequestMapping(name = "publicInfo", path = {"/api/public", "/api"})
 public class PublicInfoController extends BaseController {
 
 
-    @RequestMapping("/hello")
+    @RequestMapping(path = "/hello")
     public JSONObject helloHtml() {
         System.out.println("收到请求1");
         return createError("可能是错误吧");
     }
+
+    @RequestMapping(path = "/hello2")
+    public JSONObject hello2() {
+        System.out.println("收到请求1");
+        return createError("可能是错误吧");
+    }
+
+
+    @RequestMapping(path = "/ccc")
+    public JSONObject ccc() {
+        String s = JavaScriptGenerate.generateScriptStr(WebController.class);
+        System.out.println(s);
+        return createResultInfo(SUCCESS, s);
+    }
+
 
 }

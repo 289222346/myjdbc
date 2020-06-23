@@ -1,10 +1,9 @@
 package com.myjdbc.web.core.automation.util;
 
 import com.myjdbc.web.api.controller.PublicInfoController;
-import com.myjdbc.web.core.automation.constants.TemplateConstant;
+import com.myjdbc.web.api.controller.WebController;
 import com.myjdbc.web.core.automation.model.ScriptTemplateModel;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,39 +16,33 @@ import java.util.List;
  */
 public class JavaScriptGenerate {
 
+    private static final String CONTROLLER_TEMPLATE = "ControllerTemplate.template";
+
     @Test
     public void t() {
-        s();
+        String s = JavaScriptGenerate.generateScriptStr(WebController.class);
+        System.out.println(s);
     }
 
-    public void s() {
-        String path = getClass().getClassLoader().getResource("ControllerTemplate.template").getPath();
+
+    public static String generateScriptStr(Class cls) {
+        String path = cls.getClassLoader().getResource(CONTROLLER_TEMPLATE).getPath();
         File file = new File(path);
         //获取模板
-        ScriptTemplateModel model = new ScriptTemplateModel();
         List<StringBuffer> list = readFileContent(file);
-        for (StringBuffer temple : list) {
-            model.setValue(temple);
-        }
+        //生成模板对象
+        ScriptTemplateModel model = new ScriptTemplateModel(list, cls);
 
-
-        String modulePath = "/api/public";
-        String methodPath = "/hello";
-
-        model.setModulePath("API_MODEL", modulePath);
-        model.setMethodPath("HELLO_HTML", methodPath);
-
-        System.out.println(model.getModulePath());
-        System.out.println(model.getMethodPath());
+        //返回JS字符串
+        return model.getJavaScriptStr();
     }
-
 
     /**
      * @Author 陈文
      * @Date 2019/12/6  15:41
      * @Description 将文件流转换成字符串
      */
-    public List<StringBuffer> readFileContent(File file) {
+    private static List<StringBuffer> readFileContent(File file) {
         BufferedReader reader = null;
         List<StringBuffer> sbf = new ArrayList<>();
         try {
@@ -57,7 +50,7 @@ public class JavaScriptGenerate {
             String tempStr;
             boolean blockComment = false;
             while ((tempStr = reader.readLine()) != null) {
-                StringBuffer tempBuff = new StringBuffer(tempStr);
+                StringBuffer tempBuff = new StringBuffer(tempStr.trim());
 
                 //空行跳过
                 if (tempBuff.length() == 0) {
@@ -71,18 +64,18 @@ public class JavaScriptGenerate {
                     }
                     continue;
                 }
+                if (tempBuff.length() > 2) {
+                    //识别 /** xx */ 块注释，开始
+                    if ("/*".equals(tempBuff.substring(0, 2))) {
+                        blockComment = true;
+                        continue;
+                    }
 
-                //识别 /** xx */ 块注释，开始
-                if ("/*".equals(tempBuff.substring(0, 2))) {
-                    blockComment = true;
-                    continue;
+                    //识别 双斜杠// 行注释
+                    if ("//".equals(tempBuff.substring(0, 2))) {
+                        continue;
+                    }
                 }
-
-                //识别 双斜杠// 行注释
-                if ("//".equals(tempBuff.substring(0, 2))) {
-                    continue;
-                }
-
                 sbf.add(tempBuff);
             }
             reader.close();

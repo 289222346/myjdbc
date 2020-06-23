@@ -1,42 +1,35 @@
 package com.myjdbc.web.core.automation.constants;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * 模板常量
  *
  * @author 陈文
  */
 public class TemplateConstant {
-    /**
-     * 模块代码
-     */
-    public static final String MODULE_CODE = "0000";
 
     /**
-     * 方法代码
+     * 常量关键字
      */
-    public static final String METHOD_CODE = "0001";
+    public static final String CONSTANT = "const";
 
     /**
-     * 模块地址
+     * 方法关键字
      */
-    public static final String MODULE_PATH = "${module_path}";
+    public static final String FUNCTION = "function";
 
     /**
-     * 模块地址值
+     * 服务器请求方法
      */
-    public static final String MODULE_PATH_VALUE = "${module_path_value}";
+    public static final String SERVER_REQUEST = "serverRequestMirror";
 
     /**
-     * 方法地址
+     * 常量名
      */
-    public static final String METHOD_PATH = "${method_path}";
+    public static final String CONSTANT_NAME = "${constant_name}";
 
     /**
-     * 方法地址值
+     * 常量值
      */
-    public static final String METHOD_PATH_VALUE = "${method_path_value}";
+    public static final String CONSTANT_VALUE = "${constant_value}";
 
 }
