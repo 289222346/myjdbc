@@ -84,18 +84,33 @@ public class ScriptTemplateModel {
     }
 
 
-    private void setJavaScriptStr(String nameAlias, String valueAlias, StringBuffer buffer, String name, String value) {
-        int indexPath0 = buffer.indexOf(nameAlias);
-        int indexPath1 = indexPath0 + nameAlias.length();
-        int indexValue0 = buffer.indexOf(valueAlias);
-        int indexValue1 = indexValue0 + valueAlias.length();
-        javaScriptStr.append(buffer.substring(0, indexPath0));
-        javaScriptStr.append(name);
-        javaScriptStr.append(buffer.substring(indexPath1, indexValue0));
-        javaScriptStr.append(value);
-        javaScriptStr.append(buffer.substring(indexValue1));
+    private void setJavaScriptStr(StringBuffer buffer, String[] names, String[] values) {
+        int index = 0;
+        for (int i = 0; i < names.length; i++) {
+            int indexPath0 = buffer.indexOf(names[i]);
+            int indexPath1 = indexPath0 + names[i].length();
+            javaScriptStr.append(buffer.substring(index, indexPath0));
+            javaScriptStr.append(values[i]);
+            if (i == names.length - 1) {
+                javaScriptStr.append(buffer.substring(indexPath1));
+            }
+            index += indexPath1;
+        }
         javaScriptStr.append("\r\n");
     }
+
+//    private void setJavaScriptStr(String nameAlias, String valueAlias, StringBuffer buffer, String name, String value) {
+//        int indexPath0 = buffer.indexOf(nameAlias);
+//        int indexPath1 = indexPath0 + nameAlias.length();
+//        int indexValue0 = buffer.indexOf(valueAlias);
+//        int indexValue1 = indexValue0 + valueAlias.length();
+//        javaScriptStr.append(buffer.substring(0, indexPath0));
+//        javaScriptStr.append(name);
+//        javaScriptStr.append(buffer.substring(indexPath1, indexValue0));
+//        javaScriptStr.append(value);
+//        javaScriptStr.append(buffer.substring(indexValue1));
+//        javaScriptStr.append("\r\n");
+//    }
 
 
     private void set(Class conCls) {
@@ -112,16 +127,27 @@ public class ScriptTemplateModel {
         this.setConstValue(list);
 
         //获取方法的映射
+        List<String[]> methodJs = new ArrayList<>();
         Method[] methods = conCls.getMethods();
         for (Method method : methods) {
-            this.set(method);
+            String[] strings = this.set(method);
+            if (strings != null) {
+                methodJs.add(strings);
+            }
         }
+        //注入方法
+        for (String[] methodJ : methodJs) {
+            this.setMethodValue(methodJ[0], methodJ[1]);
+        }
+
+        //注入最终调用方法
+        this.setMethodValue(list.get(0)[0]);
     }
 
-    private void set(Method method) {
+    private String[] set(Method method) {
         RequestMapping requestMapping = AnnotationUtil.findAnnotaion(method, RequestMapping.class);
         if (requestMapping == null) {
-            return;
+            return null;
         }
         String name = requestMapping.name();
         if (StringUtil.isEmpty(name)) {
@@ -130,6 +156,8 @@ public class ScriptTemplateModel {
         //映射注入JS
         List<String[]> list = mappingResolution(name, requestMapping);
         this.setConstValue(list);
+
+        return new String[]{name, list.get(0)[0]};
     }
 
     /**
@@ -145,7 +173,7 @@ public class ScriptTemplateModel {
         name = StringUtil.humpToUnderline(name);
         for (String modulePath : requestMapping.path()) {
             name = modelIndex > 0 ? name + modelIndex : name;
-            String[] strings = new String[]{name, modulePath};
+            String[] strings = new String[]{name, "'" + modulePath + "'"};
             list.add(strings);
             modelIndex++;
         }
@@ -166,13 +194,33 @@ public class ScriptTemplateModel {
     }
 
     /**
+     * 添加方法脚本
+     */
+    private void setMethodValue(String name, String path) {
+        setJavaScriptStr(this.methodTemp,
+                new String[]{TemplateConstant.METHOD_NAME, TemplateConstant.METHOD_PATH},
+                new String[]{name, path});
+    }
+
+    /**
+     * 添加方法脚本(最终请求方法)
+     */
+    private void setMethodValue(String moudlePath) {
+        setJavaScriptStr(this.requestMethodTemp,
+                new String[]{TemplateConstant.MOUDLE_PATH},
+                new String[]{moudlePath});
+    }
+
+    /**
      * 添加常量脚本
      *
      * @param constName  常量名称
      * @param constValue 常量值
      */
     public void setConstValue(String constName, String constValue) {
-        setJavaScriptStr(TemplateConstant.CONSTANT_NAME, TemplateConstant.CONSTANT_VALUE, this.constTemp, constName, constValue);
+        setJavaScriptStr(this.constTemp,
+                new String[]{TemplateConstant.CONSTANT_NAME, TemplateConstant.CONSTANT_VALUE},
+                new String[]{constName, constValue});
     }
 
     @Override

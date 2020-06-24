@@ -32,4 +32,19 @@ public class TemplateConstant {
      */
     public static final String CONSTANT_VALUE = "${constant_value}";
 
+    /**
+     * 模块路径
+     */
+    public static final String MOUDLE_PATH = "${moudle_path}";
+
+    /**
+     * 方法名
+     */
+    public static final String METHOD_NAME = "${method_name}";
+
+    /**
+     * 方法路径
+     */
+    public static final String METHOD_PATH = "${method_path}";
+
 }

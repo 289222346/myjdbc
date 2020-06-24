@@ -84,7 +84,7 @@ public class FileUtil {
 
             String tempStr;
             while ((tempStr = reader.readLine()) != null) {
-                sbf.append(tempStr).append(" ");
+                sbf.append(tempStr.trim());
             }
             reader.close();
             return sbf;
@@ -105,8 +105,8 @@ public class FileUtil {
     public static StringBuffer getFileValue(String path) {
         File file = new File(path);
         if (file.isFile()) {
-            StringBuffer sql = readFileContent(file);
-            return sql;
+            StringBuffer buffer = readFileContent(file);
+            return buffer;
         }
         return null;
     }

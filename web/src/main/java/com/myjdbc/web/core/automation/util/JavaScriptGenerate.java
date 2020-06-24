@@ -1,5 +1,6 @@
 package com.myjdbc.web.core.automation.util;
 
+import com.myjdbc.core.util.FileUtil;
 import com.myjdbc.web.api.controller.PublicInfoController;
 import com.myjdbc.web.api.controller.WebController;
 import com.myjdbc.web.core.automation.model.ScriptTemplateModel;
@@ -20,8 +21,14 @@ public class JavaScriptGenerate {
 
     @Test
     public void t() {
-        String s = JavaScriptGenerate.generateScriptStr(WebController.class);
-        System.out.println(s);
+        Class cls = WebController.class;
+        String s = System.getProperty("user.dir");
+        String a = "\\src\\main\\java\\";
+        String b = cls.getPackage().getName().replace(".", "\\");
+        String d = "\\" + cls.getSimpleName() + ".java";
+        String path = s + a + b + d;
+        StringBuffer buffer = FileUtil.getFileValue(path);
+        System.out.println(buffer);
     }
 
 
