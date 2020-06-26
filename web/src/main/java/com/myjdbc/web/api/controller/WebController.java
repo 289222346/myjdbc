@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WebController extends BaseController {
 
     /**
-     * 你好世界
+     * helloHtml2() 你好世界
      *
      * @return
      */

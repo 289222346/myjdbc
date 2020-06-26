@@ -3,14 +3,11 @@ package com.myjdbc.web.core.automation.model;
 import com.myjdbc.api.util.AnnotationUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.web.core.automation.constants.TemplateConstant;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 脚本模板对象
@@ -19,12 +16,18 @@ import java.util.Set;
  */
 public class ScriptTemplateModel {
 
-    public ScriptTemplateModel(List<StringBuffer> list, Class conCls) {
+    public ScriptTemplateModel(List<StringBuffer> list, Class cls, List<StringBuffer> javaStr) {
         for (StringBuffer temple : list) {
             this.setTemplate(temple);
         }
-        this.set(conCls);
+        this.javaStr = javaStr;
+        this.set(cls);
     }
+
+    /**
+     * java原始代码
+     */
+    private List<StringBuffer> javaStr;
 
     /**
      * 常量-模板
@@ -87,6 +90,8 @@ public class ScriptTemplateModel {
     private void setJavaScriptStr(StringBuffer buffer, String[] names, String[] values) {
         int index = 0;
         for (int i = 0; i < names.length; i++) {
+            //模板加入注释
+            javaScriptStr.append(getAnnotate(names[i], values[i]));
             int indexPath0 = buffer.indexOf(names[i]);
             int indexPath1 = indexPath0 + names[i].length();
             javaScriptStr.append(buffer.substring(index, indexPath0));
@@ -98,20 +103,6 @@ public class ScriptTemplateModel {
         }
         javaScriptStr.append("\r\n");
     }
-
-//    private void setJavaScriptStr(String nameAlias, String valueAlias, StringBuffer buffer, String name, String value) {
-//        int indexPath0 = buffer.indexOf(nameAlias);
-//        int indexPath1 = indexPath0 + nameAlias.length();
-//        int indexValue0 = buffer.indexOf(valueAlias);
-//        int indexValue1 = indexValue0 + valueAlias.length();
-//        javaScriptStr.append(buffer.substring(0, indexPath0));
-//        javaScriptStr.append(name);
-//        javaScriptStr.append(buffer.substring(indexPath1, indexValue0));
-//        javaScriptStr.append(value);
-//        javaScriptStr.append(buffer.substring(indexValue1));
-//        javaScriptStr.append("\r\n");
-//    }
-
 
     private void set(Class conCls) {
         RequestMapping requestMapping = AnnotationUtil.findAnnotaion(conCls, RequestMapping.class);
@@ -221,6 +212,46 @@ public class ScriptTemplateModel {
         setJavaScriptStr(this.constTemp,
                 new String[]{TemplateConstant.CONSTANT_NAME, TemplateConstant.CONSTANT_VALUE},
                 new String[]{constName, constValue});
+    }
+
+    private StringBuffer getAnnotate(String methodNameKey, String methodName) {
+        StringBuffer stringBuffer = new StringBuffer();
+        if (methodNameKey.equals(TemplateConstant.METHOD_NAME)) {
+            for (int i1 = 0; i1 < javaStr.size(); i1++) {
+                StringBuffer jstr = javaStr.get(i1);
+                if (jstr.indexOf(methodName + "(") != -1 && jstr.indexOf("public") == 0) {
+                    int i2 = 1;
+                    int annotationStart = 0;
+                    int annotationEnd = 0;
+                    while (i1 > 0) {
+                        StringBuffer jstr2 = javaStr.get(i1 - i2++);
+                        //跳过注解
+                        if (jstr2.indexOf("@") == 0) {
+                            continue;
+                        }
+
+                        if (jstr2.indexOf("*/") != -1) {
+                            annotationEnd = i1 - i2 + 1;
+                        }
+
+                        if (jstr2.indexOf("/*") != -1) {
+                            annotationStart = i1 - i2 + 1;
+                            for (int x = annotationStart; x <= annotationEnd; x++) {
+                                stringBuffer.append(javaStr.get(x)).append("\r\n");
+                            }
+                            break;
+                        }
+
+                        //运行到此，如果还未找到注释，则认为没有注释
+                        if (annotationEnd == 0) {
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+        return stringBuffer;
     }
 
     @Override

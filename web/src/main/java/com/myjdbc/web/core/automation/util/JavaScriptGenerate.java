@@ -22,13 +22,9 @@ public class JavaScriptGenerate {
     @Test
     public void t() {
         Class cls = WebController.class;
-        String s = System.getProperty("user.dir");
-        String a = "\\src\\main\\java\\";
-        String b = cls.getPackage().getName().replace(".", "\\");
-        String d = "\\" + cls.getSimpleName() + ".java";
-        String path = s + a + b + d;
-        StringBuffer buffer = FileUtil.getFileValue(path);
-        System.out.println(buffer);
+
+        String json = generateScriptStr(cls);
+        System.out.println(json);
     }
 
 
@@ -36,12 +32,80 @@ public class JavaScriptGenerate {
         String path = cls.getClassLoader().getResource(CONTROLLER_TEMPLATE).getPath();
         File file = new File(path);
         //获取模板
-        List<StringBuffer> list = readFileContent(file);
+        List<StringBuffer> list = readTemplateFileContent(file);
+        List<StringBuffer> javaStr = javaToStr(cls);
         //生成模板对象
-        ScriptTemplateModel model = new ScriptTemplateModel(list, cls);
+        ScriptTemplateModel model = new ScriptTemplateModel(list, cls, javaStr);
 
         //返回JS字符串
         return model.getJavaScriptStr();
+    }
+
+    /**
+     * java文件转String
+     *
+     * @param cls 文件类型
+     * @return 文件内容字符串
+     */
+    private static List<StringBuffer> javaToStr(Class cls) {
+        StringBuffer path = new StringBuffer(System.getProperty("user.dir"));
+        path.append("\\src\\main\\java\\");
+        path.append(cls.getPackage().getName().replace(".", "\\"));
+        path.append("\\").append(cls.getSimpleName()).append(".java");
+        File file = new File(path.toString());
+        List<StringBuffer> fileValue = readJavaFileContent(file);
+        return fileValue;
+    }
+
+    private static List<StringBuffer> readJavaFileContent(File file) {
+        List<StringBuffer> fileValue = readFileContent(file);
+        for (int i = 0; i < fileValue.size(); i++) {
+            StringBuffer buffer = fileValue.get(i);
+            //移除包声明
+            if (buffer.indexOf("package") == 0) {
+                fileValue.remove(i--);
+            }
+
+            //移除导包
+            if (buffer.indexOf("import") == 0) {
+                fileValue.remove(i--);
+            }
+        }
+        return fileValue;
+    }
+
+    /**
+     * 获取模板文件内容
+     */
+    private static List<StringBuffer> readTemplateFileContent(File file) {
+        List<StringBuffer> fileValue = readFileContent(file);
+        List<StringBuffer> newFileValue = new ArrayList<>();
+        boolean blockComment = false;
+        for (int i = 0; i < fileValue.size(); i++) {
+            StringBuffer tempBuff = fileValue.get(i);
+
+            //识别 /** xx */ 块注释，结束
+            if (blockComment) {
+                if ("*/".equals(tempBuff.substring(tempBuff.length() - 2))) {
+                    blockComment = false;
+                }
+                continue;
+            }
+            if (tempBuff.length() > 2) {
+                //识别 /** xx */ 块注释，开始
+                if ("/*".equals(tempBuff.substring(0, 2))) {
+                    blockComment = true;
+                    continue;
+                }
+
+                //识别 双斜杠// 行注释
+                if ("//".equals(tempBuff.substring(0, 2))) {
+                    continue;
+                }
+            }
+            newFileValue.add(tempBuff);
+        }
+        return newFileValue;
     }
 
     /**
@@ -55,33 +119,11 @@ public class JavaScriptGenerate {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
             String tempStr;
-            boolean blockComment = false;
             while ((tempStr = reader.readLine()) != null) {
                 StringBuffer tempBuff = new StringBuffer(tempStr.trim());
-
                 //空行跳过
                 if (tempBuff.length() == 0) {
                     continue;
-                }
-
-                //识别 /** xx */ 块注释，结束
-                if (blockComment) {
-                    if ("*/".equals(tempBuff.substring(tempBuff.length() - 2))) {
-                        blockComment = false;
-                    }
-                    continue;
-                }
-                if (tempBuff.length() > 2) {
-                    //识别 /** xx */ 块注释，开始
-                    if ("/*".equals(tempBuff.substring(0, 2))) {
-                        blockComment = true;
-                        continue;
-                    }
-
-                    //识别 双斜杠// 行注释
-                    if ("//".equals(tempBuff.substring(0, 2))) {
-                        continue;
-                    }
                 }
                 sbf.add(tempBuff);
             }
