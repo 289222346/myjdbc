@@ -80,7 +80,7 @@ public class ScriptTemplateModel {
      * @return
      */
     private boolean matchHeader(StringBuffer b, String header) {
-        if (header.equals(b.substring(0, header.length()))) {
+        if (b.indexOf(header) == 0) {
             return true;
         }
         return false;
@@ -144,6 +144,8 @@ public class ScriptTemplateModel {
         if (StringUtil.isEmpty(name)) {
             name = method.getName();
         }
+        System.out.println(method.getName());
+
         //映射注入JS
         List<String[]> list = mappingResolution(name, requestMapping);
         this.setConstValue(list);

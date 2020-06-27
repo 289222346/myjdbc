@@ -57,6 +57,13 @@ public class UserController extends BaseController {
     @Autowired
     private SystemMongoService systemMongoService;
 
+    /**
+     * 新增用户
+     *
+     * @param baseUserPO
+     * @return
+     * @throws NoSuchFieldException
+     */
     @RequestMapping("/add")
     public JSONObject add(BaseUserPO baseUserPO) throws NoSuchFieldException {
         String userName = baseUserPO.getUserName();

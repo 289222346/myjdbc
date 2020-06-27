@@ -14,6 +14,8 @@ const ADD_PATH = "/add";
 
 /**
  * 添加用户
+ * @param userName     用户名称
+ * @param userPassword 用户密码
  */
 function addUser(userName, userPassword) {
     let formData = {userName: userName, userPassword: userPassword};

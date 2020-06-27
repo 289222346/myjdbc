@@ -1,21 +1,36 @@
-const WEB_CONTROLLER = '/api/public';
-const TEST = '/test';
-const HELLO_HTML2 = '/hello2';
+const PUBLIC_INFO = '/api/public';
+const PUBLIC_INFO1 = '/api';
+const HELLO2 = '/hello2';
+const CCC = '/ccc';
+const HELLO_HTML = '/hello';
 
 /**
- * 就一个测试接口
+ * 第二个注释
  *
- * @author 陈文
- * @date 2020/06/27  22:38
+ * @return
  */
-function test(formData) {
-    serverRequestMirror(TEST, formData);
+function hello2(formData) {
+    serverRequestMirror(HELLO2, formData);
 }
 
-function helloHtml2(formData) {
-    serverRequestMirror(HELLO_HTML2, formData);
+/**
+ * 第三个注释
+ *
+ * @return
+ */
+function ccc(formData) {
+    serverRequestMirror(CCC, formData);
+}
+
+/**
+ * 第一个注释
+ *
+ * @return
+ */
+function helloHtml(formData) {
+    serverRequestMirror(HELLO_HTML, formData);
 }
 
 function serverRequestMirror(path, formData) {
-    serverRequest(WEB_CONTROLLER + path, formData);
+    serverRequest(PUBLIC_INFO + path, formData);
 }

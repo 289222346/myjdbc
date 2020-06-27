@@ -1,9 +1,8 @@
 package com.myjdbc.web.core.automation.util;
 
-import com.myjdbc.core.util.FileUtil;
 import com.myjdbc.web.api.controller.PublicInfoController;
-import com.myjdbc.web.api.controller.WebController;
 import com.myjdbc.web.core.automation.model.ScriptTemplateModel;
+import com.myjdbc.web.core.user.controller.UserController;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -21,7 +20,7 @@ public class JavaScriptGenerate {
 
     @Test
     public void t() {
-        Class cls = WebController.class;
+        Class cls = PublicInfoController.class;
 
         String json = generateScriptStr(cls);
         System.out.println(json);
@@ -86,20 +85,20 @@ public class JavaScriptGenerate {
 
             //识别 /** xx */ 块注释，结束
             if (blockComment) {
-                if ("*/".equals(tempBuff.substring(tempBuff.length() - 2))) {
+                if (tempBuff.indexOf("*/") == 0) {
                     blockComment = false;
                 }
                 continue;
             }
             if (tempBuff.length() > 2) {
                 //识别 /** xx */ 块注释，开始
-                if ("/*".equals(tempBuff.substring(0, 2))) {
+                if (tempBuff.indexOf("/*") == 0) {
                     blockComment = true;
                     continue;
                 }
 
                 //识别 双斜杠// 行注释
-                if ("//".equals(tempBuff.substring(0, 2))) {
+                if (tempBuff.indexOf("//") == 0) {
                     continue;
                 }
             }

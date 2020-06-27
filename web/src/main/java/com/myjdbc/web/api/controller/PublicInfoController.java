@@ -19,20 +19,32 @@ import java.util.Map;
 @RequestMapping(name = "publicInfo", path = {"/api/public", "/api"})
 public class PublicInfoController extends BaseController {
 
-
+    /**
+     * 第一个注释
+     *
+     * @return
+     */
     @RequestMapping(path = "/hello")
     public JSONObject helloHtml() {
         System.out.println("收到请求1");
         return createError("可能是错误吧");
     }
 
+    /**
+     * 第二个注释
+     *
+     * @return
+     */
     @RequestMapping(path = "/hello2")
     public JSONObject hello2() {
         System.out.println("收到请求1");
         return createError("可能是错误吧");
     }
 
-
+    /**
+     *
+     * @return
+     */
     @RequestMapping(path = "/ccc")
     public JSONObject ccc() {
         String s = JavaScriptGenerate.generateScriptStr(WebController.class);
