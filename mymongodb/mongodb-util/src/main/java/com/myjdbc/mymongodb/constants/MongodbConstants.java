@@ -46,5 +46,9 @@ public class MongodbConstants {
      * 小于等于
      */
     public static final String OP_LE = "$lte";
+    /**
+     * 不等于
+     */
+    public static final String OP_NEQ = "$ne";
 
 }
