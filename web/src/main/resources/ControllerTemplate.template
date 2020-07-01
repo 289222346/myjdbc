@@ -4,7 +4,7 @@ const ${constant_name} = ${constant_value};
 /**
  * 方法
  */
-function ${method_name}(formData) {serverRequestMirror(${method_path}, formData);}
+function ${method_name}(formData) {serverRequestMirror(${method_path}, formData);{let s = 4;}alert("chengg");}
 
 /**
  * 基础服务方法

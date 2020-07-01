@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class ScriptTemplateModel {
 
+    private static final String[] SPLIT_LINE = new String[]{"{", ";", "}"};
+
     public ScriptTemplateModel(List<StringBuffer> list, Class cls, List<StringBuffer> javaStr) {
         for (StringBuffer temple : list) {
             this.setTemplate(temple);
@@ -86,32 +88,65 @@ public class ScriptTemplateModel {
         return false;
     }
 
-
+    /**
+     * 写入JS脚本(字符串)
+     *
+     * @param buffer 脚本模板
+     * @param names  变量名(模板代码)
+     * @param values 变量值
+     */
     private void setJavaScriptStr(StringBuffer buffer, String[] names, String[] values) {
         int index = 0;
+        StringBuffer tempBuff = new StringBuffer();
         for (int i = 0; i < names.length; i++) {
             //模板加入注释
-            javaScriptStr.append(getAnnotate(names[i], values[i]));
+            tempBuff.append(getAnnotate(names[i], values[i]));
             int indexPath0 = buffer.indexOf(names[i]);
             int indexPath1 = indexPath0 + names[i].length();
-            javaScriptStr.append(buffer.substring(index, indexPath0));
-            javaScriptStr.append(values[i]);
+            tempBuff.append(buffer.substring(index, indexPath0));
+            tempBuff.append(values[i]);
             if (i == names.length - 1) {
-                javaScriptStr.append(buffer.substring(indexPath1));
+                tempBuff.append(buffer.substring(indexPath1));
             }
             index += indexPath1;
         }
-        javaScriptStr.append("\r\n");
+
+        //换行符号
+        int spaceUnit = 4;
+        StringBuffer spaceTotal = new StringBuffer();
+        for (String s : SPLIT_LINE) {
+            int splitLine = 0;
+            while ((splitLine = tempBuff.indexOf(s, splitLine + 1)) != -1) {
+                if (s.equals("{")) {
+                    for (int i = 0; i < spaceUnit; i++) {
+                        spaceTotal.append(" ");
+                    }
+                } else if (s.equals("}")) {
+                    for (int i = 0; i < spaceUnit; i++) {
+                        spaceTotal.deleteCharAt(0);
+                    }
+                }
+
+                tempBuff.insert(splitLine + 1, "\r\n");
+            }
+        }
+
+        javaScriptStr.append(tempBuff);
     }
 
-    private void set(Class conCls) {
-        RequestMapping requestMapping = AnnotationUtil.findAnnotaion(conCls, RequestMapping.class);
+    /**
+     * 注入控制层
+     *
+     * @param cls 控制层类
+     */
+    private void set(Class cls) {
+        RequestMapping requestMapping = AnnotationUtil.findAnnotaion(cls, RequestMapping.class);
         if (requestMapping == null) {
             return;
         }
         String name = requestMapping.name();
         if (StringUtil.isEmpty(name)) {
-            name = conCls.getSimpleName();
+            name = cls.getSimpleName();
         }
         //映射类
         List<String[]> list = mappingResolution(name, requestMapping);
@@ -119,7 +154,7 @@ public class ScriptTemplateModel {
 
         //获取方法的映射
         List<String[]> methodJs = new ArrayList<>();
-        Method[] methods = conCls.getMethods();
+        Method[] methods = cls.getMethods();
         for (Method method : methods) {
             String[] strings = this.set(method);
             if (strings != null) {
@@ -135,6 +170,11 @@ public class ScriptTemplateModel {
         this.setMethodValue(list.get(0)[0]);
     }
 
+    /**
+     * 注入方法
+     *
+     * @param method 控制层方法
+     */
     private String[] set(Method method) {
         RequestMapping requestMapping = AnnotationUtil.findAnnotaion(method, RequestMapping.class);
         if (requestMapping == null) {
@@ -144,7 +184,6 @@ public class ScriptTemplateModel {
         if (StringUtil.isEmpty(name)) {
             name = method.getName();
         }
-        System.out.println(method.getName());
 
         //映射注入JS
         List<String[]> list = mappingResolution(name, requestMapping);
@@ -173,6 +212,11 @@ public class ScriptTemplateModel {
         return list;
     }
 
+    /**
+     * 返回JS脚本
+     *
+     * @return JavaScript字符串
+     */
     public String getJavaScriptStr() {
         return javaScriptStr.toString();
     }
