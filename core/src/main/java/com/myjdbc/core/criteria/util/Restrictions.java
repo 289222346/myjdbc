@@ -125,6 +125,18 @@ public class Restrictions {
     }
 
     /**
+     * 不相等
+     *
+     * @param fieldName 限定字段名
+     * @param value     限定值
+     * @return 字段查询条件
+     */
+    public static Criteria neq(String fieldName, Object value) {
+        return getCriteria(fieldName, OpType.NEQ, value);
+    }
+
+
+    /**
      * 获取字段查询条件
      *
      * @param fieldName 限定字段名

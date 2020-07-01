@@ -119,6 +119,9 @@ public interface CriteriaQuery<T> {
      */
     void isNotNull(String fieldName);
 
+
+    void neq(String fieldName, Object value);
+
     /**
      * 获取排序规则
      *

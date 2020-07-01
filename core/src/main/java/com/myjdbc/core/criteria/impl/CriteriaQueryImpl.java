@@ -151,6 +151,11 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     }
 
     @Override
+    public void neq(String fieldName, Object value) {
+        add(Restrictions.neq(fieldName, value));
+    }
+
+    @Override
     public OrderBo getOrder() {
         return orderBo;
     }
