@@ -25,26 +25,36 @@ public class TemplateConstant {
     /**
      * 常量名
      */
-    public static final String CONSTANT_NAME = "${constant_name}";
+    public static final String CONSTANT_NAME = "$[constant_name]";
 
     /**
      * 常量值
      */
-    public static final String CONSTANT_VALUE = "${constant_value}";
+    public static final String CONSTANT_VALUE = "$[constant_value]";
 
     /**
      * 模块路径
      */
-    public static final String MOUDLE_PATH = "${moudle_path}";
+    public static final String MOUDLE_PATH = "$[moudle_path]";
 
     /**
      * 方法名
      */
-    public static final String METHOD_NAME = "${method_name}";
+    public static final String METHOD_NAME = "$[method_name]";
 
     /**
      * 方法路径
      */
-    public static final String METHOD_PATH = "${method_path}";
+    public static final String METHOD_PATH = "$[method_path]";
+
+    /**
+     * 参数
+     */
+    public static final String PARAMETER = "$[formData]";
+
+    /**
+     * 参数值
+     */
+    public static final String PARAMETER_VALUE = "$[formDataValue]";
 
 }

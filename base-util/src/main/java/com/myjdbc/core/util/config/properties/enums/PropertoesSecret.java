@@ -1,21 +1,20 @@
-package com.myjdbc.core.config.properties.enums;
+package com.myjdbc.core.util.config.properties.enums;
 
+
+import com.myjdbc.core.util.config.constants.DBType;
 
 /**
  * @Author 陈文
- * @Date 2019/12/26  9:48
- * @Description JDBC配置
+ * @Date 2020/07/02  20:57
+ * @Description 密码工具配置
  */
-public enum PropertiesIdGenerator implements PropertiesEnum {
+public enum PropertoesSecret implements PropertiesEnum {
 
     /**
-     * 雪花-数据中心编码
+     * 秘钥
      */
-    DATA_CENTER_ID("myjdbc.id.datacenter", "雪花-数据中心编码", 0),
-    /**
-     * 雪花-机器编码
-     */
-    MACHINE_ID("myjdbc.id.machine", "雪花-机器编码", 0);
+    SECRET_KEY("myjdbc.secret", "数据库类型", "Z8SjxH4Lc/Inebb9Zl5G9RziP6eY");
+
 
     /**
      * 配置属性名
@@ -31,7 +30,7 @@ public enum PropertiesIdGenerator implements PropertiesEnum {
     private Object defaultValue;
 
 
-    PropertiesIdGenerator(String code, String remark, Object defaultValue) {
+    PropertoesSecret(String code, String remark, Object defaultValue) {
         this.code = code;
         this.remark = remark;
         this.defaultValue = defaultValue;

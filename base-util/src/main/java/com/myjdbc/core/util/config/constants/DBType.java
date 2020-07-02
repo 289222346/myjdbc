@@ -1,6 +1,6 @@
-package com.myjdbc.core.constants;
+package com.myjdbc.core.util.config.constants;
 
-import com.myjdbc.core.config.properties.enums.PropertiesJDBC;
+import com.myjdbc.core.util.config.properties.enums.PropertiesJDBC;
 
 /**
  * 数据库类型

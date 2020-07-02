@@ -1,8 +1,8 @@
-package com.myjdbc.core.config.properties;
+package com.myjdbc.core.util.config.properties;
 
-import com.myjdbc.core.config.properties.enums.PropertiesFile;
-import com.myjdbc.core.config.properties.enums.PropertiesJDBC;
-import com.myjdbc.core.constants.DBType;
+import com.myjdbc.core.util.config.constants.DBType;
+import com.myjdbc.core.util.config.properties.enums.PropertiesFile;
+import com.myjdbc.core.util.config.properties.enums.PropertiesJDBC;
 
 /**
  * @Author 陈文

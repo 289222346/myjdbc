@@ -1,6 +1,7 @@
 package com.myjdbc.web.core.automation.util;
 
 import com.myjdbc.web.api.controller.PublicInfoController;
+import com.myjdbc.web.api.controller.WebController;
 import com.myjdbc.web.core.automation.model.ScriptTemplateModel;
 import com.myjdbc.web.core.user.controller.UserController;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ public class JavaScriptGenerate {
 
     @Test
     public void t() {
-        Class cls = PublicInfoController.class;
+        Class cls = UserController.class;
 
         String json = generateScriptStr(cls);
         System.out.println(json);

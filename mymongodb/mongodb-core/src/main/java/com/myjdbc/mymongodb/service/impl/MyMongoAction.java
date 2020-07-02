@@ -1,6 +1,6 @@
 package com.myjdbc.mymongodb.service.impl;
 
-import com.myjdbc.core.config.properties.DbConfig;
+import com.myjdbc.core.util.config.properties.DbConfig;
 import com.myjdbc.core.service.ActionRetrieve;
 import com.myjdbc.core.service.ActionSaveAndUpdate;
 import com.myjdbc.core.util.StringUtil;

@@ -1,8 +1,8 @@
-package com.myjdbc.core.config.properties;
+package com.myjdbc.core.util.config.properties;
 
 
-import com.myjdbc.core.config.properties.enums.PropertiesEnum;
-import com.myjdbc.core.config.properties.enums.PropertiesFile;
+import com.myjdbc.core.util.config.properties.enums.PropertiesEnum;
+import com.myjdbc.core.util.config.properties.enums.PropertiesFile;
 
 import java.io.IOException;
 import java.io.InputStream;

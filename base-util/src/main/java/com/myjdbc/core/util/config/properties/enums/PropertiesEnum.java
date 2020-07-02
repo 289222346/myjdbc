@@ -1,4 +1,4 @@
-package com.myjdbc.core.config.properties.enums;
+package com.myjdbc.core.util.config.properties.enums;
 
 /**
  * @Author 陈文

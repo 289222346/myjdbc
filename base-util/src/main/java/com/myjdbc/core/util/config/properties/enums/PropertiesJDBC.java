@@ -1,14 +1,13 @@
-package com.myjdbc.core.config.properties.enums;
+package com.myjdbc.core.util.config.properties.enums;
 
 
-import com.myjdbc.core.constants.DBType;
+import com.myjdbc.core.util.config.constants.DBType;
 
 /**
  * @Author 陈文
  * @Date 2019/12/26  9:48
  * @Description JDBC配置
  */
-@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum PropertiesJDBC implements PropertiesEnum {
 
     /**

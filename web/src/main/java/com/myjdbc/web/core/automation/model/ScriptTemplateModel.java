@@ -1,5 +1,6 @@
 package com.myjdbc.web.core.automation.model;
 
+import com.myjdbc.api.annotations.MyModel;
 import com.myjdbc.api.util.AnnotationUtil;
 import com.myjdbc.core.util.StringUtil;
 import com.myjdbc.web.core.automation.constants.TemplateConstant;
@@ -98,9 +99,16 @@ public class ScriptTemplateModel {
     private void setJavaScriptStr(StringBuffer buffer, String[] names, String[] values) {
         int index = 0;
         StringBuffer tempBuff = new StringBuffer();
+
+        String[] params = null;
         for (int i = 0; i < names.length; i++) {
-            //模板加入注释
-            tempBuff.append(getAnnotate(names[i], values[i]));
+            //为方法模板加入注释
+            if (names[i].equals(TemplateConstant.METHOD_NAME)) {
+                StringBuffer annotate = getAnnotate(names[i], values[i]);
+                params = getParam(new StringBuffer(annotate));
+                tempBuff.append(annotate);
+            }
+            //将变量插入脚本
             int indexPath0 = buffer.indexOf(names[i]);
             int indexPath1 = indexPath0 + names[i].length();
             tempBuff.append(buffer.substring(index, indexPath0));
@@ -114,7 +122,8 @@ public class ScriptTemplateModel {
         //换行符号
         int spaceUnit = 4;
         StringBuffer spaceTotal = new StringBuffer();
-        for (String s : SPLIT_LINE) {
+        for (int x = 0; x < SPLIT_LINE.length; x++) {
+            String s = SPLIT_LINE[x];
             int splitLine = 0;
             while ((splitLine = tempBuff.indexOf(s, splitLine + 1)) != -1) {
                 if (s.equals("{")) {
@@ -123,7 +132,11 @@ public class ScriptTemplateModel {
                     }
                 } else if (s.equals("}")) {
                     for (int i = 0; i < spaceUnit; i++) {
-                        spaceTotal.deleteCharAt(0);
+                        if (spaceTotal.length() > 0) {
+                            spaceTotal.deleteCharAt(0);
+                        } else {
+                            break;
+                        }
                     }
                 }
 
@@ -131,7 +144,46 @@ public class ScriptTemplateModel {
             }
         }
 
+        //插入params参数
+        if (params != null) {
+            setParam(tempBuff, params);
+        }
         javaScriptStr.append(tempBuff);
+    }
+
+    private void setParam(StringBuffer tempBuff, String[] params) {
+        String formData = "formData";
+        int index = -1;
+        //替换参数
+        if (-1 != (index = tempBuff.indexOf(TemplateConstant.PARAMETER))) {
+            StringBuffer param = new StringBuffer();
+            if (params.length > 0) {
+                for (String s : params) {
+                    param.append(",").append(s);
+                }
+                param.delete(0, 1);
+            }
+            tempBuff.replace(index, index + TemplateConstant.PARAMETER.length(), param.toString());
+        }
+        //替换参数转JSON公式
+        if (-1 != (index = tempBuff.indexOf(TemplateConstant.PARAMETER_VALUE))) {
+            StringBuffer paramValue = new StringBuffer();
+            if (params.length > 0) {
+                for (String s : params) {
+                    paramValue.append(",").append(s).append(":").append(s);
+                }
+                paramValue.delete(0, 1);
+                paramValue.insert(0, "{");
+                paramValue.append("}");
+            } else {
+                paramValue.append("null");
+            }
+            tempBuff.replace(index, index + TemplateConstant.PARAMETER_VALUE.length(), paramValue.toString());
+        }
+    }
+
+    private void replace(StringBuffer tempBuff) {
+
     }
 
     /**
@@ -156,11 +208,13 @@ public class ScriptTemplateModel {
         List<String[]> methodJs = new ArrayList<>();
         Method[] methods = cls.getMethods();
         for (Method method : methods) {
+            int count = method.getParameterCount();
             String[] strings = this.set(method);
             if (strings != null) {
                 methodJs.add(strings);
             }
         }
+
         //注入方法
         for (String[] methodJ : methodJs) {
             this.setMethodValue(methodJ[0], methodJ[1]);
@@ -298,6 +352,30 @@ public class ScriptTemplateModel {
             }
         }
         return stringBuffer;
+    }
+
+    /**
+     * 解析注释，获取注释中的param参数
+     *
+     * @param annotate 注释
+     * @return
+     */
+    private String[] getParam(StringBuffer annotate) {
+        String param = "@param";
+        List<String> paramList = new ArrayList<>();
+        int index = -1;
+        while (-1 != (index = annotate.indexOf(param))) {
+            int parameterStart = index + param.length() + 1;
+            for (int i = parameterStart; i < annotate.length(); i++) {
+                char c = annotate.charAt(i);
+                if (c == ' ') {
+                    paramList.add(annotate.substring(parameterStart, i));
+                    annotate.delete(0, i);
+                    break;
+                }
+            }
+        }
+        return paramList.toArray(new String[0]);
     }
 
     @Override

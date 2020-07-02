@@ -1,4 +1,4 @@
-package com.myjdbc.web.core.common.util;
+package com.myjdbc.core.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,7 +8,16 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class Md5Util {
 
+    /**
+     * 生成MD5 16进制字符串
+     *
+     * @param data 原文
+     * @return
+     */
     public static String md5Hex(String data) {
+        if (StringUtil.isEmpty(data)) {
+            return null;
+        }
         try {
             StringBuffer sb = new StringBuffer();
             MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -27,7 +36,7 @@ public final class Md5Util {
                 sb.append(Integer.toHexString(i));
             }
             return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

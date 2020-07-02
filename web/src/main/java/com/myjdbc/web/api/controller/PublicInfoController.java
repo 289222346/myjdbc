@@ -22,27 +22,18 @@ public class PublicInfoController extends BaseController {
     /**
      * 第一个注释
      *
+     * @param name  姓名
+     * @param value 值
      * @return
      */
     @RequestMapping(path = "/hello")
-    public JSONObject helloHtml() {
+    public JSONObject helloHtml(String name, Integer value) {
         System.out.println("收到请求1");
         return createError("可能是错误吧");
     }
 
-    /**
-     * 第二个注释
-     *
-     * @return
-     */
-    @RequestMapping(path = "/hello2")
-    public JSONObject hello2() {
-        System.out.println("收到请求1");
-        return createError("可能是错误吧");
-    }
 
     /**
-     *
      * @return
      */
     @RequestMapping(path = "/ccc")

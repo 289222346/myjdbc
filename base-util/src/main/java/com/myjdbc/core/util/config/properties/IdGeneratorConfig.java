@@ -1,7 +1,7 @@
-package com.myjdbc.core.config.properties;
+package com.myjdbc.core.util.config.properties;
 
-import com.myjdbc.core.config.properties.enums.PropertiesFile;
-import com.myjdbc.core.config.properties.enums.PropertiesIdGenerator;
+import com.myjdbc.core.util.config.properties.enums.PropertiesFile;
+import com.myjdbc.core.util.config.properties.enums.PropertiesIdGenerator;
 
 /**
  * ID生成器配置

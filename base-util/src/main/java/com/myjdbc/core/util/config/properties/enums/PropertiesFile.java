@@ -1,11 +1,10 @@
-package com.myjdbc.core.config.properties.enums;
+package com.myjdbc.core.util.config.properties.enums;
 
 /**
  * @Author 陈文
  * @Date 2019/12/26  9:48
  * @Description 所有配置文件记载
  */
-@SuppressWarnings({"ALL", "AlibabaEnumConstantsMustHaveComment"})
 public enum PropertiesFile {
 
     /**
@@ -15,7 +14,11 @@ public enum PropertiesFile {
     /**
      * ID生成器配置
      */
-    ID_GENERATOR("application.properties", "ID生成器配置", PropertiesIdGenerator.values());
+    ID_GENERATOR("application.properties", "ID生成器配置", PropertiesIdGenerator.values()),
+    /**
+     * 秘钥工具配置
+     */
+    SECRET("application.properties", "秘钥工具配置", PropertoesSecret.values());
 
     /**
      * 配置文件名
