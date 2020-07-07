@@ -1,11 +1,11 @@
 package com.myjdbc.core.criteria.impl;
 
-import com.myjdbc.core.criteria.util.Restrictions;
-import com.myjdbc.core.model.Pag;
-import com.myjdbc.core.model.Criteria;
-import com.myjdbc.core.model.OrderBo;
 import com.myjdbc.core.constants.OrderType;
 import com.myjdbc.core.criteria.CriteriaQuery;
+import com.myjdbc.core.criteria.util.Restrictions;
+import com.myjdbc.core.model.Criteria;
+import com.myjdbc.core.model.OrderBo;
+import com.myjdbc.core.model.Pag;
 import com.myjdbc.core.util.ModelUtil;
 
 import java.util.HashMap;
@@ -153,6 +153,16 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     @Override
     public void neq(String fieldName, Object value) {
         add(Restrictions.neq(fieldName, value));
+    }
+
+    @Override
+    public void nin(String fieldName, Object... value) {
+        add(Restrictions.nin(fieldName, value));
+    }
+
+    @Override
+    public void nin(String fieldName, List value) {
+        add(Restrictions.nin(fieldName, value.toArray()));
     }
 
     @Override

@@ -51,4 +51,9 @@ public class MongodbConstants {
      */
     public static final String OP_NEQ = "$ne";
 
+    /**
+     * 包含
+     */
+    public static final String OP_NIN = "$nin";
+
 }

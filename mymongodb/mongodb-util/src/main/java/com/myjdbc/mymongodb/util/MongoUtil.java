@@ -287,6 +287,12 @@ public class MongoUtil {
                 continue;
             }
 
+            //不包含
+            if (op == OpType.NIN) {
+                basicDBObject.append(MongodbConstants.OP_NIN, value);
+                continue;
+            }
+
             throw new NullPointerException(op.getRemark() + ":  无效限定条件！");
         }
         return basicDBObject;
