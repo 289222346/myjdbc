@@ -156,6 +156,16 @@ public class CriteriaQueryImpl<T> implements CriteriaQuery {
     }
 
     @Override
+    public void nin(String fieldName, Object... value) {
+        add(Restrictions.nin(fieldName, value));
+    }
+
+    @Override
+    public void nin(String fieldName, List value) {
+        add(Restrictions.nin(fieldName, value.toArray()));
+    }
+
+    @Override
     public OrderBo getOrder() {
         return orderBo;
     }
