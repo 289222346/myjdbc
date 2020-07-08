@@ -135,6 +135,16 @@ public class Restrictions {
         return getCriteria(fieldName, OpType.NEQ, value);
     }
 
+    /**
+     * 不包含
+     *
+     * @param fieldName 限定字段名
+     * @param values    限定值
+     * @return 字段查询条件
+     */
+    public static Criteria nin(String fieldName, Object... values) {
+        return getCriteria(fieldName, OpType.NIN, values);
+    }
 
     /**
      * 获取字段查询条件

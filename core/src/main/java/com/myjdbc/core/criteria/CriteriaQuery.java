@@ -119,8 +119,34 @@ public interface CriteriaQuery<T> {
      */
     void isNotNull(String fieldName);
 
-
+    /**
+     * 执行 {@literal $neq} 不相等运算
+     *
+     * @param fieldName 限定字段
+     * @param value     限定值
+     * @Description 字段内容不等于某个值
+     */
     void neq(String fieldName, Object value);
+
+    /**
+     * 执行不包含运算，可以理解为：
+     * 对多个值，执行 {@literal $neq} 不相等运算，要全部满足才行
+     *
+     * @param fieldName 限定字段
+     * @param value     限定值(限定值为数组)
+     * @Description 字段内容完全等于某一些值
+     */
+    void nin(String fieldName, Object... value);
+
+    /**
+     * 执行不包含运算，可以理解为：
+     * 对多个值，执行 {@literal $neq} 不相等运算，要全部满足才行
+     *
+     * @param fieldName 限定字段
+     * @param value     限定值(集合)
+     * @Description 字段内容完全等于某一些值
+     */
+    void nin(String fieldName, List<Object> value);
 
     /**
      * 获取排序规则
