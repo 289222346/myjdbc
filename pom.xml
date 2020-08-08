@@ -12,8 +12,6 @@
         <module>mymongodb</module>
         <module>base-util</module>
         <module>api-document</module>
-        <module>web</module>
-        <module>web.socket</module>
     </modules>
     <properties>
         <!-- myjdbc各组件版本控制 -->
@@ -28,10 +26,6 @@
         <myjdbc.mymongodb.version>${that.version}</myjdbc.mymongodb.version>
         <!-- mongodb组件_工具 -->
         <myjdbc.mymongodb.util.version>${that.version}</myjdbc.mymongodb.util.version>
-        <!--   版本控制   -->
-        <!--SpringBoot版本-->
-        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-
 
         <!--    版本控制    -->
         <!--  公共引用  -->
