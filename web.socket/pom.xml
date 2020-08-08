@@ -10,4 +10,25 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>web.socket</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.myjdbc</groupId>
+            <artifactId>base-util</artifactId>
+            <version>1.5.0-WEB</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+    </dependencies>
 </project>

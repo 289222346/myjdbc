@@ -24,11 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
-
 public class MongoUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(MongoUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(MongoUtil.class);
 
     /**
      * MongoDB  ID属性名称
@@ -324,7 +322,7 @@ public class MongoUtil {
             dbUri = key + dbUri;
         }
         dbUri = "mongodb://" + dbUri;
-        log.println("mongodb获取了一次url:" + dbUri);
+        logger.info("mongodb获取了一次url:" + dbUri);
         return dbUri;
     }
 

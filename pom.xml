@@ -13,6 +13,7 @@
         <module>base-util</module>
         <module>api-document</module>
         <module>web</module>
+        <module>web.socket</module>
     </modules>
     <properties>
         <!-- myjdbc各组件版本控制 -->
@@ -45,6 +46,7 @@
         <!--Spring支持-->
         <spring.data.version>2.1.10.RELEASE</spring.data.version>
         <spring.context.version>5.1.9.RELEASE</spring.context.version>
+        <slf4j.version>1.7.16</slf4j.version>
 
         <!-- 固定配置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -20,8 +20,6 @@
         <!--版本控制Start-->
 
         <!--myjdbc公共版本依赖Start-->
-        <!-- log4j12 -->
-        <slf4j.version>1.6.1</slf4j.version>
         <!--JPA-->
         <jpa.version>1.0</jpa.version>
         <!--myjdbc公共版本依赖End-->
@@ -40,12 +38,6 @@
         </dependency>
 
         <!--myjdbc公共依赖Start-->
-        <!-- log4j12 -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
 
         <!--JPA-->
         <dependency>

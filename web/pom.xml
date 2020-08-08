@@ -22,6 +22,19 @@
     </properties>
 
     <dependencies>
+        <!--  ORM框架  -->
+        <dependency>
+            <groupId>com.myjdbc.mongodb</groupId>
+            <artifactId>mongodb-core</artifactId>
+            <version>${myjdbc.core.version}</version>
+        </dependency>
+
+        <!--  Socket工具  -->
+        <dependency>
+            <groupId>com.myjdbc</groupId>
+            <artifactId>web.socket</artifactId>
+            <version>1.5.0-WEB</version>
+        </dependency>
 
         <!--  SpringBoot框架支持  -->
         <dependency>
@@ -41,13 +54,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
-        </dependency>
-
-        <!--  ORM框架  -->
-        <dependency>
-            <groupId>com.myjdbc.mongodb</groupId>
-            <artifactId>mongodb-core</artifactId>
-            <version>${myjdbc.core.version}</version>
         </dependency>
 
         <!--  lombok框架支持  -->
