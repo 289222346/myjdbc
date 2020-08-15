@@ -44,6 +44,11 @@ public interface BaseServiceType {
      * 操作结果：操作失败，必要属性为空
      */
     int FAILURE_REQUIRED_NULL = 8;
+
+    /**
+     * 操作结果：操作失败，功能维护中
+     */
+    int FAILURE_IN_MAINTENANCE = 9;
     /**
      * 操作结果：操作失败，非法操作
      */
@@ -59,6 +64,7 @@ public interface BaseServiceType {
             "操作失败，不允许传入集合",
             "操作失败，找不到没有数据",
             "操作失败，必填属性为空",
+            "操作失败，功能维护中",
             "操作失败，非法操作"
     };
 
@@ -71,7 +77,6 @@ public interface BaseServiceType {
      * @Date 2020/4/13  20:42
      * @Description 可以通过重写该方法，来自定义返回值
      */
-
     default String getDesc(int type) {
         if (type >= DESCS.length) {
             return DESCS[DESCS.length - 1];

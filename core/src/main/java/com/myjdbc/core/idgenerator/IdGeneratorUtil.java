@@ -35,14 +35,25 @@ public class IdGeneratorUtil {
 
             //生成String类型,默认UUID
             if (String.class.equals(cls)) {
-                return UUIDHexGenerator.getUUID();
+                return generateUUID();
             }
 
-            //生成Integer类型,默认snowflake(雪花算法)
+            //生成Long类型,默认snowflake(雪花算法)
             if (Integer.class.equals(cls)) {
-                return snowFlakeGenerator.nextId();
+                return generateSnowFlakeID();
             }
         }
         return null;
     }
+
+    public static String generateUUID() {
+        //生成String类型,默认UUID
+        return UUIDHexGenerator.getUUID();
+    }
+
+    public static long generateSnowFlakeID() {
+        //生成String类型,默认UUID
+        return snowFlakeGenerator.nextId();
+    }
+
 }
