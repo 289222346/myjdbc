@@ -164,6 +164,9 @@ public class MyMongoSaveAndUpdateImpl implements ActionSaveAndUpdate {
      * @Date 2020/4/11  9:29
      */
     private <T> int saveAndUpdate(T t, int actionType) {
+        if (t == null) {
+            return FAILURE_ALL_NULL;
+        }
         //前置检查结果
         SaveAndUpdateBO saveAndUpdateBO = saveAndUpdateChecking(t, actionType);
         if (actionType != saveAndUpdateBO.getCode()) {
