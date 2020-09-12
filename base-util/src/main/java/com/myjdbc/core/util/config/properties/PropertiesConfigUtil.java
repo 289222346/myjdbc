@@ -3,6 +3,7 @@ package com.myjdbc.core.util.config.properties;
 
 import com.myjdbc.core.util.config.properties.enums.PropertiesEnum;
 import com.myjdbc.core.util.config.properties.enums.PropertiesFile;
+import com.myjdbc.core.util.config.properties.enums.PropertiesFileI;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +34,7 @@ public class PropertiesConfigUtil {
      *
      * @param propertiesFile 配置枚举（分类）
      */
-    public PropertiesConfigUtil(PropertiesFile propertiesFile) {
+    public <PropertiesFile extends PropertiesFileI> PropertiesConfigUtil(PropertiesFile propertiesFile) {
         Properties prop = getProperties(propertiesFile.getFileName());
         PropertiesEnum[] propertiesEnums = (PropertiesEnum[]) propertiesFile.getPropertiesEnums();
         for (PropertiesEnum propertiesEnum : propertiesEnums) {

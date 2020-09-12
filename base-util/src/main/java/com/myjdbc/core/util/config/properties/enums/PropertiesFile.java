@@ -5,7 +5,7 @@ package com.myjdbc.core.util.config.properties.enums;
  * @Date 2019/12/26  9:48
  * @Description 所有配置文件记载
  */
-public enum PropertiesFile {
+public enum PropertiesFile implements PropertiesFileI {
 
     /**
      * JDBC配置
@@ -39,14 +39,17 @@ public enum PropertiesFile {
         this.propertiesEnums = propertiesEnums;
     }
 
+    @Override
     public String getFileName() {
         return fileName;
     }
 
+    @Override
     public String getRemark() {
         return remark;
     }
 
+    @Override
     public Enum<? extends PropertiesEnum>[] getPropertiesEnums() {
         return propertiesEnums;
     }
