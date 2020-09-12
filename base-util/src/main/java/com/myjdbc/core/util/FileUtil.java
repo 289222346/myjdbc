@@ -67,7 +67,10 @@ public class FileUtil {
      */
     public static File[] getFileAll(String folderPath) {
         File file = new File(folderPath);
-        return getFileAll(file);
+        if (file.isDirectory()) {
+            return getFileAll(file);
+        }
+        return null;
     }
 
     /**

@@ -60,6 +60,17 @@ public class PropertiesConfigUtil {
     }
 
     /**
+     * 读取属性
+     *
+     * @param propertiesEnum 属性枚举
+     * @author 陈文
+     * @date 2020/9/12 16:40
+     */
+    public <P extends PropertiesEnum> Object readProperty(P propertiesEnum) {
+        return PROP_VALUE_POOL.get(propertiesEnum.getCode());
+    }
+
+    /**
      * @Author 陈文
      * @Date 2019/12/26  9:44
      * @Description 获取属性文件
