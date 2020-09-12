@@ -1,6 +1,12 @@
 package com.myjdbc.core.util;
 
+import sun.security.util.ArrayUtil;
+
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FileUtil {
 
@@ -32,10 +38,62 @@ public class FileUtil {
     /**
      * @Author 陈文
      * @Date 2019/12/18  1:01
-     * @Description 获取文件夹内所有文件
+     * @Description 获取文件夹根目录内所有文件(不含子文件夹中文件)
+     */
+    public static File[] getFiles(String folderPath) {
+        File file = new File(folderPath);
+        return getFiles(file);
+    }
+
+    /**
+     * @param file 文件夹
+     * @Author 陈文
+     * @Date 2019/12/18  1:01
+     * @Description 获取文件夹根目录内所有文件(不含子文件夹中文件)
      */
     public static File[] getFiles(File file) {
-        return file.listFiles();
+        if (file.isDirectory()) {
+            return file.listFiles();
+        }
+        return null;
+    }
+
+    /**
+     * @param folderPath
+     * @return
+     * @Description 获取文件夹内所有文件
+     * @author 陈文
+     * @date 2020/9/12 13:15
+     */
+    public static File[] getFileAll(String folderPath) {
+        File file = new File(folderPath);
+        return getFileAll(file);
+    }
+
+    /**
+     * @param file 文件夹
+     * @return
+     * @Description 获取文件夹内所有文件
+     * @author 陈文
+     * @date 2020/9/12 13:15
+     */
+    public static File[] getFileAll(File file) {
+        List<File> fileList = new ArrayList<>();
+        //获取该文件夹根目录下所有文件
+        File[] files = getFiles(file);
+        for (File childFile : files) {
+            if (childFile.isFile()) {
+                //是文件，加入文件集合
+                fileList.add(childFile);
+            } else if (childFile.isDirectory()) {
+                //是文件夹，则递归重复统计
+                File[] childFiles = getFileAll(childFile);
+                if (childFiles != null && childFiles.length > 0) {
+                    fileList.addAll(Arrays.asList(childFiles));
+                }
+            }
+        }
+        return fileList.toArray(new File[fileList.size()]);
     }
 
     /**
